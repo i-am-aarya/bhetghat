@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"net/http"
+)
 
 func main() {
-	fmt.Println("BhetGhat ma aau")
+	srv := &http.Server{
+		Addr: ":8000",
+	}
+
+	srv.ListenAndServe()
 }
