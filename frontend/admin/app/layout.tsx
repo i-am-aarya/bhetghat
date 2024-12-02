@@ -1,4 +1,4 @@
-import MenuBar from "./Components/MenuBar";
+import MenuBar from "@/components/MenuBar";
 import "./globals.css";
 
 export default function RootLayout({
@@ -10,9 +10,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="flex flex-col md:flex-row">
         <div className="flex-none md:block hidden w-64">
-          <MenuBar />
+          <MenuBar/>
         </div>
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          {children}</main>
       </body>
     </html>
   );
