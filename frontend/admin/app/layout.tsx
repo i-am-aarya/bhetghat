@@ -1,11 +1,5 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
+import MenuBar from "./Components/MenuBar";
 import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "BhetGhat: Admin Dashboard",
-  description: "BhetGhat Admin",
-};
 
 export default function RootLayout({
   children,
@@ -14,8 +8,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        {children}
+      <body className="flex flex-col md:flex-row">
+        <div className="flex-none md:block hidden w-64">
+          <MenuBar />
+        </div>
+        <main className="flex-1">{children}</main>
       </body>
     </html>
   );
