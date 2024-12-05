@@ -14,6 +14,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 
 export default function Page() {
@@ -55,6 +68,21 @@ export default function Page() {
 
   return (
     <div className="ml-4 p-10">
+      <AlertDialog>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <Time />
       <div className="w-[1485px] pt-10">
         <div className="flex pb-10">
@@ -74,7 +102,7 @@ export default function Page() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Table className="table-auto w-full">
+        <Table className="table-auto w-full mt-12">
           <TableHeader>
             <TableRow className="text-[#EB3D77]">
               <TableHead className="w-1/3 text-[#EB3D77]">UserID</TableHead>
@@ -98,9 +126,31 @@ export default function Page() {
                   {player.Status}
                 </TableCell>
                 <TableCell>
-                  <Button className="w-[150px] h-[40px] bg-[#EB3D77] hover:bg-[#f597b6] hover:text-white">
-                    Remove
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="w-[150px] h-[40px] bg-[#EB3D77] hover:bg-[#f597b6] hover:text-white">
+                        Remove
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your account and remove your data from our
+                          servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction className="bg-[#EB3D77] text-white hover:bg-[#f597b6]">
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}
