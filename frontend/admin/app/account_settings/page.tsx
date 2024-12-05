@@ -41,7 +41,7 @@ function page() {
             </div>
           </div>
           <div>
-            <Button className="w-[150px] has-[40px] bg-[#EB3D77]">
+            <Button className="w-[150px] has-[40px] bg-[#EB3D77] hover:bg-[#f597b6] hover:text-white">
               Update
             </Button>
           </div>
