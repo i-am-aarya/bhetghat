@@ -93,7 +93,7 @@ export default function Page() {
           <Circle className="mb-[2px] self-end stroke-[#00FF11] w-[6.67px] h-[6.67px] border-[#00FF11] rounded-full bg-[#00FF11] mr-2" />
           <span className="self-end text-xs font-medium">{count}</span>
         </div>
-        <div className="flex items-center w-[469px] h-[40px] align-middle border-b-2 border-b-[#CCCCCC]">
+        <div className="flex items-center mt-8 w-[469px] h-[40px] align-middle border-b-2 border-b-[#CCCCCC]">
           <Search className="w-[12px] has-[12px] ml-4 mr-2" />
           <Input
             className="border-none focus:border-none text-sm font-medium outline-none"
@@ -102,7 +102,7 @@ export default function Page() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Table className="table-auto w-full mt-12">
+        <Table className="table-auto w-full mt-20 ">
           <TableHeader>
             <TableRow className="text-[#EB3D77]">
               <TableHead className="w-1/3 text-[#EB3D77]">UserID</TableHead>
@@ -155,7 +155,7 @@ export default function Page() {
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter>
+          <TableFooter className="bg-white hover:bg-none">
             <TableRow>
               <TableCell colSpan={1} className="text-center pt-[40px]">
                 <Button
