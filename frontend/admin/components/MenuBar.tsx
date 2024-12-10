@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link"; // Import Next.js Link component
+
+import { useRouter } from "next/navigation"; // Import useRouter for navigation
 import {
   Sidebar,
   SidebarContent,
@@ -14,33 +16,47 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 import { LogOut, Settings2, Users2 } from "lucide-react";
 
 const items = [
   {
     title: "Manage Players",
-    url: "/manage_players",
+    url: "/players",
     icon: Users2,
   },
   {
     title: "Account Settings",
-    url: "/account_settings",
+    url: "/account",
     icon: Settings2,
-  },
-  {
-    title: "Log Out",
-    url: "/log-out",
-    icon: LogOut,
   },
 ];
 
 export function MenuBar() {
   const [highlight, setHighlight] = useState<string | null>(null);
+  const [showLogOutDialog, setShowLogOutDialog] = useState(false);
+  const router = useRouter(); // Initialize Next.js router
+
+  const handleLogOut = () => {
+    setShowLogOutDialog(false); // Close the dialog
+    setHighlight("Log Out"); // Mark "Log Out" as active
+    setTimeout(() => {
+      router.push("/log-out"); // Redirect to log-out page
+    }, 300); // Delay for smooth visual transition
+  };
 
   return (
     <SidebarProvider className="bg-white w-64">
-      {" "}
-      {/* Adjust sidebar width */}
       <Sidebar className="p-4 bg-white">
         <SidebarContent className="bg-white">
           <SidebarGroup>
@@ -73,11 +89,51 @@ export function MenuBar() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+                {/* Log Out Menu Item */}
+                <SidebarMenuItem className="p-2">
+                  <SidebarMenuButton
+                    className={`hover:bg-[#f597b6] hover:text-white flex items-center p-2 rounded-md ${
+                      highlight === "Log Out"
+                        ? "text-white bg-[#EB3D77]"
+                        : "text-black"
+                    }`}
+                    onClick={() => setShowLogOutDialog(true)}
+                  >
+                    <LogOut className="mr-2" />
+                    <span>Log Out</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>
+
+      {/* Log Out Confirmation Dialog */}
+      {showLogOutDialog && (
+        <AlertDialog open={showLogOutDialog} onOpenChange={setShowLogOutDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Log Out</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to log out? You will be redirected to the
+                log-out page.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setShowLogOutDialog(false)}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleLogOut}
+                className="bg-[#EB3D77] text-white hover:bg-[#f597b6]"
+              >
+                Log Out
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </SidebarProvider>
   );
 }
