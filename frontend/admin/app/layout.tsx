@@ -1,21 +1,20 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
+import MenuBar from "@/components/MenuBar";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "BhetGhat: Admin Dashboard",
-  description: "BhetGhat Admin",
-};
+import { AuthProvider } from "@/app/context/auth-context";
+import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <AuthProvider>
+          <ProtectedLayout>{children}</ProtectedLayout>
+        </AuthProvider>
       </body>
     </html>
   );

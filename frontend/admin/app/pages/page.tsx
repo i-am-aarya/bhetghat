@@ -1,12 +1,10 @@
 import Time from "@/components/Time";
-import React from "react";
+import "../globals.css";
 
-const Home = () => {
+export default function page() {
   return (
     <div className="p-9">
       <Time />
     </div>
   );
-};
-
-export default Home;
+}
