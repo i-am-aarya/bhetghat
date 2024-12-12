@@ -35,9 +35,9 @@ type UpdateUserParams struct {
 }
 
 type LoginUserParams struct {
-	Username string `json:"username"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
-	// Email    string `json:"email"`
+	// Username string `json:"username"`
 }
 
 func (u *User) Validate() error {

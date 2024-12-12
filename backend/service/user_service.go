@@ -74,7 +74,7 @@ func (s *UserService) LoginUser(
 	login *models.LoginUserParams,
 ) (*models.User, string, error) {
 
-	user, err := s.userRepository.GetByField(ctx, "username", login.Username)
+	user, err := s.userRepository.GetByField(ctx, "email", login.Email)
 	if err != nil {
 		return nil, "", err
 	}
