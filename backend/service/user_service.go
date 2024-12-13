@@ -81,7 +81,6 @@ func (s *UserService) LoginUser(
 	if user == nil {
 		return nil, "", errors.New("invalid username or password")
 	}
-
 	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(login.Password))
 	if err != nil {
 		return nil, "", errors.New("invalid username or password")
@@ -91,7 +90,6 @@ func (s *UserService) LoginUser(
 	if token == "" {
 		return nil, "", errors.New("error logging in")
 	}
-
 	return user, token, nil
 }
 
@@ -100,17 +98,16 @@ func (s *UserService) CreateTokenFromUser(user *models.User) string {
 		"userID":   user.ID,
 		"username": user.Username,
 		"email":    user.Email,
+		"isAdmin":  user.IsAdmin,
 		"expires":  time.Now().Add(4 * time.Hour).Unix(),
 		// TODO ADD USER ROLE
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// SECRET_KEY := os.Getenv("JWT_SECRET")
-
 	SECRET_KEY, exists := os.LookupEnv("JWT_SECRET")
 	if !exists {
-		log.Fatal("Environment variable JWT_SECRET not set")
+		log.Fatal("JWT SECRET KEY NOT FOUND")
 	}
 
 	fmt.Println("---- SECRET KEY: ", SECRET_KEY)
@@ -121,5 +118,41 @@ func (s *UserService) CreateTokenFromUser(user *models.User) string {
 	return tokenString
 }
 
-// func (s *UserService) GetByUsernameOrEmail(username, email string) (*models.User, error) {
-// }
+func (s *UserService) VerifyUser(ctx context.Context, tokenString string) (*models.User, *jwt.MapClaims, error) {
+	SECRET_KEY, exists := os.LookupEnv("JWT_SECRET")
+	if !exists {
+		return nil, nil, errors.New("Environment variable JWT_SECRET not set")
+	}
+
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return []byte(SECRET_KEY), nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return nil, nil, fmt.Errorf("invalid token")
+	}
+
+	if exp, ok := claims["exp"].(float64); ok {
+		if time.Unix(int64(exp), 0).Before(time.Now()) {
+			return nil, nil, fmt.Errorf("token has expired")
+		}
+	}
+
+	emailFromClaims, exists := claims["email"]
+	if !exists {
+		return nil, nil, fmt.Errorf("email not found in claims\n")
+	}
+	user, err := s.userRepository.GetByField(ctx, "email", emailFromClaims)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error finding user: %s\n", err.Error())
+	}
+
+	return user, &claims, nil
+}

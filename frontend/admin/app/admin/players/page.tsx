@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Page() {
   const [count, setCount] = useState(0);
@@ -62,10 +63,6 @@ export default function Page() {
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredPlayers.slice(indexOfFirstRow, indexOfLastRow);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
   return (
     <div className="ml-4 p-10">
       <AlertDialog>
@@ -83,7 +80,11 @@ export default function Page() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <div className="flex gap-2">
+
+      <SidebarTrigger/>
       <Time />
+      </div>
       <div className="w-[1485px] pt-10">
         <div className="flex pb-10">
           <h1 className="text-4xl font-medium">Manage Players</h1>
@@ -158,7 +159,7 @@ export default function Page() {
           <TableFooter className="bg-white hover:bg-none">
             <TableRow>
               <TableCell colSpan={1} className="text-center pt-[40px]">
-                <Button
+                {/* <Button
                   className="border-2 border-grey mr-[40px] w-[150px] h-[40px] bg-white text-black hover:bg-gray-200"
                   disabled={currentPage === 1}
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -171,7 +172,7 @@ export default function Page() {
                   onClick={() => handlePageChange(currentPage + 1)}
                 >
                   Next
-                </Button>
+                </Button> */}
               </TableCell>
             </TableRow>
           </TableFooter>

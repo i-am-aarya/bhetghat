@@ -1,8 +1,13 @@
-import MenuBar from "@/components/MenuBar";
 import "./globals.css";
 
-import { AuthProvider } from "@/app/context/auth-context";
-import ProtectedLayout from "@/components/layouts/ProtectedLayout";
+import { AuthProvider } from "@/context/auth-context";
+import { Metadata } from "next";
+import { Toaster } from "@/components/ui/toaster";
+
+export const metadata: Metadata = {
+  title: "BhetGhat - Admin",
+  description: "Admin dashboard for BhetGhat",
+}
 
 export default function RootLayout({
   children,
@@ -13,7 +18,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <ProtectedLayout>{children}</ProtectedLayout>
+          {children}
+          <Toaster/>
         </AuthProvider>
       </body>
     </html>

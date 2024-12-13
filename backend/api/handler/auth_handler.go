@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"log"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 
 	"bhetghat-server/models"
@@ -46,8 +49,46 @@ func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "unauthorized"})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"token": token,
-		"user":  user,
+	c.Cookie(&fiber.Cookie{
+		Name:     "authToken",
+		Value:    token,
+		Path:     "/",
+		HTTPOnly: true,
+		Expires:  time.Now().Add(4 * time.Hour),
 	})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"user": user,
+	})
+}
+
+func (h *UserHandler) VerificationHandler(c *fiber.Ctx) error {
+	jwtTokenString := c.Cookies("authToken")
+	if jwtTokenString == "" {
+		log.Println("TOKEN NOT FOUND IN COOKIES")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
+	}
+	log.Println("TOKEN FOUND IN COOKIES")
+
+	user, _, err := h.userService.VerifyUser(c.Context(), jwtTokenString)
+	// log.Println("JWT CLAIMS: ", claims)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"user": user,
+	})
+}
+
+func (h *UserHandler) LogOutHandler(c *fiber.Ctx) error {
+	// cookie := c.Cookies("authToken")
+	c.Cookie(&fiber.Cookie{
+		Name:   "authToken",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"msg": "logged out"})
 }

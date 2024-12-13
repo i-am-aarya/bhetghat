@@ -1,21 +1,27 @@
 "use client";
-import React from "react";
-import { useAuth } from "@/app/context/auth-context";
+import React, { useEffect } from "react";
+import { useAuth } from "@/context/auth-context";
 import { MenuBar } from "@/components/MenuBar"; // Your Navbar
-import Login from "@/components/Login"; // Your Login Component
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
+  const router = useRouter()
 
-  if (!isAuthenticated) {
-    return <Login />; // Render login component if not authenticated
-  }
+  useEffect(() => {
+
+    if (!user || !user?.isAdmin) {
+      router.push("/login")
+      toast({
+        title: "Unauthorized",
+        variant: "destructive"
+      })
+    }
+  }, [])
 
   return (
     <div className="flex flex-col md:flex-row">
-      <div className="flex-none md:block hidden w-64">
-        <MenuBar />
-      </div>
       <main className="flex-1">{children}</main>
     </div>
   );

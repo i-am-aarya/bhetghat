@@ -1,13 +1,19 @@
 "use client";
 import React, { useState } from "react";
-import { useAuth } from "@/app/context/auth-context";
+import { useAuth } from "@/context/auth-context";
 import Image from "next/image"; // Import Image component for optimization
 import BackgroundImage from "@/app/assets/background.png"; // Import background image
+import BackgroundBlurred from "@/app/assets/background-blurred.png"; // Import background image
 import Title from "@/app/assets/title.png"; // Import title image
 import { Input } from "./ui/input"; // Assuming Input is a custom component
+import { Button } from "./ui/button";
+import { LoadingSpinner } from "./spinner";
+import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
-  const { login } = useAuth();
+  const router = useRouter()
+  const { login, setUser, logout } = useAuth();
   const [loading, setLoading] = useState(false);
 
   // State for email and password input fields
@@ -18,7 +24,8 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
     setLoading(true);
 
     // Simple form validation
@@ -34,11 +41,16 @@ const Login = () => {
     }
 
     try {
-      await login();
+      setLoading(true)
+      login(email, password)
+      setLoading(false)
+
     } catch (error) {
-      console.error("Login failed", error);
-    } finally {
       setLoading(false);
+      toast({
+        title: "Login Failed",
+        description: "Invalid Credentials"
+      })
     }
   };
 
@@ -46,65 +58,70 @@ const Login = () => {
     <div className="flex w-full relative">
       {/* Background with Image */}
       <div
-        className="md:w-1/2 flex justify-start items-start"
+        className="flex-1 md:flex justify-center items-center hidden"
         style={{
-          backgroundImage: `url(${BackgroundImage.src})`,
+          backgroundImage: `url(${BackgroundBlurred.src})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         {/* Use the Next.js Image component for the Title */}
-        <Image src={Title} alt="Logo" className="w-[245px] z-50 p-5" />
+        <div className="flex flex-col justify-center">
+          <Image src={Title} alt="Logo" className="w-[500px] z-50 p-5" />
+          <p className="text-6xl text-white font-bold font-mono"> Admin Dashboard</p>
+        </div>
       </div>
 
       {/* Right side: Login Form */}
-      <div className="flex md:w-1/2 justify-center items-center h-screen bg-cover bg-center">
+      <div className="flex flex-1 justify-center items-center h-screen bg-cover bg-center">
         <div className="flex flex-col p-10 ">
           <h1 className="text-7xl text-center font-bold mb-4 pb-9">
             Log<span className="text-[#EB3D77]">in</span>
           </h1>
 
           {/* Email Input */}
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold pb-3">Enter Email</h2>
-            <Input
-              className="w-[400px]"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-            />
-            {emailError && (
-              <span className="text-red-500 text-sm">{emailError}</span>
-            )}
-          </div>
+          <form onSubmit={handleLogin}>
 
-          {/* Password Input */}
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold pb-3">Enter Password</h2>
-            <Input
-              className="w-[400px]"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-            />
-            {passwordError && (
-              <span className="text-red-500 text-sm">{passwordError}</span>
-            )}
-          </div>
+            <div className="mb-4">
+              <label htmlFor="emailInput" className="text-lg font-semibold">Enter Email</label>
+              <Input
+                className="w-[400px]"
+                type="email"
+                id="emailInput"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+              />
+              {(emailError && email.length === 0) && (
+                <span className="text-red-500 text-sm">{emailError}</span>
+              )}
+            </div>
 
-          {/* Login Button */}
-          <button
-            className={`bg-[#EB3D77] text-white hover:bg-[#f597b6] px-4 py-2 rounded ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={handleLogin}
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
+            {/* Password Input */}
+            <div className="mb-4">
+              <label className="text-lg font-semibold">Enter Password</label>
+              <Input
+                className="w-[400px]"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+              />
+              {(passwordError && password.length === 0) && (
+                <span className="text-red-500 text-sm">{passwordError}</span>
+              )}
+            </div>
+
+            {/* Login Button */}
+            <Button className="w-full" type="submit" disabled={loading}>{
+              loading ?
+                <p className="flex gap-2 items-center"><LoadingSpinner /> Logging In</p>
+                :
+                "LogIn"
+            }</Button>
+          </form>
+
         </div>
       </div>
     </div>

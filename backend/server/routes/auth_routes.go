@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"bhetghat-server/api/handler"
-
 	"github.com/gofiber/fiber/v2"
+
+	"bhetghat-server/api/handler"
 )
 
 func RegisterAuthRoutes(app *fiber.App, userHandler *handler.UserHandler) {
@@ -11,4 +11,6 @@ func RegisterAuthRoutes(app *fiber.App, userHandler *handler.UserHandler) {
 	// uncomment this when there's RBAC (Role Based Access Control)
 	// auth.Post("/register", userHandler.RegisterHandler)
 	auth.Post("/login", userHandler.LoginHandler)
+	auth.Get("/verify", userHandler.VerificationHandler)
+	auth.Post("/logout", userHandler.LogOutHandler)
 }

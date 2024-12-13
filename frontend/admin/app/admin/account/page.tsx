@@ -3,11 +3,15 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 function page() {
   return (
     <div className="ml-4 p-10">
-      <Time />
+      <div>
+        <SidebarTrigger />
+        <Time />
+      </div>
       <div className="w-[993px] pt-10">
         <h1 className="text-4xl font-medium">Accout Settings</h1>
         <div>

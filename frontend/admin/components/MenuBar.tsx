@@ -28,39 +28,38 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { LogOut, Settings2, Users2 } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
 
 const items = [
   {
     title: "Manage Players",
-    url: "/players",
+    url: "/admin/players",
     icon: Users2,
   },
   {
     title: "Account Settings",
-    url: "/account",
+    url: "/admin/account",
     icon: Settings2,
   },
 ];
 
 export function MenuBar() {
+  const {logout} = useAuth()
   const [highlight, setHighlight] = useState<string | null>(null);
   const [showLogOutDialog, setShowLogOutDialog] = useState(false);
   const router = useRouter(); // Initialize Next.js router
 
   const handleLogOut = () => {
     setShowLogOutDialog(false); // Close the dialog
-    setHighlight("Log Out"); // Mark "Log Out" as active
-    setTimeout(() => {
-      router.push("/log-out"); // Redirect to log-out page
-    }, 300); // Delay for smooth visual transition
+    setHighlight("Log Out");
+    logout()
   };
 
   return (
-    <SidebarProvider className="bg-white w-64">
-      <Sidebar className="p-4 bg-white">
-        <SidebarContent className="bg-white">
+      <Sidebar className="p-4">
+        <SidebarContent className="">
           <SidebarGroup>
-            <SidebarHeader className="text-4xl text-black font-bold mb-9">
+            <SidebarHeader className="text-4xl font-bold mb-9">
               BhetGhat
             </SidebarHeader>
             <SidebarGroupLabel className="text-lg mb-7 font-medium">
@@ -71,7 +70,7 @@ export function MenuBar() {
                 {items.map((item) => (
                   <SidebarMenuItem key={item.title} className="p-2">
                     <SidebarMenuButton
-                      className="hover:bg-[#f597b6] hover:text-white"
+                      className="hover:bg-[#f597b6] hover:text-white p-4"
                       asChild
                     >
                       <Link
@@ -107,7 +106,6 @@ export function MenuBar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-      </Sidebar>
 
       {/* Log Out Confirmation Dialog */}
       {showLogOutDialog && (
@@ -116,8 +114,7 @@ export function MenuBar() {
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm Log Out</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to log out? You will be redirected to the
-                log-out page.
+                Are you sure you want to log out?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -126,7 +123,6 @@ export function MenuBar() {
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleLogOut}
-                className="bg-[#EB3D77] text-white hover:bg-[#f597b6]"
               >
                 Log Out
               </AlertDialogAction>
@@ -134,7 +130,7 @@ export function MenuBar() {
           </AlertDialogContent>
         </AlertDialog>
       )}
-    </SidebarProvider>
+      </Sidebar>
   );
 }
 
