@@ -11,14 +11,14 @@ config_version=5
 [application]
 
 config/name="bhetghat"
-run/main_scene="res://Characters/player_male.tscn"
+run/main_scene="res://game/game.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=1024
-window/size/viewport_height=768
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 window/stretch/scale=3.0
 
 [input]
