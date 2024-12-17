@@ -1,0 +1,104 @@
+[gd_scene load_steps=4 format=3 uid="uid://chi6cf8fla0mf"]
+
+[ext_resource type="Script" path="res://login_menus.gd" id="1_hrrbk"]
+[ext_resource type="Texture2D" uid="uid://bwqhjsiisyc7u" path="res://logos.png" id="2_ol08q"]
+
+[sub_resource type="GDScript" id="GDScript_6fwmg"]
+script/source = "extends Control
+
+var username = \"\"
+var password
+
+var created = false
+
+
+
+func _on_login_button_down() -> void:
+	if !created:
+		username = $Username.text
+		password = $Password.text.sha256_text()
+		created = true
+		$Login.text = \"Login\"
+		$Username.text =\"\"
+		$Password.text = \"\"
+		print(\"Account created\")
+	else:
+		if $Username.text == username:
+			if $Password.text.sha256_text() == password:
+				print(\"Login sucess \")
+			else : 
+				print(\"Login fail\")
+		else: 
+				print(\"Login fail\")
+				
+"
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 371.0
+offset_bottom = 203.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_6fwmg")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.051
+anchor_top = 0.052
+anchor_right = 0.051
+anchor_bottom = 0.052
+offset_left = -0.673004
+offset_top = -0.252003
+offset_right = 436.327
+offset_bottom = 398.748
+script = ExtResource("1_hrrbk")
+
+[node name="name" type="RichTextLabel" parent="Panel"]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 174.0
+offset_right = 137.0
+offset_bottom = 213.0
+text = "Username"
+
+[node name="pw" type="RichTextLabel" parent="Panel"]
+layout_mode = 0
+offset_left = 51.0
+offset_top = 248.0
+offset_right = 144.0
+offset_bottom = 287.0
+text = "Password"
+
+[node name="Username" type="TextEdit" parent="Panel"]
+layout_mode = 0
+offset_left = 183.0
+offset_top = 174.0
+offset_right = 376.0
+offset_bottom = 215.0
+placeholder_text = "enter username"
+
+[node name="Password" type="TextEdit" parent="Panel"]
+layout_mode = 0
+offset_left = 185.0
+offset_top = 242.0
+offset_right = 378.0
+offset_bottom = 283.0
+placeholder_text = "enter password"
+
+[node name="Login" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 310.0
+offset_right = 320.0
+offset_bottom = 360.0
+text = "Create"
+
+[node name="Logos" type="Sprite2D" parent="Panel"]
+position = Vector2(224, 82)
+texture = ExtResource("2_ol08q")
+
+[connection signal="button_down" from="Panel/Login" to="Panel" method="_on_login_button_down"]
