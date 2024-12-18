@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://bqqvxyjta2kw6"]
+
+[ext_resource type="Script" path="res://control/control.gd" id="1_rewc8"]
+
+[node name="GameController" type="Node"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_rewc8")

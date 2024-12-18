@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://dixcywdhis0qo"]
+
+[node name="ui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 2.0
+offset_right = 3.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 103.0
+offset_right = 86.0
+offset_bottom = 125.0
+theme_override_font_sizes/font_size = 8
+text = "LogIn"
+
+[node name="username" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 41.0
+offset_top = 34.0
+offset_right = 97.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 8
+placeholder_text = "username"
+
+[node name="password" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 41.0
+offset_top = 68.0
+offset_right = 97.0
+offset_bottom = 98.0
+theme_override_font_sizes/font_size = 8
+placeholder_text = "password"
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 141.0
+offset_top = 42.0
+offset_right = 181.0
+offset_bottom = 82.0
+
+[node name="Menu" type="NinePatchRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

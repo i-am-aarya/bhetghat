@@ -12,4 +12,5 @@ func SetupRoutes(app *fiber.App, userHandler *handler.UserHandler) {
 	RegisterHealthCheckRoutes(app)
 	RegisterUserRoutes(app)
 
+	RegisterGameRoutes(app)
 }
