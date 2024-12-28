@@ -14,7 +14,6 @@ var player_name: String
 var input_direction := Vector2.ZERO
 var is_user: bool
 
-# flag to indicate if the player synced once
 func _ready():
 	print("PLAYER ", player_name, " READY!")
 	player_name_label.set_text(player_name)
