@@ -47,14 +47,7 @@ func _on_web_socket_client_message_received(message: Variant) -> void:
 			other_players[new_player.player_name] = new_player
 			add_child(new_player)
 		else:
-			print("PACKET IS: ", packet.to_string())
-			print("packet position: ", packet.position, " other_player position: ", other_players[packet.name].position)
-			print("absolute diff in position: ", (packet.position - other_players[packet.name].position).abs())
-			if (packet.position - other_players[packet.name].position).abs() > Vector2.ONE:
-				var dir: Vector2 = (packet.position - other_players[packet.name].position).normalized()
-				other_players[packet.name].velocity = dir*100
-			else:
-				other_players[packet.name].velocity = Vector2.ZERO
+			other_players[packet.name].pos_in_server = packet.position
 
 func _physics_process(delta: float) -> void:
 	p.name = player1.player_name

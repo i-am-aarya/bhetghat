@@ -11,8 +11,17 @@ extends CharacterBody2D
 @onready var state_machine = animation_tree.get("parameters/playback")
 
 var player_name: String
-var input_direction := Vector2.ZERO
-var is_user: bool
+var is_user: bool = false
+
+var direction := Vector2.ZERO
+var pos_in_server := Vector2.ZERO
+
+const POSITION_THRESHOLD :float = 1.0
+
+func update_direction():
+	print(player_name, " POSITION: ", position, " POS_IN_SERVER: ", pos_in_server)
+	direction = (pos_in_server - position).normalized()
+	print(player_name, " DIRECTION: ", direction)
 
 func _ready():
 	print("PLAYER ", player_name, " READY!")
@@ -21,11 +30,18 @@ func _ready():
 
 func _physics_process(delta):
 	if is_user:
-		var input_direction = Vector2(
+		direction = Vector2(
 			Input.get_action_strength('right') - Input.get_action_strength('left'),
 			Input.get_action_strength('down') - Input.get_action_strength('up')
 		).normalized()
-		velocity = input_direction * move_speed
+		velocity = direction * move_speed
+	else:
+		update_direction()
+		if position.distance_to(pos_in_server) <= POSITION_THRESHOLD:
+			velocity = Vector2.ZERO
+		else:
+			velocity = direction * move_speed
+		print(player_name, "   VELOCITY: ", velocity)
 	move_and_slide()
 	update_animation_parameters(velocity)
 	pick_new_state()
@@ -36,7 +52,7 @@ func update_animation_parameters(move_input : Vector2):
 		animation_tree.set('parameters/Walk/blend_position', move_input)
 	else:
 		animation_tree.set('parameters/Idle/blend_position',move_input)
-	
+
 func pick_new_state():
 	if(velocity != Vector2.ZERO):
 		state_machine.travel("Walk")
