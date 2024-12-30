@@ -19,9 +19,7 @@ var pos_in_server := Vector2.ZERO
 const POSITION_THRESHOLD :float = 1.0
 
 func update_direction():
-	print(player_name, " POSITION: ", position, " POS_IN_SERVER: ", pos_in_server)
 	direction = (pos_in_server - position).normalized()
-	print(player_name, " DIRECTION: ", direction)
 
 func _ready():
 	print("PLAYER ", player_name, " READY!")
@@ -41,7 +39,6 @@ func _physics_process(delta):
 			velocity = Vector2.ZERO
 		else:
 			velocity = direction * move_speed
-		print(player_name, "   VELOCITY: ", velocity)
 	move_and_slide()
 	update_animation_parameters(velocity)
 	pick_new_state()
