@@ -235,7 +235,7 @@ script = ExtResource("1_5j78r")
 texture = ExtResource("2_2jjci")
 hframes = 2
 vframes = 8
-frame = 14
+frame = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 11)
@@ -251,3 +251,11 @@ tree_root = SubResource("AnimationNodeStateMachine_ennys")
 anim_player = NodePath("../AnimationPlayer")
 parameters/Idle/blend_position = Vector2(0.380488, 0.531317)
 parameters/Walk/blend_position = Vector2(-0.00585365, -1.09633)
+
+[node name="TileMap" type="TileMap" parent="."]
+format = 2
+
+[node name="TileMap2" type="TileMap" parent="."]
+format = 2
+
+[node name="Node2D" type="Node2D" parent="."]
