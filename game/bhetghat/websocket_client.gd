@@ -40,7 +40,6 @@ func _process(_delta: float) -> void:
 	poll()
 
 func send(message: Packet) -> int:
-	#print("SENDING: ", message)
 	if socket.get_ready_state()==WebSocketPeer.STATE_OPEN:
 		return socket.send_text(message.to_string())
 	return FAILED

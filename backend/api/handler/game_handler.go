@@ -28,6 +28,17 @@ func WSConn(c *websocket.Conn) {
 			break
 		}
 
+		// fmt.Println(p.)
+		switch p.Type {
+		// pup -> position update
+		case "pup":
+		// fmt.Println("POSITION UPDATE")
+
+		// chat -> chat
+		case "chat":
+			fmt.Println("CHAT MESSAGE")
+		}
+
 		// broadcast
 		for cl := range clients {
 			mut.Lock()

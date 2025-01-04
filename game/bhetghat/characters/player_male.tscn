@@ -225,14 +225,16 @@ _data = {
 }
 
 [node name="Player_male" type="CharacterBody2D"]
-position = Vector2(80, 81)
 script = ExtResource("1_5j78r")
+move_speed = 200.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-2.38419e-06, 3.21865e-06)
+scale = Vector2(3, 3)
 texture = ExtResource("2_2jjci")
 hframes = 2
 vframes = 8
-frame = 15
+frame = 14
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeStateMachine_ennys")
@@ -241,13 +243,13 @@ parameters/Idle/blend_position = Vector2(0.380488, 0.531317)
 parameters/Walk/blend_position = Vector2(-0.00585365, -1.09633)
 
 [node name="PlayerNameLabel" type="Label" parent="."]
-offset_left = -19.0
-offset_top = 16.0
-offset_right = 21.0
-offset_bottom = 38.0
-theme_override_font_sizes/font_size = 6
-text = "hello world"
+offset_left = -32.0
+offset_top = -88.0
+offset_right = 34.0
+offset_bottom = -60.0
+text = "player"
 horizontal_alignment = 1
+vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

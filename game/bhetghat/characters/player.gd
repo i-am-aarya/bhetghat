@@ -16,7 +16,7 @@ var is_user: bool = false
 var direction := Vector2.ZERO
 var pos_in_server := Vector2.ZERO
 
-const POSITION_THRESHOLD :float = 1.0
+const POSITION_THRESHOLD :float = 3.0
 
 func update_direction():
 	direction = (pos_in_server - position).normalized()
@@ -42,7 +42,6 @@ func _physics_process(delta):
 	move_and_slide()
 	update_animation_parameters(velocity)
 	pick_new_state()
-
 
 func update_animation_parameters(move_input : Vector2):
 	if (move_input != Vector2.ZERO):

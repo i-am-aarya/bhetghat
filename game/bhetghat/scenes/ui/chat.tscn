@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpjiprynh8g4p"]
+
+[ext_resource type="Script" path="res://scenes/ui/chat.gd" id="1_qr6sa"]
+
+[node name="chat" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qr6sa")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 0.25
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 479.0
+offset_bottom = -20.0
+grow_vertical = 0
+theme_override_constants/separation = 5
+
+[node name="chat_history_container" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="chat_history" type="RichTextLabel" parent="VBoxContainer/chat_history_container"]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_following = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="message_input" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Enter Message..."
+
+[node name="send_btn" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Send"
+
+[connection signal="focus_entered" from="VBoxContainer/HBoxContainer/message_input" to="." method="_on_message_input_focus_entered"]
+[connection signal="text_submitted" from="VBoxContainer/HBoxContainer/message_input" to="." method="_on_message_input_text_submitted"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/send_btn" to="." method="_on_send_btn_pressed"]
