@@ -45,6 +45,10 @@ func (s *UserService) CreateUser(
 		return nil, errors.New("username already in use")
 	}
 
+	if len(params.Password) < 8 {
+		return nil, errors.New("password too short")
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -73,7 +77,6 @@ func (s *UserService) LoginUser(
 	ctx context.Context,
 	login *models.LoginUserParams,
 ) (*models.User, string, error) {
-
 	user, err := s.userRepository.GetByField(ctx, "email", login.Email)
 	if err != nil {
 		return nil, "", err
@@ -118,7 +121,10 @@ func (s *UserService) CreateTokenFromUser(user *models.User) string {
 	return tokenString
 }
 
-func (s *UserService) VerifyUser(ctx context.Context, tokenString string) (*models.User, *jwt.MapClaims, error) {
+func (s *UserService) VerifyUser(
+	ctx context.Context,
+	tokenString string,
+) (*models.User, *jwt.MapClaims, error) {
 	SECRET_KEY, exists := os.LookupEnv("JWT_SECRET")
 	if !exists {
 		return nil, nil, errors.New("Environment variable JWT_SECRET not set")

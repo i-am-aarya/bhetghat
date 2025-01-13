@@ -10,10 +10,14 @@ config_version=5
 
 [application]
 
-config/name="bhetghat"
-run/main_scene="res://game/game.tscn"
+config/name="BhetGhat"
+run/main_scene="res://scenes/login_screen.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://assets/favicon.png"
+
+[autoload]
+
+Globals="*res://game/globals.gd"
 
 [display]
 
@@ -22,7 +26,7 @@ window/size/viewport_height=1080
 
 [gui]
 
-theme/custom_font="res://assets/font/Minecraftia-Regular.ttf"
+theme/custom_font="res://assets/font/SpaceGrotesk-Regular.ttf"
 
 [input]
 

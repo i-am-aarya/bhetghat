@@ -18,7 +18,8 @@ var other_players : Dictionary = {
 signal message_received(sender: String, message: String)
 
 func _ready() -> void:
-	player1.player_name = str(randi_range(10, 100))
+	#player1.player_name = str(randi_range(10, 100))
+	player1.player_name = Globals.player_name
 	var err := wsclient.connect_to_url(WebSocketURL)
 	if err!=OK:
 		print("ERROR CONNECTING")

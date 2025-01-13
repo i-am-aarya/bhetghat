@@ -36,7 +36,8 @@ func WSConn(c *websocket.Conn) {
 
 		// chat -> chat
 		case "chat":
-			fmt.Println("CHAT MESSAGE")
+			fmt.Println("ITS A MESSAGE:")
+			fmt.Println(p)
 		}
 
 		// broadcast

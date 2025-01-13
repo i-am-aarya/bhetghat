@@ -1,0 +1,269 @@
+[gd_scene load_steps=4 format=3 uid="uid://bibrudfmmy21y"]
+
+[ext_resource type="Script" path="res://scenes/login_screen.gd" id="1_3rhlt"]
+[ext_resource type="Texture2D" uid="uid://46nbddperpeq" path="res://assets/title.png" id="1_hqdwh"]
+[ext_resource type="Texture2D" uid="uid://43t7akiit85g" path="res://assets/back.png" id="4_2mg0j"]
+
+[node name="login_screen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3rhlt")
+
+[node name="Title" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.499
+anchor_top = 0.5
+anchor_right = 0.499
+anchor_bottom = 0.5
+offset_left = -254.08
+offset_top = -428.0
+offset_right = 253.92
+offset_bottom = -371.0
+grow_horizontal = 2
+texture = ExtResource("1_hqdwh")
+
+[node name="Container" type="Container" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -276.0
+offset_right = 16.0
+offset_bottom = -276.0
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -368.0
+offset_top = -268.0
+offset_right = 368.0
+offset_bottom = 468.0
+grow_horizontal = 2
+grow_vertical = 2
+region_rect = Rect2(0, 0, 256, 256)
+
+[node name="TabContainer" type="TabContainer" parent="NinePatchRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.5
+offset_top = -316.0
+offset_right = 320.5
+offset_bottom = 316.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+tabs_position = 1
+clip_tabs = false
+tabs_visible = false
+
+[node name="Login" type="NinePatchRect" parent="NinePatchRect/TabContainer"]
+layout_mode = 2
+region_rect = Rect2(27.3221, 29.5934, 193.356, 178.845)
+patch_margin_bottom = 29
+metadata/_tab_index = 0
+
+[node name="login_container" type="VBoxContainer" parent="NinePatchRect/TabContainer/Login"]
+layout_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="RichTextLabel" type="RichTextLabel" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=30][b]Login To Game[/b][/font_size]"
+fit_content = true
+
+[node name="MarginContainer" type="MarginContainer" parent="NinePatchRect/TabContainer/Login/login_container"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="email_label" type="Label" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+text = "email"
+
+[node name="email" type="LineEdit" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+placeholder_text = "godfather329@abc.com"
+
+[node name="password_label" type="Label" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+text = "password"
+
+[node name="password" type="LineEdit" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+placeholder_text = "supersecret123"
+secret = true
+
+[node name="MarginContainer2" type="MarginContainer" parent="NinePatchRect/TabContainer/Login/login_container"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="login_btn" type="Button" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+disabled = true
+text = "Login"
+
+[node name="login_status_msg" type="RichTextLabel" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+
+[node name="login_status_msg_old" type="Label" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer4" type="MarginContainer" parent="NinePatchRect/TabContainer/Login/login_container"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+text = "Not Signed Up Yet?"
+
+[node name="signup_btn" type="Button" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+text = "Sign Up"
+
+[node name="MarginContainer3" type="MarginContainer" parent="NinePatchRect/TabContainer/Login/login_container"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="exit_btn" type="Button" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+text = "Quit"
+
+[node name="login_req" type="HTTPRequest" parent="NinePatchRect/TabContainer/Login/login_container"]
+
+[node name="TextureButton" type="TextureButton" parent="NinePatchRect/TabContainer/Login/login_container"]
+layout_mode = 2
+
+[node name="SignUp" type="NinePatchRect" parent="NinePatchRect/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NinePatchRect/TabContainer/SignUp"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -309.5
+offset_top = -310.0
+offset_right = 314.5
+offset_bottom = 306.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="back_btn" type="Button" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Back"
+icon = ExtResource("4_2mg0j")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer/HBoxContainer"]
+clip_contents = false
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[font_size=30][b]Sign Up[/b][/font_size]"
+fit_content = true
+
+[node name="MarginContainer" type="MarginContainer" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="firstname_title" type="Label" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+text = "First Name"
+
+[node name="firstname_input" type="LineEdit" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Shree"
+
+[node name="lastname_title" type="Label" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+text = "Last Name"
+
+[node name="lastname_input" type="LineEdit" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Man"
+
+[node name="email_title" type="Label" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+text = "Email (*)"
+
+[node name="email_input" type="LineEdit" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "johndoe@example.com"
+
+[node name="username_title" type="Label" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+text = "Username (*, 4+ characters)"
+
+[node name="username_input" type="LineEdit" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "johndo3"
+
+[node name="password_title" type="Label" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+text = "Password (* , 8+ characters)"
+
+[node name="password_input" type="LineEdit" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "supersecret123"
+
+[node name="confirm_password_title" type="Label" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+text = "Confirm Password (*)"
+
+[node name="confirm_password_input" type="LineEdit" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "supersecret123"
+
+[node name="MarginContainer2" type="MarginContainer" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="register_btn" type="Button" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "Register"
+
+[node name="register_status_msg" type="Label" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="register_req" type="HTTPRequest" parent="NinePatchRect/TabContainer/SignUp/VBoxContainer"]
+
+[connection signal="pressed" from="NinePatchRect/TabContainer/Login/login_container/login_btn" to="." method="_on_login_btn_pressed"]
+[connection signal="pressed" from="NinePatchRect/TabContainer/Login/login_container/signup_btn" to="." method="_on_signup_btn_pressed"]
+[connection signal="pressed" from="NinePatchRect/TabContainer/Login/login_container/exit_btn" to="." method="_on_exit_btn_pressed"]
+[connection signal="pressed" from="NinePatchRect/TabContainer/SignUp/VBoxContainer/HBoxContainer/back_btn" to="." method="_on_back_btn_pressed"]
+[connection signal="pressed" from="NinePatchRect/TabContainer/SignUp/VBoxContainer/register_btn" to="." method="_on_register_btn_pressed"]

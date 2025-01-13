@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"regexp"
+	"strings"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -18,14 +19,37 @@ type User struct {
 	IsAdmin        bool               `bson:"isAdmin,omitempty"        json:"isAdmin"`
 }
 
-// Params for User registration
+// Params for User registration, used by RegisterHandler
 type CreateUserParams struct {
-	ID        primitive.ObjectID `json:"id,omitempty"`
-	FirstName string             `json:"firstName"`
-	LastName  string             `json:"lastName"`
-	Email     string             `json:"email"`
-	Username  string             `json:"username"`
-	Password  string             `json:"password"`
+	ID              primitive.ObjectID `json:"id,omitempty"`
+	FirstName       string             `json:"firstName,omitempty"`
+	LastName        string             `json:"lastName,omitempty"`
+	Email           string             `json:"email"`
+	Username        string             `json:"username"`
+	Password        string             `json:"password"`
+	ConfirmPassword string             `json:"confirmPassword"`
+}
+
+func (cu *CreateUserParams) Validate() error {
+	if !isEmailValid(cu.Email) {
+		return errors.New("invalid email")
+	}
+	// if len(cu.FirstName) <= 1 {
+	// 	return errors.New("firstname too short")
+	// }
+	// if len(cu.LastName) <= 1 {
+	// 	return errors.New("lastname too short")
+	// }
+	if len(cu.Password) < 8 {
+		return errors.New("password too short")
+	}
+	if len(cu.Username) < 4 {
+		return errors.New("username too short")
+	}
+	if strings.Compare(cu.Password, cu.ConfirmPassword) != 0 {
+		return errors.New("passwords dont match")
+	}
+	return nil
 }
 
 // Params for updating User
@@ -41,17 +65,15 @@ type LoginUserParams struct {
 }
 
 func (u *User) Validate() error {
-
 	if !isEmailValid(u.Email) {
 		return errors.New("invalid email")
 	}
-	if len(u.FirstName) <= 1 {
-		return errors.New("firstname too short")
-	}
-	if len(u.LastName) <= 1 {
-		return errors.New("lastname too short")
-	}
-	// if
+	// if len(u.FirstName) <= 1 {
+	// 	return errors.New("firstname too short")
+	// }
+	// if len(u.LastName) <= 1 {
+	// 	return errors.New("lastname too short")
+	// }
 	return nil
 }
 

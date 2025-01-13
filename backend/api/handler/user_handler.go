@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"bhetghat-server/service"
-
 	"github.com/gofiber/fiber/v2"
+
+	"bhetghat-server/service"
 )
 
 type UserHandler struct {

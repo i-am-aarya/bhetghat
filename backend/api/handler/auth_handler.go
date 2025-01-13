@@ -55,10 +55,12 @@ func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {
 		Path:     "/",
 		HTTPOnly: true,
 		Expires:  time.Now().Add(4 * time.Hour),
+		SameSite: "Strict",
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"user": user,
+		"user":      user,
+		"authToken": token,
 	})
 }
 

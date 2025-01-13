@@ -45,10 +45,6 @@ layer_0/tile_data = PackedInt32Array(-458767, 65536, 2, -393231, 65536, 2, -3276
 
 [node name="chat" parent="CanvasLayer" instance=ExtResource("4_lya5n")]
 
-[node name="camera" type="TextureRect" parent="CanvasLayer"]
-offset_right = 40.0
-offset_bottom = 40.0
-
 [connection signal="message_received" from="." to="CanvasLayer/chat" method="_on_game_message_received"]
 [connection signal="connected_to_server" from="WebSocketClient" to="." method="_on_web_socket_client_connected_to_server"]
 [connection signal="connection_closed" from="WebSocketClient" to="." method="_on_web_socket_client_connection_closed"]

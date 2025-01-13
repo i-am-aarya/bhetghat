@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c51u1krargl62"]
+
+[ext_resource type="Script" path="res://scenes/camera_test.gd" id="1_m62jj"]
+[ext_resource type="Script" path="res://scenes/camera_feed_script.gd" id="2_8xsgj"]
+
+[node name="camera" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m62jj")
+
+[node name="camera_feed" type="Sprite2D" parent="."]
+script = ExtResource("2_8xsgj")
