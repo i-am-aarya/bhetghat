@@ -113,13 +113,6 @@ func _input(event: InputEvent) -> void:
 	else:
 		register_btn.set_disabled(true)
 
-#func _process(_delta: float) -> void:
-	#if register_password.get_text() == register_confirm_password.get_text():
-		#passwords_match = true
-	#else:
-		#passwords_match = false
-
-
 func _on_exit_btn_pressed() -> void:
 	get_tree().quit()
 
@@ -143,13 +136,13 @@ func _on_login_request_completed(result, response_code, headers, body):
 	else:
 		token = ""
 		username = ""
+		login_status_msg.append_text("[color=red]Login Failed[/color]")
 	if len(token)>0:
 		login_status_msg.set_text("Welcome, " + username)
 		Globals.player_name = username
 		get_tree().change_scene_to_packed(game_scene)
 	else:
 		login_status_msg.append_text("[color=red]Login Failed[/color]")
-		#login_status_msg.
 	login_btn.set_disabled(true)
 
 
@@ -170,6 +163,7 @@ func check_register_params() -> bool:
 	return true
 
 func _on_register_btn_pressed() -> void:
+	#JavaScriptBridge.create_callback(t)
 	if !check_register_params():
 		return
 	print("

@@ -56,7 +56,6 @@ func _on_web_socket_client_message_received(message: Variant) -> void:
 				other_players[packet.name].pos_in_server = packet.position
 	elif packet.type == "chat":
 		message_received.emit(packet.name, packet.message)
-		#chat_history.append_text("\n"+ packet.name +": "+packet.message)
 	else:
 		pass
 
@@ -78,4 +77,3 @@ func _on_chat_send_msg_signal(msg: String) -> void:
 	pkt.name = player1.player_name
 	pkt.message = msg
 	wsclient.send(pkt)
-	#pass # Replace with function body.
