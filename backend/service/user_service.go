@@ -113,7 +113,6 @@ func (s *UserService) CreateTokenFromUser(user *models.User) string {
 		log.Fatal("JWT SECRET KEY NOT FOUND")
 	}
 
-	fmt.Println("---- SECRET KEY: ", SECRET_KEY)
 	tokenString, err := token.SignedString([]byte(SECRET_KEY))
 	if err != nil {
 		return ""

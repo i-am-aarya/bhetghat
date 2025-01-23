@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/gofiber/contrib/websocket"
@@ -28,16 +30,22 @@ func WSConn(c *websocket.Conn) {
 			break
 		}
 
-		// fmt.Println(p.)
 		switch p.Type {
 		// pup -> position update
 		case "pup":
-		// fmt.Println("POSITION UPDATE")
 
-		// chat -> chat
 		case "chat":
-			fmt.Println("ITS A MESSAGE:")
-			fmt.Println(p)
+			var message models.ChatPayload
+
+			err := json.Unmarshal(p.Payload, &message)
+			if err != nil {
+				log.Println("error deserealizing chat payload")
+				continue
+			}
+			fmt.Printf("message: %+v\n", message)
+
+		case "comm":
+			fmt.Println("communication request received")
 		}
 
 		// broadcast

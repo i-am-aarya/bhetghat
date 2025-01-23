@@ -1,8 +1,10 @@
 package models
 
+import "encoding/json"
+
 type Packet struct {
-	Type    string      `json:"t"`
-	Payload interface{} `json:"pl"`
+	Type    string          `json:"t"`
+	Payload json.RawMessage `json:"pl"`
 }
 
 type PositionPayload struct {
