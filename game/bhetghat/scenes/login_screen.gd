@@ -26,78 +26,15 @@ var passwords_match: bool = false
 
 @onready var game_scene = preload("res://game/game.tscn")
 
+#var SERVER_URL = JSON.parse_string(JavaScriptBridge.eval("")
+var GAME_SERVER_URL = JSON.parse_string(JavaScriptBridge.eval("JSON.stringify(CONFIG)"))["GAME_SERVER"]
 
-#@onready var email_input = $NinePatchRect/login_container/email
-#@onready var password_input = $NinePatchRect/login_container/password
-#@onready var login_btn = $NinePatchRect/login_container/login_btn
-#@onready var signup_btn = $NinePatchRect/login_container/signup_btn
-#@onready var request = $NinePatchRect/login_container/HTTPRequest
-#@onready var status_msg = $NinePatchRect/login_container/status_msg
-#@onready var tab_container = $NinePatchRect/TabContainer
-#@onready var game_scene = preload("res://game/game.tscn")
-##@onready var register_scene = preload("res://game/game.tscn")
-#
-#func _on_login_btn_pressed() -> void:
-	#login_btn.disabled = true
-	#signup_btn.disabled = true
-	##var request = HTTPRequest.new()
-	#add_child(request)
-	#request.request_completed.connect(_on_login_request_completed)
-	#var headers = ["Content-Type: application/json"]
-	#var req_body = JSON.stringify({"email": email_input.text, "password": password_input.text})
-	#request.request("http://localhost:8000/auth/v1/login", headers, HTTPClient.METHOD_POST, req_body)
-#
-#func _on_register_btn_pressed() -> void:
-	## change scene
-	#pass
-#
-	##register_btn.disabled = true
-	#login_btn.disabled = true
-	###var request = HTTPRequest.new()
-	#add_child(request)
-	#var headers = ["Content-Type: application/json"]
-	#var req_body = JSON.stringify("username: ")
-	#request.request("http://localhost:8000/auth/v1/register", headers, HTTPClient.METHOD_POST, req_body)
-	#request.request_completed.connect(_on_register_request_completed)
-	#
-#func _on_register_request_completed(result, response_code, headers, body):
-	#pass
-	## change scene
-	## do stuff here
-	##print("called on register_request_completed")
-	##print("RESULT:", result)
-	##var response_json = JSON.parse_string(body.get_string_from_utf8())
-	##print(response_json)
-	##register_btn.disabled = false
-	##login_btn.disabled = false
-#
-#func _on_login_request_completed(result, response_code, headers, body):
-	##print("called on login_request_completed")
-	#var response_json: Dictionary = JSON.parse_string(body.get_string_from_utf8())
-	#var token: String = ""
-	#var username: String = ""
-	#if response_json.has("authToken"):
-		#token = response_json["authToken"]
-		#username = response_json["user"]["username"]
-	#else:
-		#token = ""
-		#username = ""
-	#if len(token)>0:
-		#print("login success")
-		#print("username: ", username)
-		#
-		#get_tree().change_scene_to_packed(game_scene)
-		#
-		#status_msg.text = "Welcome, " + username
-	#else:
-		#status_msg.text = "Login Failed"
-	#login_btn.disabled = false
-	#signup_btn.disabled = false
+func _ready() -> void:
+	JavaScriptBridge.eval("callMe()")
+	print("callMe called")
+	print("game server: " + GAME_SERVER_URL)
 
 func _input(event: InputEvent) -> void:
-	#if event is not InputEventMouseMotion:
-		#login_status_msg.set_text("")
-		#register_status_msg.set_text("")
 	if len(login_email.text)>0 and len(login_password.text)>0:
 		login_btn.set_disabled(false)
 	else:
@@ -124,7 +61,7 @@ func _on_login_btn_pressed() -> void:
 		"password": login_password.get_text()
 	})
 	login_req.request_completed.connect(_on_login_request_completed)
-	login_req.request("http://localhost:8000/auth/v1/login", headers, HTTPClient.METHOD_POST, req_body)
+	login_req.request(GAME_SERVER_URL + "/auth/v1/login", headers, HTTPClient.METHOD_POST, req_body)
 
 func _on_login_request_completed(result, response_code, headers, body):
 	var response_json: Dictionary = JSON.parse_string(body.get_string_from_utf8())
@@ -188,7 +125,7 @@ func _on_register_btn_pressed() -> void:
 		"password": register_password.get_text(),
 		"confirmPassword": register_confirm_password.get_text()
 	})
-	register_req.request("http://localhost:8000/auth/v1/register", headers, HTTPClient.METHOD_POST, req_body)
+	register_req.request(GAME_SERVER_URL+"/auth/v1/register", headers, HTTPClient.METHOD_POST, req_body)
 
 func _on_register_request_completed(result, response_code, headers, body):
 	var response_json: Dictionary = JSON.parse_string(body.get_string_from_utf8())

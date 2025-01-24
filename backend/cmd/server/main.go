@@ -23,5 +23,6 @@ func main() {
 
 	server := server.NewServer()
 
-	log.Fatal(server.App.Listen(":8000"))
+	// log.Fatal(server.App.Listen(":8000"))
+	log.Fatal(server.App.ListenTLS(":8000", "cert.pem", "key.pem"))
 }

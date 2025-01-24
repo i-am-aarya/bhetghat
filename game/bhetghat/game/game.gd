@@ -1,6 +1,8 @@
 extends Node2D
 
-@export var WebSocketURL = "ws://localhost:8000/ws"
+#@export var WebSocketURL = "ws://localhost:8000/ws"
+var GAME_SERVER_WS_ENDPOINT = JSON.parse_string(JavaScriptBridge.eval("JSON.stringify(CONFIG)"))["GAME_SERVER_WS"]
+var WebSocketURL = GAME_SERVER_WS_ENDPOINT
 @onready var wsclient:WebSocketClient = $WebSocketClient
 @onready var camera2d :Camera2D = Camera2D.new()
 #@onready var chat_history = $CanvasLayer/chat/VBoxContainer/chat_history_container/chat_history
@@ -18,6 +20,7 @@ var other_players : Dictionary = {
 signal message_received(sender: String, message: String)
 
 func _ready() -> void:
+	print("WEBSOCKET URL IS: "+ WebSocketURL)
 	#player1.player_name = str(randi_range(10, 100))
 	player1.player_name = Globals.player_name
 	var err := wsclient.connect_to_url(WebSocketURL)
@@ -39,12 +42,12 @@ func _on_web_socket_client_connected_to_server() -> void:
 
 func _on_web_socket_client_message_received(message: Variant) -> void:
 	var packet := Packet.string_to_packet(message)
-	#if packet.type == Packet.PacketType.CHAT
 	if packet.type == "pup":
 		if packet.name == player1.player_name:
 			pass
 		else:
 			if !other_players.has(packet.name):
+				
 				var new_player := MyPlayer.instantiate()
 				new_player.is_user = false
 				new_player.position = packet.position
@@ -56,6 +59,8 @@ func _on_web_socket_client_message_received(message: Variant) -> void:
 				other_players[packet.name].pos_in_server = packet.position
 	elif packet.type == "chat":
 		message_received.emit(packet.name, packet.message)
+	elif packet.type == "leave":
+		other_players.erase(packet.name)
 	else:
 		pass
 
