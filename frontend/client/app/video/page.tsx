@@ -45,7 +45,8 @@ const VideoCall = () => {
     }
 
     const signaling = `wss://${process.env.SFU_SERVER_ADDRESS}/ws`
-    const signal = new IonSFUJSONRPCSignal(`wss://192.168.101.11/ws`)
+    console.log("signaling at: ", signaling)
+    const signal = new IonSFUJSONRPCSignal(`wss://192.168.101.11:7000/ws`)
     signal.onopen = () => {
       alert("connected to signaling server")
     }

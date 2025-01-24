@@ -26,13 +26,14 @@ var passwords_match: bool = false
 
 @onready var game_scene = preload("res://game/game.tscn")
 
-#var SERVER_URL = JSON.parse_string(JavaScriptBridge.eval("")
 var GAME_SERVER_URL = JSON.parse_string(JavaScriptBridge.eval("JSON.stringify(CONFIG)"))["GAME_SERVER"]
+#var GAME_SERVER_URL = "https://192.168.101.11:8000"
 
 func _ready() -> void:
+	#get_tree().change_scene_to_packed(game_scene)
 	JavaScriptBridge.eval("callMe()")
 	print("callMe called")
-	print("game server: " + GAME_SERVER_URL)
+	#print("game server: " + GAME_SERVER_URL)
 
 func _input(event: InputEvent) -> void:
 	if len(login_email.text)>0 and len(login_password.text)>0:
@@ -62,6 +63,7 @@ func _on_login_btn_pressed() -> void:
 	})
 	login_req.request_completed.connect(_on_login_request_completed)
 	login_req.request(GAME_SERVER_URL + "/auth/v1/login", headers, HTTPClient.METHOD_POST, req_body)
+	print("LOGIN REQUEST: " + GAME_SERVER_URL + "/auth/v1/login")
 
 func _on_login_request_completed(result, response_code, headers, body):
 	var response_json: Dictionary = JSON.parse_string(body.get_string_from_utf8())

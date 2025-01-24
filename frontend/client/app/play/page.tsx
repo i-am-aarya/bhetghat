@@ -11,11 +11,11 @@ const Play = () => {
   return (
     <div>
       <Game />
-      <Button className='absolute right-0 top-0' onClick={() => { setInACall(!inACall) }}>Toggle Call</Button>
+      {/* <Button className='absolute right-0 top-0' onClick={() => { setInACall(!inACall) }}>Toggle Call</Button>
       {
         inACall &&
         <CallControls className={`${inACall ? "" : "invisible"} transition-all`} />
-      }
+      } */}
     </div>
   )
 }

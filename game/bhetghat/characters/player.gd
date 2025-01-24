@@ -10,7 +10,7 @@ extends CharacterBody2D
 @onready var animation_player :AnimationPlayer = $AnimationPlayer
 @onready var state_machine = animation_tree.get("parameters/playback")
 
-var player_name: String
+var player_name: String = "helloo"
 var is_user: bool = false
 
 var direction := Vector2.ZERO
@@ -21,9 +21,31 @@ const POSITION_THRESHOLD :float = 3.0
 func update_direction():
 	direction = (pos_in_server - position).normalized()
 
+# suitable spawn around town center
+# top left -> 400, 80
+# inner top left -> 450, 110
+# bottom right -> 650, 230
+# inner bottom right -> 600, 210
+var top_left = Vector2(400, 80)
+var inner_top_left = Vector2(450, 110)
+var bottom_right = Vector2(650, 230)
+var inner_bottom_right = Vector2(600, 210)
+
+func generate_spawn_position():
+	var x_coord = randi_range(top_left.x, bottom_right.x)
+	var y_coord = randi_range(top_left.y, bottom_right.y)
+	
+	while x_coord >= inner_top_left.x and x_coord <= inner_bottom_right.x and y_coord >= inner_top_left.y and y_coord <= inner_bottom_right.y:
+		x_coord = randi_range(top_left.x, bottom_right.x)
+		y_coord = randi_range(top_left.y, bottom_right.y)
+	
+	return Vector2(x_coord, y_coord)
+
+
 func _ready():
 	print("PLAYER ", player_name, " READY!")
 	player_name_label.set_text(player_name)
+	set_position(generate_spawn_position())
 	add_child(player_name_label)
 
 func _physics_process(delta):

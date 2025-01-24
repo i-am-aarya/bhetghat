@@ -1,7 +1,7 @@
 extends Node2D
 
-#@export var WebSocketURL = "ws://localhost:8000/ws"
 var GAME_SERVER_WS_ENDPOINT = JSON.parse_string(JavaScriptBridge.eval("JSON.stringify(CONFIG)"))["GAME_SERVER_WS"]
+#var GAME_SERVER_WS_ENDPOINT = "wss://192.168.101.11:8000/ws"
 var WebSocketURL = GAME_SERVER_WS_ENDPOINT
 @onready var wsclient:WebSocketClient = $WebSocketClient
 @onready var camera2d :Camera2D = Camera2D.new()
@@ -14,7 +14,7 @@ const MyPlayer := preload("res://characters/player_male.tscn")
 var player1 := MyPlayer.instantiate()
 
 var other_players : Dictionary = {
-	#player1.name: player1
+	player1.name: player1
 }
 
 signal message_received(sender: String, message: String)
@@ -30,6 +30,7 @@ func _ready() -> void:
 	print("CONNECTING...")
 	player1.is_user = true
 	camera2d.set_enabled(true)
+	camera2d.set_zoom(Vector2(3,3))
 	camera2d.make_current()
 	player1.add_child(camera2d)
 	add_child(player1)

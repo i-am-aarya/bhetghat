@@ -1,7 +1,8 @@
-[gd_scene load_steps=26 format=3 uid="uid://61v64jhhcd6"]
+[gd_scene load_steps=28 format=3 uid="uid://61v64jhhcd6"]
 
 [ext_resource type="Script" path="res://characters/player.gd" id="1_5j78r"]
 [ext_resource type="Texture2D" uid="uid://dxelm261pe0jd" path="res://assets/character/m_character.png" id="2_2jjci"]
+[ext_resource type="FontFile" uid="uid://v1srmqw8dw0p" path="res://assets/font/SpaceGrotesk-Regular.ttf" id="3_2vylt"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wg2gp"]
 animation = &"Idle_down"
@@ -224,13 +225,15 @@ _data = {
 "walk_up": SubResource("Animation_0rkr1")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s3afr"]
+size = Vector2(16, 16)
+
 [node name="Player_male" type="CharacterBody2D"]
 script = ExtResource("1_5j78r")
-move_speed = 200.0
+move_speed = 125.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(-2.38419e-06, 3.21865e-06)
-scale = Vector2(3, 3)
+scale = Vector2(1.5, 1.5)
 texture = ExtResource("2_2jjci")
 hframes = 2
 vframes = 8
@@ -244,9 +247,11 @@ parameters/Walk/blend_position = Vector2(-0.00585365, -1.09633)
 
 [node name="PlayerNameLabel" type="Label" parent="."]
 offset_left = -32.0
-offset_top = -88.0
+offset_top = -48.0
 offset_right = 34.0
-offset_bottom = -60.0
+offset_bottom = -20.0
+theme_override_fonts/font = ExtResource("3_2vylt")
+theme_override_font_sizes/font_size = 13
 text = "player"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -256,3 +261,7 @@ metadata/_edit_use_anchors_ = true
 libraries = {
 "": SubResource("AnimationLibrary_o4rr0")
 }
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_s3afr")
