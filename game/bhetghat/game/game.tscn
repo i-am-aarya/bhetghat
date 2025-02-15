@@ -5363,6 +5363,7 @@ sources/9 = SubResource("TileSetAtlasSource_73hxd")
 sources/11 = SubResource("TileSetAtlasSource_h0s4w")
 
 [node name="game" type="Node2D"]
+position = Vector2(53, -392)
 script = ExtResource("1_5j7dy")
 
 [node name="WebSocketClient" type="Node" parent="."]

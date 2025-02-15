@@ -1,0 +1,8 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1734436587
+click.gd::GDScript::-1::1734436028::0::1::::<>Node2D<>::
+click.tscn::PackedScene::1136975299313145816::1734436493::0::1::::<><>::res://click.gd
+icon.svg::CompressedTexture2D::2826634988707411775::1734333588::1734333600::1::::<><>::
+Nodes_2D.tscn::PackedScene::8150661526596654343::1734436493::0::1::::<><>::res://Node_2D.gd
+Node_2D.gd::GDScript::-1::1734435881::0::1::::<>Node2D<>::
+WebSocketServer.gd::GDScript::-1::1734436587::0::1::::<>Node2D<>::
