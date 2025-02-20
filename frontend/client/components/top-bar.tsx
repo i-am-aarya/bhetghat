@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from './ui/button'
-import { Phone, PhoneCall } from 'lucide-react'
+import { MonitorPlay, Phone, PhoneCall } from 'lucide-react'
 import { Input } from './ui/input'
 import { Label } from './ui/label';
 
@@ -11,9 +11,11 @@ interface TopBarProps {
   roomName: string;
   setRoomName: (e: string) => void;
 
+  startPreview: () => void
+
 }
 
-const TopBar = ({ startCall, username, setUsername, roomName, setRoomName }: TopBarProps) => {
+const TopBar = ({ startCall, username, setUsername, roomName, setRoomName, startPreview }: TopBarProps) => {
   return (
     <div className='bg-black bg-opacity-50 p-2 flex items-center justify-between px-8'>
 
@@ -52,7 +54,8 @@ const TopBar = ({ startCall, username, setUsername, roomName, setRoomName }: Top
 
       <div className='flex gap-4'>
         <Button onClick={startCall}><PhoneCall /> Call </Button>
-        <Button variant={"secondary"} onClick={() => { alert("does nothing") }}><PhoneCall /> Button </Button>
+
+        <Button variant={"secondary"} onClick={startPreview}><MonitorPlay /> Preview </Button>
       </div>
 
     </div>

@@ -31,7 +31,7 @@ func (h *UserHandler) RegisterHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).
-		JSON(fiber.Map{"msg": "registered", "userID": userFromParams.ID})
+		JSON(fiber.Map{"msg": "registered", "user": userFromParams})
 }
 
 func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {

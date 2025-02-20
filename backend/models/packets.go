@@ -4,20 +4,31 @@ import "encoding/json"
 
 type Packet struct {
 	Type    string          `json:"t"`
+	Sender  string          `json:"s"`
 	Payload json.RawMessage `json:"pl"`
 }
 
-type PositionPayload struct {
-	Name     string   `json:"n"`
-	Position Position `json:"p"`
-}
-
-type Position struct {
-	X float64 `json:"x"`
-	Y float64 `json:"y"`
+// playerstate
+type StatePayload struct {
+	Sender         string `json:"s"`
+	X              int    `json:"x"`
+	Y              int    `json:"y"`
+	AnimationState string `json:"a"`
+	Direction      string `json:"d"`
+	Frame          int    `json:"f"`
 }
 
 type ChatPayload struct {
-	Name    string `json:"n"`
+	Sender  string `json:"s"`
 	Message string `json:"m"`
+}
+
+type PlayerEnterPayload struct {
+	Sender         string `json:"s"`
+	X              int    `json:"x"`
+	Y              int    `json:"y"`
+	ImgSrc         string `json:"img"`
+	AnimationState string `json:"a"`
+	Direction      string `json:"d"`
+	Frame          int    `json:"f"`
 }

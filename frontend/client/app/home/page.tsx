@@ -8,17 +8,21 @@ import check from "@/app/images/check.png";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
-
 function LandingPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   const handleStartPlayingClick = () => {
-    router.push("/play")
+    // router.push("/login");
+    router.push("/character");
   };
 
-  const handleTestClick = () => {
-    router.push("/video")
-  }
+  const handleTestVideoCallClick = () => {
+    router.push("/video");
+  };
+
+  const handleTestGameClick = () => {
+    router.push("/character");
+  };
 
   return (
     <div className="relative min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
@@ -79,12 +83,28 @@ function LandingPage() {
           with both the world and other players.
         </p>
 
-
-
         {/* Download Button */}
         <div className="flex gap-4 justify-center">
-          <Button className="text-xl font-bold px-8 py-8" onClick={handleStartPlayingClick}>Start Playing</Button>
-          <Button className="text-xl font-bold px-8 py-8" variant={"secondary"} onClick={handleTestClick}>Test</Button>
+          <Button
+            className="text-xl font-bold px-8 py-8"
+            onClick={handleStartPlayingClick}
+          >
+            Start Playing
+          </Button>
+          <Button
+            className="text-xl font-bold px-8 py-8"
+            variant={"secondary"}
+            onClick={handleTestGameClick}
+          >
+            Test Game
+          </Button>
+          <Button
+            className="text-xl font-bold px-8 py-8"
+            variant={"secondary"}
+            onClick={handleTestVideoCallClick}
+          >
+            Test Video Call
+          </Button>
         </div>
 
         {/* Tech Logos */}

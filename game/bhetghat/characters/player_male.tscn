@@ -237,7 +237,7 @@ scale = Vector2(1.5, 1.5)
 texture = ExtResource("2_2jjci")
 hframes = 2
 vframes = 8
-frame = 14
+frame = 15
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeStateMachine_ennys")

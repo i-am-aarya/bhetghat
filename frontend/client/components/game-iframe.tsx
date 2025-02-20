@@ -1,11 +1,11 @@
 "use client"
 import React from 'react'
 
-const Game = () => {
+const GameIframe = () => {
 
   return (
     <iframe src="bhetghat/bhetghat.html" className='w-screen h-screen'></iframe>
   )
 }
 
-export default Game
+export default GameIframe

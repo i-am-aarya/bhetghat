@@ -1,6 +1,6 @@
 "use client"
 import CallControls from '@/components/call-controls'
-import Game from '@/components/game'
+import GameIframe from '@/components/game-iframe'
 // import GameTest from '@/components/game-different-method'
 import { Button } from '@/components/ui/button'
 import React, { useState } from 'react'
@@ -10,7 +10,7 @@ const Play = () => {
 
   return (
     <div>
-      <Game />
+      <GameIframe />
       {/* <Button className='absolute right-0 top-0' onClick={() => { setInACall(!inACall) }}>Toggle Call</Button>
       {
         inACall &&

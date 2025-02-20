@@ -1,66 +1,50 @@
 package handler
 
 import (
+	"bhetghat-server/hub"
+	"bhetghat-server/models"
 	"encoding/json"
-	"fmt"
 	"log"
-	"sync"
 
 	"github.com/gofiber/contrib/websocket"
-
-	"bhetghat-server/models"
-)
-
-var (
-	clients = make(map[*websocket.Conn]bool)
-	mut     = sync.Mutex{}
 )
 
 func WSConn(c *websocket.Conn) {
 	defer c.Close()
-	clients[c] = true
-	fmt.Println("CONNECTED")
-	for {
-		var p models.Packet
-		err := c.ReadJSON(&p)
-		if err != nil {
-			fmt.Println("error reading json: ", err)
-			clients[c] = false
-			delete(clients, c)
-			break
-		}
+	globalHub := hub.GetHubInstance()
 
-		switch p.Type {
-		// pup -> position update
-		case "pup":
-
-		case "chat":
-			var message models.ChatPayload
-
-			err := json.Unmarshal(p.Payload, &message)
-			if err != nil {
-				log.Println("error deserealizing chat payload")
-				continue
-			}
-			fmt.Printf("message: %+v\n", message)
-
-		case "comm":
-			fmt.Println("communication request received")
-		}
-
-		// broadcast
-		for cl := range clients {
-			mut.Lock()
-			err := cl.WriteJSON(p)
-			mut.Unlock()
-
-			if err != nil {
-				fmt.Println("error writing json: ", err)
-				clients[c] = false
-				delete(clients, cl)
-				break
-			}
-		}
-
+	var initialPkt models.Packet
+	if err := c.ReadJSON(&initialPkt); err != nil {
+		log.Printf("ERROR READING JSON: %v", err)
+		return
 	}
+	log.Printf("INITIAL PACKET from %s", initialPkt.Sender)
+
+	var playerEnterPayload models.PlayerEnterPayload
+	if err := json.Unmarshal(initialPkt.Payload, &playerEnterPayload); err != nil {
+		log.Printf("ERROR READING JSON: %v", err)
+		return
+	}
+
+	client := &hub.Client{
+		Hub:      globalHub,
+		Conn:     c,
+		Send:     make(chan *models.Packet, 256),
+		Username: playerEnterPayload.Sender,
+		PlayerState: hub.PlayerState{
+			Username:       playerEnterPayload.Sender,
+			SpriteURL:      playerEnterPayload.ImgSrc,
+			X:              playerEnterPayload.X,
+			Y:              playerEnterPayload.Y,
+			AnimationState: playerEnterPayload.AnimationState,
+			Direction:      playerEnterPayload.Direction,
+			Frame:          playerEnterPayload.Frame,
+		},
+	}
+
+	globalHub.RegisterCh <- client
+
+	go client.WritePump()
+	client.ReadPump()
+
 }

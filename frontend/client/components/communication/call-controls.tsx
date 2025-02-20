@@ -3,6 +3,7 @@ import { Button } from './ui/button'
 import { Camera, CameraOff, Mic, MicOff, MonitorOff, MonitorUp, PhoneOff } from 'lucide-react'
 
 interface CallControlsProps {
+  inACall: boolean;
   micOn: boolean;
   toggleMic: () => void;
   cameraOn: boolean;
@@ -15,7 +16,7 @@ interface CallControlsProps {
   className?: string;
 }
 
-const CallControls = ({ className, micOn, cameraOn, screenSharingOn, toggleMic, toggleCamera, toggleScreenSharing, endCall }: CallControlsProps) => {
+const CallControls = ({ className, inACall, micOn, cameraOn, screenSharingOn, toggleMic, toggleCamera, toggleScreenSharing, endCall }: CallControlsProps) => {
 
   return (
     <div className={`fixed bottom-0 flex justify-center gap-8 bg-black bg-opacity-50 w-screen p-4 ${className}`}>
@@ -24,6 +25,7 @@ const CallControls = ({ className, micOn, cameraOn, screenSharingOn, toggleMic, 
         onClick={toggleMic}
         size={"icon"}
         variant={micOn ? "secondary" : "ghost"}
+        disabled={!inACall}
       >
         {micOn ? <Mic /> : <MicOff />}
       </Button>
@@ -33,6 +35,7 @@ const CallControls = ({ className, micOn, cameraOn, screenSharingOn, toggleMic, 
         onClick={toggleCamera}
         size={"icon"}
         variant={cameraOn ? "secondary" : "ghost"}
+        disabled={!inACall}
       >
         {cameraOn ? <Camera /> : <CameraOff />}
       </Button>
@@ -44,6 +47,7 @@ const CallControls = ({ className, micOn, cameraOn, screenSharingOn, toggleMic, 
         size={"icon"}
         variant={screenSharingOn ? "secondary" : "ghost"}
         title="Toggle Screen Share"
+        disabled={!inACall}
       >
         {screenSharingOn ? <MonitorUp /> : <MonitorOff />}
       </Button>
@@ -54,6 +58,7 @@ const CallControls = ({ className, micOn, cameraOn, screenSharingOn, toggleMic, 
         size={"icon"}
         // variant={micOn ? "secondary" : "ghost"}
         variant={"destructive"}
+        disabled={!inACall}
       >
         <PhoneOff />
       </Button>
