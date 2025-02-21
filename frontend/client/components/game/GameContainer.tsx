@@ -60,14 +60,19 @@ const GameContainer = () => {
 
   useEffect(() => {
     if (!assets) return;
+    console.log("assets bhayo");
     const canvas = canvasRef.current;
     if (!canvas) return;
+    console.log("canvas bhayo");
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    console.log("context bhayo");
     ctx.imageSmoothingEnabled = false;
 
     if (!WSURL) return;
+    console.log("WSURL bhayo");
     if (!user) return;
+    console.log("User Bhayo: ", user);
 
     const initGame = async () => {
       try {
@@ -77,8 +82,8 @@ const GameContainer = () => {
           "/assets/characters/character-male.png";
 
         const player = new LocalPlayer(
-          500,
-          500,
+          2250,
+          1700,
           user.username,
           characterSprite,
         );

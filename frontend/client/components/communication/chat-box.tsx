@@ -1,10 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Loader, Loader2, Send } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import EmojiPicker from "./emoji-picker";
 
 interface ChatBoxProps {
   send: () => void;
@@ -52,9 +59,13 @@ const ChatBox = ({ send }: ChatBoxProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setMessages((prev) => [...prev, message]);
+
     send();
     setMessage("");
+
+    setLoading(false);
   };
 
   return (
@@ -64,12 +75,14 @@ const ChatBox = ({ send }: ChatBoxProps) => {
     `}
     >
       <Card>
-        <CardHeader>Chat</CardHeader>
+        <CardHeader>
+          <p className="font-bold text-3xl">Chat</p>
+        </CardHeader>
 
         <CardContent>
           <ScrollArea
             ref={scrollAreaRef}
-            className="h-[300px] border rounded-md"
+            className="h-[70vh] w-[500px] border rounded-md"
           >
             {messages.map((message, i) => (
               <div key={i} className="bg-primary text-primary-foreground">
@@ -81,21 +94,30 @@ const ChatBox = ({ send }: ChatBoxProps) => {
 
         <CardFooter>
           <form onSubmit={handleSubmit} className="flex w-full space-x-2">
-            <Input
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value);
-              }}
-              placeholder="Message..."
-              className="flex-grow"
-              ref={inputRef}
-              onKeyDown={(e) => {
-                if (e.key !== "Escape") e.stopPropagation();
-              }}
-            />
+            <div className="relative flex w-full gap-2">
+              <Input
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                }}
+                placeholder="Message..."
+                className="flex-grow"
+                ref={inputRef}
+                onKeyDown={(e) => {
+                  if (e.key !== "Escape") e.stopPropagation();
+                }}
+              />
+
+              <div className="absolute right-0">
+                <EmojiPicker
+                  onSelect={(emoji) => setMessage((prev) => prev + emoji)}
+                />
+              </div>
+            </div>
 
             <Button type="submit" disabled={loading}>
-              <Loader2 className="w-4 h-4 animate-spin" /> Send
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              Send
             </Button>
           </form>
         </CardFooter>
