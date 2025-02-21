@@ -91,20 +91,6 @@ function LandingPage() {
           >
             Start Playing
           </Button>
-          <Button
-            className="text-xl font-bold px-8 py-8"
-            variant={"secondary"}
-            onClick={handleTestGameClick}
-          >
-            Test Game
-          </Button>
-          <Button
-            className="text-xl font-bold px-8 py-8"
-            variant={"secondary"}
-            onClick={handleTestVideoCallClick}
-          >
-            Test Video Call
-          </Button>
         </div>
 
         {/* Tech Logos */}

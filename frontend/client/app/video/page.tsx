@@ -1,9 +1,9 @@
-import VideoCall from "@/components/video-call";
+import VideoCall from "@/components/communication/video-call";
 
 export default function VCPage() {
-  return(
+  return (
     <div>
-      <VideoCall/>
+      <VideoCall />
     </div>
-  )
+  );
 }

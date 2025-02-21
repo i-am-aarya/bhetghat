@@ -1,6 +1,14 @@
-import React from 'react'
-import { Button } from './ui/button'
-import { Camera, CameraOff, Mic, MicOff, MonitorOff, MonitorUp, PhoneOff } from 'lucide-react'
+import React from "react";
+import {
+  Camera,
+  CameraOff,
+  Mic,
+  MicOff,
+  MonitorOff,
+  MonitorUp,
+  PhoneOff,
+} from "lucide-react";
+import { Button } from "../ui/button";
 
 interface CallControlsProps {
   inACall: boolean;
@@ -16,10 +24,21 @@ interface CallControlsProps {
   className?: string;
 }
 
-const CallControls = ({ className, inACall, micOn, cameraOn, screenSharingOn, toggleMic, toggleCamera, toggleScreenSharing, endCall }: CallControlsProps) => {
-
+const CallControls = ({
+  className,
+  inACall,
+  micOn,
+  cameraOn,
+  screenSharingOn,
+  toggleMic,
+  toggleCamera,
+  toggleScreenSharing,
+  endCall,
+}: CallControlsProps) => {
   return (
-    <div className={`fixed bottom-0 flex justify-center gap-8 bg-black bg-opacity-50 w-screen p-4 ${className}`}>
+    <div
+      className={`fixed bottom-0 flex justify-center gap-8 bg-black bg-opacity-50 w-screen p-4 ${className}`}
+    >
       {/* mic */}
       <Button
         onClick={toggleMic}
@@ -39,7 +58,6 @@ const CallControls = ({ className, inACall, micOn, cameraOn, screenSharingOn, to
       >
         {cameraOn ? <Camera /> : <CameraOff />}
       </Button>
-
 
       {/* screen sharing */}
       <Button
@@ -62,9 +80,8 @@ const CallControls = ({ className, inACall, micOn, cameraOn, screenSharingOn, to
       >
         <PhoneOff />
       </Button>
-
     </div>
-  )
-}
+  );
+};
 
-export default CallControls
+export default CallControls;
