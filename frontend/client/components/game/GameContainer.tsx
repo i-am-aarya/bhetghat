@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Game } from "./Game";
 import { Player } from "./player/Player";
-// import { GameMap, MapData } from "./GameMap";
 import { Camera } from "./Camera";
 import LoadingScreen from "../loading-screen";
 import { Progress } from "../ui/progress";
@@ -10,6 +9,7 @@ import { GameAssets, loadAssets } from "./assets";
 import useAuth from "@/hooks/useAuth";
 import { LocalPlayer } from "./player/LocalPlayer";
 import ChatBox from "../communication/chat-box";
+import VideoCall from "../communication/video-call";
 
 const GameContainer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -82,8 +82,9 @@ const GameContainer = () => {
           "/assets/characters/character-male.png";
 
         const player = new LocalPlayer(
-          2250,
-          1700,
+          // 2250,
+          3000,
+          2200,
           user.username,
           characterSprite,
         );
@@ -127,6 +128,7 @@ const GameContainer = () => {
           <Progress value={progress} />
         </div>
       </LoadingScreen>
+      <VideoCall />
     </div>
   );
 };

@@ -3,6 +3,7 @@ export interface GameAssets {
   characterFemaleSprite: HTMLImageElement;
   characterMale2Sprite: HTMLImageElement;
   mapImg: HTMLImageElement;
+  mapForegroundImg: HTMLImageElement;
 }
 
 export function loadImage(imgSrc: string): Promise<HTMLImageElement> {
@@ -20,11 +21,13 @@ export async function loadAssets(): Promise<GameAssets> {
     characterFemaleSprite,
     characterMale2Sprite,
     mapImg,
+    mapForegroundImg,
   ] = await Promise.all([
     loadImage("/assets/characters/character-male.png"),
     loadImage("/assets/characters/character-female.png"),
     loadImage("/assets/characters/character-male-2.png"),
-    loadImage("/assets/map/gameMap.png"),
+    loadImage("/assets/map/gameMap-2.png"),
+    loadImage("/assets/map/foreground-new.png"),
   ]);
 
   return {
@@ -32,5 +35,6 @@ export async function loadAssets(): Promise<GameAssets> {
     characterFemaleSprite,
     characterMale2Sprite,
     mapImg,
+    mapForegroundImg,
   };
 }

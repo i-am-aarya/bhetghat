@@ -1,20 +1,23 @@
 "use client";
 
 import LocalStreamPreview from "@/components/localstream-preview";
-import TopBar from "@/components/top-bar";
 import { Client, LocalStream } from "ion-sdk-js";
 import { IonSFUJSONRPCSignal } from "ion-sdk-js/lib/signal/json-rpc-impl";
 import React, { useEffect, useRef, useState } from "react";
 import StreamsView from "./streams-view";
 import CallControls from "./call-controls";
+import TopBar from "../top-bar";
+import useAuth from "@/hooks/useAuth";
 
 const VideoCall = () => {
+  const { user } = useAuth();
+
   const [micOn, setMicOn] = useState<boolean>(true);
   const [cameraOn, setCameraOn] = useState<boolean>(true);
   const [screenSharingOn, setScreenSharingOn] = useState(false);
 
   const [username, setUsername] = useState("");
-  const [roomName, setRoomname] = useState("");
+  const [roomName, setRoomName] = useState("");
 
   const [members, setMembers] = useState<Member[]>([]);
 
@@ -28,8 +31,13 @@ const VideoCall = () => {
     useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
 
-  // const signaling = `ws://${process.env.NEXT_PUBLIC_SFU_SERVER_ADDRESS}/ws`
   const signaling = process.env.NEXT_PUBLIC_SFU_SERVER_ADDRESS;
+
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username);
+    }
+  }, [user]);
 
   const startCall = async () => {
     if (!signaling) return;
@@ -43,7 +51,6 @@ const VideoCall = () => {
     signal.onopen = () => {
       alert("connected to signaling server");
     };
-    // const signal = new IonSFUJSONRPCSignal(`wss://${process.env.SFU_SERVER_ADDRESS}/ws`)
     const client = new Client(signal, {
       codec: "vp8",
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
@@ -53,6 +60,7 @@ const VideoCall = () => {
       console.log("websocket connection established");
       client.join(roomName, username);
     };
+
     signal.onerror = (error) => {
       console.log("websocket error: ", error);
     };
@@ -170,26 +178,26 @@ const VideoCall = () => {
   };
 
   return (
-    <div>
+    <div className="relative">
       <TopBar
         startCall={startCall}
         username={username}
         roomName={roomName}
         setUsername={setUsername}
-        setRoomName={setRoomname}
+        setRoomName={setRoomName}
         startPreview={startPreview}
       />
 
-      <div className="flex justify-center">
+      <div className="absolute top-56 left-1/2 -translate-x-1/2 flex justify-center">
         <StreamsView streams={remoteStreams} />
       </div>
 
-      {
+      <div className="">
         <LocalStreamPreview
           cameraFeed={localStream}
           screenShare={screenShareStream}
         />
-      }
+      </div>
 
       <CallControls
         cameraOn={cameraOn}

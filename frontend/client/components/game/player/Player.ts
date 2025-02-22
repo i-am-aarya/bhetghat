@@ -1,4 +1,5 @@
 import { GameAssets } from "../assets";
+import { GetCollisionsMap } from "../collisions";
 
 export enum Direction {
   UP = "up",
@@ -36,7 +37,6 @@ export const AnimationStateFromLastDirection: {
   [Direction.LEFT]: AnimationState.IDLE_LEFT,
   [Direction.RIGHT]: AnimationState.IDLE_RIGHT,
 };
-
 export abstract class Player {
   username: string;
   playerX: number;
@@ -65,6 +65,8 @@ export abstract class Player {
   static assets: GameAssets;
 
   static updateDuration: number = 50;
+
+  // collisionsMap: number[][] = GetCollisionsMap();
 
   constructor(x: number, y: number, name: string, spriteSrc: string) {
     this.spriteSrc = spriteSrc;

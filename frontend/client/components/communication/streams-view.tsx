@@ -105,14 +105,16 @@ const VideoElement = ({ stream }: VideoElementProps) => {
       <div
         className={`w-full h-full transition-all duration-500 rounded-lg ${isSpeaking ? "outline outline-4 outline-blue-300" : "outline-none"}`}
       >
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          className={`rounded-lg bg-black w-full h-full object-cover`}
-        ></video>
-
-        <User size={100} />
+        {videoEnabled ? (
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            className={`rounded-lg bg-black w-full h-full object-cover`}
+          ></video>
+        ) : (
+          <User size={100} />
+        )}
       </div>
 
       <div className="w-full h-full rounded-lg absolute opacity-0 bg-opacity-0 hover:bg-opacity-40 hover:opacity-100 bg-black flex justify-center items-center gap-4 transition-all duration-200">

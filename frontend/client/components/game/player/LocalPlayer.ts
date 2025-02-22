@@ -1,3 +1,4 @@
+import { GetCollisionsMap } from "../collisions";
 import {
   AnimationState,
   AnimationStateFromLastDirection,
@@ -5,11 +6,18 @@ import {
   Player,
 } from "./Player";
 
+const TILE_SIZE = 32;
+
 export class LocalPlayer extends Player {
   lastNetworkUpdate: number = 0;
+  collisionsMap: number[][];
+
+  hitbox = { width: this.playerSize / 2, height: this.playerSize - 14 };
 
   constructor(x: number, y: number, name: string, spriteSrc: string) {
     super(x, y, name, spriteSrc);
+
+    this.collisionsMap = GetCollisionsMap();
   }
 
   update(keys: Record<string, boolean>) {
@@ -54,8 +62,20 @@ export class LocalPlayer extends Player {
       dy *= this.speed;
     }
 
-    this.playerX += Math.floor(dx);
-    this.playerY += Math.floor(dy);
+    const originalX = this.playerX;
+    const originalY = this.playerY;
+
+    const newX = originalX + Math.floor(dx);
+    const newY = originalY + Math.floor(dy);
+
+    if (this.canMoveTo(newX, originalY)) {
+      this.playerX = newX;
+    }
+
+    // Then check Y axis
+    if (this.canMoveTo(this.playerX, newY)) {
+      this.playerY = newY;
+    }
 
     if (!moving) {
       this.frameDelay = 32;
@@ -99,5 +119,46 @@ export class LocalPlayer extends Player {
     );
 
     c.restore();
+
+    // draw hitbox around player
+    // c.save();
+    // c.strokeStyle = "rgba(0, 0, 255, 0.5)";
+    // c.fillStyle = "rgba(0, 0, 255, 0.5)";
+    // c.lineWidth = 2;
+    // c.fillRect(
+    //   this.playerX + this.hitbox.width / 2,
+    //   this.playerY + (this.playerSize - this.hitbox.height),
+    //   this.hitbox.width,
+    //   this.hitbox.height,
+    // );
+    // c.restore();
+  }
+
+  canMoveTo(x: number, y: number): boolean {
+    const hitboxX = x + (this.playerSize - this.hitbox.width) / 2;
+    const hitboxY = y + (this.playerSize - this.hitbox.height);
+
+    const left = Math.floor(hitboxX / TILE_SIZE);
+    const right = Math.floor((hitboxX + this.hitbox.width - 1) / TILE_SIZE);
+    const top = Math.floor(hitboxY / TILE_SIZE);
+    const bottom = Math.floor((hitboxY + this.hitbox.height - 1) / TILE_SIZE);
+
+    for (let row = top; row <= bottom; row++) {
+      for (let col = left; col <= right; col++) {
+        if (
+          row < 0 ||
+          row >= this.collisionsMap.length ||
+          col < 0 ||
+          col >= this.collisionsMap[0].length
+        ) {
+          return false;
+        }
+
+        if (this.collisionsMap[row][col] !== 0) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }

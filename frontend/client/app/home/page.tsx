@@ -1,33 +1,78 @@
 "use client";
 
 import Image from "next/image";
-import godot from "@/app/images/gotdot.png";
 import Bhet from "@/app/images/bhet.png";
-import logo from "@/app/images/logo.png";
-import check from "@/app/images/check.png";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { MessageSquare, Users, Video, Volume2 } from "lucide-react";
 
 function LandingPage() {
+  const features = [
+    {
+      icon: Users,
+      title: "Multiplayer Experience",
+      description: "Explore and interact with other players in real-time",
+    },
+    {
+      icon: Video,
+      title: "Video Calls",
+      description: "Connect face-to-face when near other players",
+    },
+    {
+      icon: MessageSquare,
+      title: "Chat System",
+      description: "Communicate through text with nearby players",
+    },
+    {
+      icon: Volume2,
+      title: "Voice Chat",
+      description: "Talk with others in your proximity",
+    },
+  ];
+
+  const techStack = [
+    {
+      name: "Aseprite",
+      logo: "/assets/logos/aseprite.png",
+      link: "#",
+    },
+    {
+      name: "TypeScript",
+      logo: "/assets/logos/typescript.svg",
+      link: "https://www.typescriptlang.org",
+    },
+    {
+      name: "WebRTC",
+      logo: "/assets/logos/webrtc.svg",
+      link: "https://webrtc.org",
+    },
+    {
+      name: "WebSocket",
+      logo: "/assets/logos/websocket.svg",
+      link: "https://developer.mozilla.org/en-US/docs/Web/API/WebSocket",
+    },
+    {
+      name: "Golang",
+      logo: "/assets/logos/go-logo.svg",
+      link: "https://golang.org",
+    },
+    {
+      name: "Next.js",
+      logo: "/assets/logos/nextjs.svg",
+      link: "https://nextjs.org",
+    },
+  ];
+
   const router = useRouter();
 
   const handleStartPlayingClick = () => {
-    // router.push("/login");
-    router.push("/character");
-  };
-
-  const handleTestVideoCallClick = () => {
-    router.push("/video");
-  };
-
-  const handleTestGameClick = () => {
     router.push("/character");
   };
 
   return (
     <div className="relative min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
       <div
-        className="absolute inset-0 bg-cover bg-center z-0 blur-[0.9px]"
+        className="absolute inset-0 bg-cover bg-center z-0 blur-sm"
         style={{
           backgroundImage: `url(${Bhet.src})`,
         }}
@@ -36,81 +81,86 @@ function LandingPage() {
       <div className="absolute inset-0 bg-black/50 z-10"></div>
 
       {/* Developed By */}
-      <div className="absolute  top-10 text-center">
-        <p className="text-lg text-[#D91656] font-extrabold">Developed By</p>
-        <p
-          className="text-lg font-extrabold mb-8"
-          style={{
-            fontFamily: "Inter",
-            fontSize: "18px",
-            fontWeight: "800",
-            lineHeight: "21.78px",
-            textAlign: "left",
-          }}
-        >
-          Arya Bhattarai | Bisham Neupane | Prabal Piya | Sumit Ojha
-        </p>
+      <div className="absolute z-20 top-10 text-center mb-20">
+        <p className="text-primary font-bold text-xl">Developed By</p>
+        <div className="text-2xl font-extrabold w-full flex gap-8">
+          <p>Arya Bhattarai</p>
+          <p>Bisham Neupane</p>
+          <p>Prabal Piya</p>
+          <p>Sumit Ojha</p>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="relative z-20 text-center p-6">
+      <div className="relative z-20 text-center p-6 flex flex-col gap-8">
         {/* Logo Image */}
-        <Image
-          src={logo}
-          alt="Bhetghat Logo"
-          width={300}
-          height={100}
-          className="mx-auto mb-6"
-        />
 
-        {/* Subtitle */}
-        <p
-          className="text-4xl font-black text-center mb-4"
-          style={{ fontFamily: "Inter", lineHeight: "43.57px" }}
-        >
-          A 2D Proximity Communication Game
-        </p>
+        <div className="flex justify-center flex-col items-center gap-8">
+          <Image
+            src={"/assets/icons/title-crisp-filled.png"}
+            alt="Bhetghat Logo"
+            width={1000}
+            height={500}
+            style={{ imageRendering: "pixelated" }}
+            className=""
+          />
 
-        <p
-          className="text-base font-bold text-center mb-8"
-          style={{
-            fontFamily: "Inter",
-            fontSize: "16px",
-            lineHeight: "19.36px",
-          }}
-        >
-          It is a project we envisioned where players can explore and interact
-          with both the world and other players.
+          {/* Subtitle */}
+          <p
+            className="text-4xl font-black text-center mb-4"
+            style={{ fontFamily: "Inter", lineHeight: "43.57px" }}
+          >
+            A 2D Proximity Communication Game
+          </p>
+        </div>
+
+        <p className="text-xl font-bold text-center">
+          Explore and interact with both the world and other players in this
+          unique multiplayer experience.
         </p>
 
         {/* Download Button */}
-        <div className="flex gap-4 justify-center">
+        <div className="flex gap-4 justify-center my-8">
           <Button
-            className="text-xl font-bold px-8 py-8"
+            className="text-xl font-black px-8 py-8 hover:-translate-y-2 hover:scale-110 transition-transform duration-400"
             onClick={handleStartPlayingClick}
           >
-            Start Playing
+            START PLAYING
           </Button>
         </div>
 
+        {/* Features */}
+        <div>
+          <p className="text-white text-5xl font-bold">FEATURES</p>
+
+          {/* {features.map((feature) => (
+
+          ))} */}
+        </div>
+
         {/* Tech Logos */}
-        <div className="flex justify-center items-center gap-8 mt-12">
-          {/* Godot Logo */}
-          <Image
-            src={godot}
-            alt="Godot Logo"
-            width={250}
-            height={250}
-            className="w-20 h-20 md:w-28 md:h-28"
-          />
-          {/* Check Icon */}
-          <Image
-            src={check}
-            alt="Check Icon"
-            width={250}
-            height={250}
-            className="w-20 h-20 md:w-28 md:h-28"
-          />
+
+        <div className="flex flex-col">
+          <p className="text-white font-black text-3xl mb-4">
+            MADE WITH ❤️ USING
+          </p>
+          <div className="flex justify-center items-center gap-16 h-full">
+            {techStack.map((tech, i) => (
+              <div className="p-4 flex flex-col gap-4 h-full" key={i}>
+                <Image
+                  src={tech.logo}
+                  alt={`${tech.name} Logo`}
+                  width={100}
+                  height={100}
+                  className="w-24 h-24"
+                  style={{ imageRendering: "pixelated" }}
+                />
+                <p className="text-white font-mono font-bold text-lg">
+                  {tech.name}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
