@@ -85,13 +85,13 @@ func (hub *Hub) Run() {
 			if _, ok := hub.Clients[client]; ok {
 				delete(hub.Clients, client)
 				close(client.Send)
-				log.Printf("closing %s connection\n", client.Username)
 				client.Conn.Close()
+				log.Printf("closing %s connection\n", client.Username)
 				// pleave packet
 				pkt := &models.Packet{
 					Type:    PLAYER_LEAVE,
 					Sender:  client.Username,
-					Payload: json.RawMessage(""),
+					Payload: json.RawMessage(fmt.Sprintf(`{"s":"%s"}`, client.Username)),
 				}
 				hub.BroadcastCh <- pkt
 
@@ -101,9 +101,6 @@ func (hub *Hub) Run() {
 			for client := range hub.Clients {
 				select {
 				case client.Send <- packet:
-					// default:
-					// 	close(client.Send)
-					// 	delete(hub.Clients, client)
 				}
 			}
 

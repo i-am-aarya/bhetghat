@@ -3,11 +3,18 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
+import { Poppins } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "BhetGhat",
   description: "Download BhetGhat",
 };
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  display: "swap",
+  weight: "600",
+});
 
 export default function RootLayout({
   children,
@@ -16,10 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+      <body className={poppins.className}>
+        <AuthProvider>{children}</AuthProvider>
         <Toaster />
       </body>
     </html>

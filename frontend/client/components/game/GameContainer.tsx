@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Game } from "./Game";
 import { Player } from "./player/Player";
 import { Camera } from "./Camera";
@@ -8,8 +8,9 @@ import { Progress } from "../ui/progress";
 import { GameAssets, loadAssets } from "./assets";
 import useAuth from "@/hooks/useAuth";
 import { LocalPlayer } from "./player/LocalPlayer";
-import ChatBox from "../communication/chat-box";
+import ChatBox, { Message } from "../communication/chat-box";
 import VideoCall from "../communication/video-call";
+import { ChatPayload } from "./packet";
 
 const GameContainer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -24,6 +25,10 @@ const GameContainer = () => {
 
   const [assets, setAssets] = useState<GameAssets | null>(null);
 
+  const gameRef = useRef<Game | null>(null);
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
   useEffect(() => {
     loadAssets()
       .then((loadedAssets) => {
@@ -33,6 +38,31 @@ const GameContainer = () => {
       })
       .catch((error) => console.log("error loading assets: ", error));
   }, []);
+
+  const handleChatMessages = useCallback((payload: ChatPayload) => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        content: payload.m,
+        sender: payload.s,
+      } as Message,
+    ]);
+  }, []);
+
+  const sendMessage = useCallback(
+    (message: string) => {
+      const newMessage: Message = {
+        content: message,
+        sender: user?.username || "",
+      };
+
+      console.log("NEW MESSAGE: ", newMessage);
+      setMessages((prev) => [...prev, newMessage]);
+
+      gameRef.current?.sendChatMessage(message);
+    },
+    [user],
+  );
 
   const WSURL = process.env.NEXT_PUBLIC_WS_URL;
   useEffect(() => {
@@ -89,7 +119,15 @@ const GameContainer = () => {
           characterSprite,
         );
         const camera = new Camera(player, ctx.canvas.width, ctx.canvas.height);
-        const game = new Game(player, ctx, camera, WSURL, assets);
+        const game = new Game(
+          player,
+          ctx,
+          camera,
+          WSURL,
+          assets,
+          handleChatMessages,
+        );
+        gameRef.current = game;
         setLoaded(true);
         game.gameloop();
 
@@ -104,7 +142,7 @@ const GameContainer = () => {
     initGame();
   }, [assets, user]);
 
-  const sendMessage = () => {};
+  // const sendMessage = () => {};
 
   return (
     <div>
@@ -120,7 +158,7 @@ const GameContainer = () => {
         }}
       />
 
-      <ChatBox send={sendMessage} />
+      <ChatBox messages={messages} sendMessage={sendMessage} />
 
       <LoadingScreen isVisible={!loaded}>
         <div className="flex flex-col gap-4">

@@ -37,25 +37,25 @@ export default function Page() {
   const rowsPerPage = 6;
 
   const PlayersTable = [
-    { UserId: "#12345", Email: "abc@gmail.com", Status: "Online" },
-    { UserId: "#12346", Email: "xyz@gmail.com", Status: "Offline" },
-    { UserId: "#12347", Email: "lmn@gmail.com", Status: "Online" },
-    { UserId: "#12348", Email: "pqr@gmail.com", Status: "Offline" },
-    { UserId: "#12349", Email: "stu@gmail.com", Status: "Online" },
-    { UserId: "#12350", Email: "vwx@gmail.com", Status: "Online" },
-    { UserId: "#12351", Email: "ghi@gmail.com", Status: "Offline" },
-    { UserId: "#12352", Email: "jkl@gmail.com", Status: "Online" },
+    { username: "#12345", email: "abc@gmail.com", status: "Online" },
+    { username: "#12346", email: "xyz@gmail.com", status: "Offline" },
+    { username: "#12347", email: "lmn@gmail.com", status: "Online" },
+    { username: "#12348", email: "pqr@gmail.com", status: "Offline" },
+    { username: "#12349", email: "stu@gmail.com", status: "Online" },
+    { username: "#12350", email: "vwx@gmail.com", status: "Online" },
+    { username: "#12351", email: "ghi@gmail.com", status: "Offline" },
+    { username: "#12352", email: "jkl@gmail.com", status: "Online" },
   ];
 
   useEffect(() => {
     const onlinePlayerCount = PlayersTable.filter(
-      (player) => player.Status === "Online"
+      (player) => player.status === "Online",
     ).length;
     setCount(onlinePlayerCount);
   }, []);
 
   const filteredPlayers = PlayersTable.filter((player) =>
-    player.Email.toLowerCase().includes(searchTerm.toLowerCase())
+    player.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredPlayers.length / rowsPerPage);
@@ -65,7 +65,7 @@ export default function Page() {
 
   return (
     <div className="ml-4 p-10">
-      <AlertDialog>
+      {/* <AlertDialog>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -79,11 +79,10 @@ export default function Page() {
             <AlertDialogAction>Continue</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
       <div className="flex gap-2">
-
-      <SidebarTrigger/>
-      <Time />
+        <SidebarTrigger />
+        <Time />
       </div>
       <div className="w-[1485px] pt-10">
         <div className="flex pb-10">
@@ -94,39 +93,44 @@ export default function Page() {
           <Circle className="mb-[2px] self-end stroke-[#00FF11] w-[6.67px] h-[6.67px] border-[#00FF11] rounded-full bg-[#00FF11] mr-2" />
           <span className="self-end text-xs font-medium">{count}</span>
         </div>
-        <div className="flex items-center mt-8 w-[469px] h-[40px] align-middle border-b-2 border-b-[#CCCCCC]">
-          <Search className="w-[12px] has-[12px] ml-4 mr-2" />
+        {/* <div className="flex items-center mt-8 w-[469px] h-[40px] align-middle border-b-2 border-b-[#CCCCCC]"> */}
+
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="w-5 h-5 ml-4 mr-2 absolute top-2 left-0 text-gray-500" />
+          </div>
           <Input
-            className="border-none focus:border-none text-sm font-medium outline-none"
+            className="text-sm font-medium pl-10"
             placeholder="Search for player"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        {/* </div> */}
         <Table className="table-auto w-full mt-20 ">
           <TableHeader>
             <TableRow className="text-[#EB3D77]">
-              <TableHead className="w-1/3 text-[#EB3D77]">UserID</TableHead>
+              <TableHead className="w-1/3 text-[#EB3D77]">Username</TableHead>
               <TableHead className="w-1/3 text-[#EB3D77]">Email</TableHead>
               <TableHead className="w-1/3 text-[#EB3D77]">Status</TableHead>
               <TableHead className="w-1/3 text-[#EB3D77]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentRows.map((player) => (
-              <TableRow key={player.UserId}>
-                <TableCell className="font-medium">{player.UserId}</TableCell>
-                <TableCell>{player.Email}</TableCell>
+            {currentRows.map((player, i) => (
+              <TableRow key={i}>
+                <TableCell className="font-medium">{player.username}</TableCell>
+                <TableCell>{player.email}</TableCell>
                 <TableCell
                   className={`${
-                    player.Status === "Online"
+                    player.status === "Online"
                       ? "text-green-500"
                       : "text-gray-500"
                   }`}
                 >
-                  {player.Status}
+                  {player.status}
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button className="w-[150px] h-[40px] bg-[#EB3D77] hover:bg-[#f597b6] hover:text-white">
@@ -152,7 +156,7 @@ export default function Page() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

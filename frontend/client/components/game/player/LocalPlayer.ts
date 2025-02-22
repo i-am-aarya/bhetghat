@@ -12,7 +12,7 @@ export class LocalPlayer extends Player {
   lastNetworkUpdate: number = 0;
   collisionsMap: number[][];
 
-  hitbox = { width: this.playerSize / 2, height: this.playerSize - 14 };
+  hitbox = { width: this.playerSize / 2, height: this.playerSize / 4 };
 
   constructor(x: number, y: number, name: string, spriteSrc: string) {
     super(x, y, name, spriteSrc);

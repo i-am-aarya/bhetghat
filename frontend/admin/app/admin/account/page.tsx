@@ -32,7 +32,7 @@ function page() {
               <Input
                 type="password"
                 id="currentpassword"
-                placeholder="Current Password"
+                placeholder="New Password"
               />
             </div>
             <div className="grid w-full max-w-sm items-cneter gap-1.5">
@@ -40,7 +40,7 @@ function page() {
               <Input
                 type="password"
                 id="currentpassword"
-                placeholder="Current Password"
+                placeholder="Re-enter New Password"
               />
             </div>
           </div>

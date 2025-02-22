@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Loader, Loader2, Send } from "lucide-react";
+import { Loader, Loader2, Send, SendHorizonal } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import {
   Card,
@@ -12,22 +12,33 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import EmojiPicker from "./emoji-picker";
+import MessageBubble from "./message-bubble";
+import { ChatPayload } from "../game/packet";
 
 interface ChatBoxProps {
-  send: () => void;
+  sendMessage: (message: string) => void;
+  messages: Message[];
 }
 
-const ChatBox = ({ send }: ChatBoxProps) => {
+export interface Message {
+  content: string;
+  sender: string;
+}
+
+const ChatBox = ({ sendMessage: send, messages }: ChatBoxProps) => {
   const { user } = useAuth();
 
   const [isVisible, setIsVisible] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
-  const [messages, setMessages] = useState<string[]>([]);
-  const [message, setMessage] = useState("");
+  // const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessages, setNewMessages] = useState(0);
+  const [inputMessage, setInputMessage] = useState("");
 
-  const [loading, setLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+
+  const endOfMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -52,26 +63,27 @@ const ChatBox = ({ send }: ChatBoxProps) => {
   }, [isVisible]);
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-    }
+    scrollToBottom();
   }, [messages]);
+
+  const scrollToBottom = () => {
+    endOfMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setMessages((prev) => [...prev, message]);
+    setIsSending(true);
+    send(inputMessage);
+    setInputMessage("");
 
-    send();
-    setMessage("");
-
-    setLoading(false);
+    setIsSending(false);
   };
 
   return (
     <div
       className={`
-      fixed bottom-20 transition-all duration-300 ease-in-out ${isVisible ? "left-4" : "-left-full"}
+      fixed bottom-20 transition-all duration-300 ease-in-out
+      ${isVisible ? "left-4" : "-left-full"}
     `}
     >
       <Card>
@@ -82,13 +94,17 @@ const ChatBox = ({ send }: ChatBoxProps) => {
         <CardContent>
           <ScrollArea
             ref={scrollAreaRef}
-            className="h-[70vh] w-[500px] border rounded-md"
+            className="h-[50vh] w-[500px] border rounded-md flex flex-col gap-2 px-4"
           >
             {messages.map((message, i) => (
-              <div key={i} className="bg-primary text-primary-foreground">
-                {message}
+              <div
+                key={i}
+                className={`flex my-2 ${message.sender === user?.username ? "justify-end" : "justify-start"}`}
+              >
+                <MessageBubble message={message} key={i} />
               </div>
             ))}
+            <div ref={endOfMessageRef}></div>
           </ScrollArea>
         </CardContent>
 
@@ -96,9 +112,9 @@ const ChatBox = ({ send }: ChatBoxProps) => {
           <form onSubmit={handleSubmit} className="flex w-full space-x-2">
             <div className="relative flex w-full gap-2">
               <Input
-                value={message}
+                value={inputMessage}
                 onChange={(e) => {
-                  setMessage(e.target.value);
+                  setInputMessage(e.target.value);
                 }}
                 placeholder="Message..."
                 className="flex-grow"
@@ -110,13 +126,20 @@ const ChatBox = ({ send }: ChatBoxProps) => {
 
               <div className="absolute right-0">
                 <EmojiPicker
-                  onSelect={(emoji) => setMessage((prev) => prev + emoji)}
+                  onSelect={(emoji) => setInputMessage((prev) => prev + emoji)}
                 />
               </div>
             </div>
 
-            <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+            <Button
+              type="submit"
+              disabled={isSending || inputMessage.length === 0}
+            >
+              {isSending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <SendHorizonal />
+              )}
               Send
             </Button>
           </form>

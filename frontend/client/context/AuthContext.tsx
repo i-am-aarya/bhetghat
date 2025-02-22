@@ -33,7 +33,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -102,6 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const login = async (email: string, password: string) => {
+    setLoading(true);
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -110,16 +111,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (response.ok) {
+      setLoading(false);
       const data = await response.json();
       setUser(data.user);
-      router.push("/game");
+      router.push("/character");
     } else {
+      setLoading(false);
       throw new Error("Invalid Credentials!");
     }
+    setLoading(false);
   };
 
   const logout = async () => {
-    // await fetch("")
     await fetch(`${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/auth/v1/logout`, {
       credentials: "include",
     });

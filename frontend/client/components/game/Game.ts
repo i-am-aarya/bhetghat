@@ -4,6 +4,7 @@ import { GameNetwork } from "./GameNetwork";
 import { Player } from "./player/Player";
 import { GameAssets } from "./assets";
 import {
+  ChatPayload,
   PlayerEnterPayload,
   PlayerLeavePayload,
   PlayerStatePayload,
@@ -35,6 +36,9 @@ export class Game {
 
   assets: GameAssets;
 
+  // callback functions
+  onChatMessage: (message: ChatPayload) => void;
+
   // TO DRAW COLLISION AREAS
   // boundaries: Boundary[] = [];
 
@@ -44,6 +48,7 @@ export class Game {
     camera: Camera,
     wsURL: string,
     assets: GameAssets,
+    onChatMessage: (message: ChatPayload) => void,
   ) {
     // TO DRAW COLLISION AREAS
     // const collisionsMap = GetCollisionsMap();
@@ -56,6 +61,7 @@ export class Game {
     //     }
     //   });
     // });
+    this.onChatMessage = onChatMessage;
 
     this.assets = assets;
 
@@ -96,8 +102,8 @@ export class Game {
       },
     );
 
-    this.gameNetwork.on(WSMessageType.CHAT_MESSAGE, (payload: any) => {
-      this.handleChatMessage(payload.message);
+    this.gameNetwork.on(WSMessageType.CHAT_MESSAGE, (payload: ChatPayload) => {
+      this.handleChatMessage(payload);
     });
 
     this.gameNetwork.on(WSMessageType.COMM_REQUEST, (payload: any) => {
@@ -172,8 +178,21 @@ export class Game {
       );
   }
 
-  handleChatMessage(message: string) {
-    console.log("handling chat message: ", message);
+  handleChatMessage(payload: ChatPayload) {
+    this.onChatMessage(payload);
+  }
+
+  sendChatMessage(message: string) {
+    const chatMsg: WSMessage = {
+      t: WSMessageType.CHAT_MESSAGE,
+      s: this.localPlayer.username,
+      pl: {
+        m: message,
+        s: this.localPlayer.username,
+      },
+    };
+
+    this.gameNetwork.sendWSMessage(chatMsg);
   }
 
   handleCommRequest(req: string) {

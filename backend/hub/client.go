@@ -39,10 +39,11 @@ func (c *Client) ReadPump() {
 		var pkt models.Packet
 		if err := c.Conn.ReadJSON(&pkt); err != nil {
 			if errors.Is(err, websocket.ErrCloseSent) {
-				// c.Hub.UnregisterCh <- c
+				c.Hub.UnregisterCh <- c
 				return
 			}
 			log.Printf("ERROR reading packet from client %s: %v", c.Username, err)
+			c.Hub.UnregisterCh <- c
 		}
 
 		switch pkt.Type {
@@ -87,6 +88,14 @@ func (c *Client) ReadPump() {
 			c.Hub.UnregisterCh <- c
 
 		case CHAT_MESSAGE:
+			var cpl models.ChatPayload
+			if err := json.Unmarshal(pkt.Payload, &cpl); err != nil {
+				log.Printf("ERROR unmarshalling chat payload from %s: %v", c.Username, err)
+
+				continue
+			}
+			c.Hub.BroadcastCh <- &pkt
+		// store message in database
 
 		case COMM_REQUEST:
 
@@ -120,7 +129,7 @@ func (c *Client) WritePump() {
 				log.Printf("Error writing JSON to client %s: %v", c.Username, err)
 				return
 			}
-			log.Printf("message from %s written to %s", message.Sender, c.PlayerState.Username)
+			// log.Printf("message from %s written to %s", message.Sender, c.PlayerState.Username)
 
 		}
 	}

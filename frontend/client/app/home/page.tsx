@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Bhet from "@/app/images/bhet.png";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { MessageSquare, Users, Video, Volume2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 function LandingPage() {
   const features = [
@@ -71,17 +71,12 @@ function LandingPage() {
 
   return (
     <div className="relative min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
-      <div
-        className="absolute inset-0 bg-cover bg-center z-0 blur-sm"
-        style={{
-          backgroundImage: `url(${Bhet.src})`,
-        }}
-      ></div>
+      <div className="absolute inset-0 bg-cover bg-center z-0 blur-sm bg-[url(/assets/images/background-image.png)]" />
 
       <div className="absolute inset-0 bg-black/50 z-10"></div>
 
       {/* Developed By */}
-      <div className="absolute z-20 top-10 text-center mb-20">
+      <div className="relative z-20 top-10 text-center mb-20">
         <p className="text-primary font-bold text-xl">Developed By</p>
         <div className="text-2xl font-extrabold w-full flex gap-8">
           <p>Arya Bhattarai</p>
@@ -100,16 +95,13 @@ function LandingPage() {
             src={"/assets/icons/title-crisp-filled.png"}
             alt="Bhetghat Logo"
             width={1000}
-            height={500}
+            height={200}
             style={{ imageRendering: "pixelated" }}
-            className=""
+            className="my-10"
           />
 
           {/* Subtitle */}
-          <p
-            className="text-4xl font-black text-center mb-4"
-            style={{ fontFamily: "Inter", lineHeight: "43.57px" }}
-          >
+          <p className="text-4xl font-black text-center mb-4 mt-2">
             A 2D Proximity Communication Game
           </p>
         </div>
@@ -131,16 +123,26 @@ function LandingPage() {
 
         {/* Features */}
         <div>
-          <p className="text-white text-5xl font-bold">FEATURES</p>
+          {/* <p className="text-white text-5xl font-bold mb-10">FEATURES</p> */}
 
-          {/* {features.map((feature) => (
-
-          ))} */}
+          <div className="grid grid-cols-4 gap-8 px-40">
+            {features.map((feature, i) => (
+              <div key={i}>
+                <Card className="relative overflow-hidden h-full bg-white/40 p-6 backdrop-blur-lg transition-all hover:bg-white/20">
+                  <feature.icon className="mb-4 h-8 w-8 text-primary" />
+                  <h3 className="mb-2 text-xl font-bold text-white">
+                    {feature.description}
+                  </h3>
+                  <p className="text-gray-300">{feature.description}</p>
+                </Card>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Tech Logos */}
 
-        <div className="flex flex-col">
+        <div className="flex flex-col mt-20">
           <p className="text-white font-black text-3xl mb-4">
             MADE WITH ❤️ USING
           </p>
