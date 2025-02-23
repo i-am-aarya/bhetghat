@@ -8,6 +8,8 @@ import {
 
 const TILE_SIZE = 32;
 
+const TRIGGER_RADIUS = TILE_SIZE * 6;
+
 export class LocalPlayer extends Player {
   lastNetworkUpdate: number = 0;
   collisionsMap: number[][];
@@ -119,19 +121,6 @@ export class LocalPlayer extends Player {
     );
 
     c.restore();
-
-    // draw hitbox around player
-    // c.save();
-    // c.strokeStyle = "rgba(0, 0, 255, 0.5)";
-    // c.fillStyle = "rgba(0, 0, 255, 0.5)";
-    // c.lineWidth = 2;
-    // c.fillRect(
-    //   this.playerX + this.hitbox.width / 2,
-    //   this.playerY + (this.playerSize - this.hitbox.height),
-    //   this.hitbox.width,
-    //   this.hitbox.height,
-    // );
-    // c.restore();
   }
 
   canMoveTo(x: number, y: number): boolean {

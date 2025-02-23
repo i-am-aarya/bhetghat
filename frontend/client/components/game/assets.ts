@@ -26,8 +26,8 @@ export async function loadAssets(): Promise<GameAssets> {
     loadImage("/assets/characters/character-male.png"),
     loadImage("/assets/characters/character-female.png"),
     loadImage("/assets/characters/character-male-2.png"),
-    loadImage("/assets/map/gameMap-2.png"),
-    loadImage("/assets/map/foreground-new.png"),
+    loadImage("/assets/map/gamemap-updated.png"),
+    loadImage("/assets/map/foreground-updated.png"),
   ]);
 
   return {

@@ -41,6 +41,10 @@ export class GameNetwork extends EventEmitter {
             this.emit(WSMessageType.COMM_REQUEST, data.pl);
             break;
 
+          case WSMessageType.COMM_UPDATE:
+            this.emit(WSMessageType.COMM_UPDATE, data.pl);
+            break;
+
           case WSMessageType.PLAYER_ENTER:
             this.emit(WSMessageType.PLAYER_ENTER, data.pl);
             break;
@@ -51,6 +55,10 @@ export class GameNetwork extends EventEmitter {
 
           case WSMessageType.PLAYER_STATE:
             this.emit(WSMessageType.PLAYER_STATE, data.pl);
+            break;
+
+          case WSMessageType.EVENT_NOTIFY:
+            this.emit(WSMessageType.EVENT_NOTIFY, data.pl);
             break;
 
           default:
@@ -67,7 +75,6 @@ export class GameNetwork extends EventEmitter {
     try {
       if (this.ws.readyState === WebSocket.OPEN) {
         this.ws.send(JSON.stringify(msg));
-        console.log(`${msg.t} MESSAGE SENT BY ${msg.s}`);
       } else {
         console.log("websocket not open");
       }

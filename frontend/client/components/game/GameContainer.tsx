@@ -10,12 +10,24 @@ import useAuth from "@/hooks/useAuth";
 import { LocalPlayer } from "./player/LocalPlayer";
 import ChatBox, { Message } from "../communication/chat-box";
 import VideoCall from "../communication/video-call";
-import { ChatPayload } from "./packet";
+import {
+  ChatPayload,
+  CommUpdatePayload,
+  EventNotifyPayload,
+  EventSchedulePayload,
+} from "./packet";
+import { useMediaPermissions } from "@/hooks/useMediaPermissions";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "../ui/toast";
+import { EventScheduler } from "../communication/event-scheduler";
 
 const GameContainer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const { toast } = useToast();
+
   const { user } = useAuth();
+  const { requestMediaAccess } = useMediaPermissions();
 
   const [loaded, setLoaded] = useState(false);
 
@@ -29,7 +41,11 @@ const GameContainer = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const [roomID, setRoomID] = useState("");
+  const [nearbyUsers, setNearbyUsers] = useState<string[]>([]);
+
   useEffect(() => {
+    requestMediaAccess(true, true);
     loadAssets()
       .then((loadedAssets) => {
         setAssets(loadedAssets);
@@ -49,6 +65,11 @@ const GameContainer = () => {
     ]);
   }, []);
 
+  const handleCommUpdate = useCallback((payload: CommUpdatePayload) => {
+    setRoomID(payload.roomHash);
+    setNearbyUsers(payload.nearby);
+  }, []);
+
   const sendMessage = useCallback(
     (message: string) => {
       const newMessage: Message = {
@@ -56,13 +77,42 @@ const GameContainer = () => {
         sender: user?.username || "",
       };
 
-      console.log("NEW MESSAGE: ", newMessage);
       setMessages((prev) => [...prev, newMessage]);
 
       gameRef.current?.sendChatMessage(message);
     },
     [user],
   );
+
+  const sendEventScheduleMessage = useCallback(
+    (payload: EventSchedulePayload) => {
+      try {
+        gameRef.current?.sendEventSchedule(payload);
+        toast({
+          title: payload.title,
+          description: payload.description,
+          action: <ToastAction altText="OKAYYYYYYY">OKAYYYY</ToastAction>,
+        });
+        alert("Event Scheduled!");
+      } catch (error) {
+        console.error("error sending event schedule", error);
+      }
+    },
+    [],
+  );
+
+  const handleEventNotification = (payload: EventNotifyPayload) => {
+    // useToast
+    toast({
+      title: payload.title,
+      description: payload.description,
+      action: <ToastAction altText="OKAYYYYY">OK</ToastAction>,
+    });
+
+    alert(
+      `ALERT!!!! REMAINDER!!! EVENT: ${payload.title} ${payload.description}, by ${payload.creator}`,
+    );
+  };
 
   const WSURL = process.env.NEXT_PUBLIC_WS_URL;
   useEffect(() => {
@@ -90,19 +140,14 @@ const GameContainer = () => {
 
   useEffect(() => {
     if (!assets) return;
-    console.log("assets bhayo");
     const canvas = canvasRef.current;
     if (!canvas) return;
-    console.log("canvas bhayo");
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    console.log("context bhayo");
     ctx.imageSmoothingEnabled = false;
 
     if (!WSURL) return;
-    console.log("WSURL bhayo");
     if (!user) return;
-    console.log("User Bhayo: ", user);
 
     const initGame = async () => {
       try {
@@ -126,6 +171,8 @@ const GameContainer = () => {
           WSURL,
           assets,
           handleChatMessages,
+          handleCommUpdate,
+          handleEventNotification,
         );
         gameRef.current = game;
         setLoaded(true);
@@ -142,13 +189,15 @@ const GameContainer = () => {
     initGame();
   }, [assets, user]);
 
+  useEffect(() => {}, []);
+
   // const sendMessage = () => {};
 
   return (
     <div>
       <canvas
         ref={canvasRef}
-        className="block"
+        className="-z-50"
         style={{
           imageRendering: "pixelated",
           display: "block",
@@ -159,6 +208,7 @@ const GameContainer = () => {
       />
 
       <ChatBox messages={messages} sendMessage={sendMessage} />
+      <EventScheduler onSchedule={sendEventScheduleMessage} />
 
       <LoadingScreen isVisible={!loaded}>
         <div className="flex flex-col gap-4">
@@ -166,7 +216,7 @@ const GameContainer = () => {
           <Progress value={progress} />
         </div>
       </LoadingScreen>
-      <VideoCall />
+      <VideoCall roomID={roomID} nearbyUsers={nearbyUsers} />
     </div>
   );
 };

@@ -12,6 +12,7 @@ import (
 func WSConn(c *websocket.Conn) {
 	defer c.Close()
 	globalHub := hub.GetHubInstance()
+	// proximityManager := globalHub.Proximity
 
 	var initialPkt models.Packet
 	if err := c.ReadJSON(&initialPkt); err != nil {

@@ -9,17 +9,17 @@ import CallControls from "./call-controls";
 import TopBar from "../top-bar";
 import useAuth from "@/hooks/useAuth";
 
-const VideoCall = () => {
+interface VideoCallProps {
+  roomID: string;
+  nearbyUsers: string[];
+}
+
+const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
   const { user } = useAuth();
 
   const [micOn, setMicOn] = useState<boolean>(true);
   const [cameraOn, setCameraOn] = useState<boolean>(true);
   const [screenSharingOn, setScreenSharingOn] = useState(false);
-
-  const [username, setUsername] = useState("");
-  const [roomName, setRoomName] = useState("");
-
-  const [members, setMembers] = useState<Member[]>([]);
 
   const [inACall, setInACall] = useState(false);
 
@@ -33,20 +33,21 @@ const VideoCall = () => {
 
   const signaling = process.env.NEXT_PUBLIC_SFU_SERVER_ADDRESS;
 
+  const [showRemoteStreams, setShowRemoteStreams] = useState();
+
   useEffect(() => {
-    if (user) {
-      setUsername(user.username);
+    if (roomID.length == 0) {
+      endCall();
+    } else {
+      startCall();
     }
-  }, [user]);
+    console.log("endcall wala useEffect called");
+  }, [roomID]);
 
   const startCall = async () => {
     if (!signaling) return;
-    if (!username || !roomName) {
-      alert("username or roomname not set");
-      return;
-    }
+    if (!user) return;
 
-    console.log("signaling at: ", signaling);
     const signal = new IonSFUJSONRPCSignal(signaling);
     signal.onopen = () => {
       alert("connected to signaling server");
@@ -58,7 +59,7 @@ const VideoCall = () => {
 
     signal.onopen = () => {
       console.log("websocket connection established");
-      client.join(roomName, username);
+      client.join(roomID, user.username);
     };
 
     signal.onerror = (error) => {
@@ -148,7 +149,8 @@ const VideoCall = () => {
     setMicOn(!micOn);
   };
 
-  const toggleScreenSharing = () => {
+  const toggleScreenSharing = async () => {
+    // toggle screen sharing
     setScreenSharingOn(!screenSharingOn);
   };
 
@@ -181,10 +183,8 @@ const VideoCall = () => {
     <div className="relative">
       <TopBar
         startCall={startCall}
-        username={username}
-        roomName={roomName}
-        setUsername={setUsername}
-        setRoomName={setRoomName}
+        username={user?.username || "N/A"}
+        roomID={roomID}
         startPreview={startPreview}
       />
 

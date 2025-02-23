@@ -38,18 +38,6 @@ export class RemotePlayer extends Player {
 
     this.playerX = Number(lerp(this.playerX, this.targetX, smoothT));
     this.playerY = Number(lerp(this.playerY, this.targetY, smoothT));
-    // this.playerX = this.targetX;
-    // this.playerY = this.targetY;
-
-    // console.log(`
-    //   now: ${now}
-    //   deltaTime: ${deltaTime}
-    //   smoothingFactor: ${smoothingFactor}
-    //   playerX: ${this.playerX}
-    //   targetX: ${this.targetX}
-    //   playerY: ${this.playerY}
-    //   targetY: ${this.targetY}
-    //   `);
   }
 
   draw(c: CanvasRenderingContext2D): void {

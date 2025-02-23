@@ -1,19 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Loader, Loader2, Send, SendHorizonal } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import EmojiPicker from "./emoji-picker";
 import MessageBubble from "./message-bubble";
-import { ChatPayload } from "../game/packet";
 
 interface ChatBoxProps {
   sendMessage: (message: string) => void;

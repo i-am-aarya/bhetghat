@@ -15,6 +15,10 @@ const (
 	PLAYER_STATE = "pstate"
 	COMM_REQUEST = "comm"
 	CHAT_MESSAGE = "chat"
+	COMM_UPDATE  = "comup"
+
+	EVENT_SCHEDULE = "esched"
+	EVENT_NOTIFY   = "enotify"
 )
 
 type Hub struct {
@@ -23,6 +27,7 @@ type Hub struct {
 	UnregisterCh chan *Client
 	BroadcastCh  chan *models.Packet
 	PlayerStates map[string]PlayerState
+	Proximity    *ProximityManager
 }
 
 func NewHub() *Hub {
@@ -32,6 +37,7 @@ func NewHub() *Hub {
 		UnregisterCh: make(chan *Client, 256),
 		BroadcastCh:  make(chan *models.Packet, 256),
 		PlayerStates: make(map[string]PlayerState, 256),
+		Proximity:    NewProximityManager(),
 	}
 }
 
@@ -65,6 +71,7 @@ func (hub *Hub) Run() {
 
 				client.Send <- existingPkt
 				log.Printf("Sent %s's player data to new client: %s", existingPkt.Sender, client.Username)
+				hub.Proximity.Cleanup(client.Username)
 
 			}
 

@@ -52,7 +52,9 @@ export default function CharacterSelector() {
     characters[0],
   );
 
-  useEffect(() => {}, [selectedCharacter]);
+  useEffect(() => {
+    localStorage.setItem("characterSpriteURL", characters[0].url);
+  }, []);
 
   const handleStartPlaying = () => {
     router.push("/game");

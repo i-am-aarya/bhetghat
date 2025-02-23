@@ -5,6 +5,9 @@ import { Player } from "./player/Player";
 import { GameAssets } from "./assets";
 import {
   ChatPayload,
+  CommUpdatePayload,
+  EventNotifyPayload,
+  EventSchedulePayload,
   PlayerEnterPayload,
   PlayerLeavePayload,
   PlayerStatePayload,
@@ -15,6 +18,7 @@ import { LocalPlayer } from "./player/LocalPlayer";
 import { RemotePlayer } from "./player/RemotePlayer";
 import { Boundary } from "./Boundary";
 import { collisions, GetCollisionsMap } from "./collisions";
+import { SpatialAudioManager } from "@/lib/spatialAudio";
 
 export class Game {
   localPlayer: LocalPlayer;
@@ -39,8 +43,9 @@ export class Game {
   // callback functions
   onChatMessage: (message: ChatPayload) => void;
 
-  // TO DRAW COLLISION AREAS
-  // boundaries: Boundary[] = [];
+  onCommUpdate: (commUpdate: CommUpdatePayload) => void;
+
+  onEventNotification: (event: EventNotifyPayload) => void;
 
   constructor(
     localPlayer: LocalPlayer,
@@ -49,19 +54,13 @@ export class Game {
     wsURL: string,
     assets: GameAssets,
     onChatMessage: (message: ChatPayload) => void,
+    onCommUpdate: (commUpdate: CommUpdatePayload) => void,
+    onEventNotification: (event: EventNotifyPayload) => void,
   ) {
-    // TO DRAW COLLISION AREAS
-    // const collisionsMap = GetCollisionsMap();
-    // collisionsMap.forEach((row, i) => {
-    //   row.forEach((symbol, j) => {
-    //     if (symbol !== 0) {
-    //       this.boundaries.push(
-    //         new Boundary(j * Boundary.width, i * Boundary.height),
-    //       );
-    //     }
-    //   });
-    // });
     this.onChatMessage = onChatMessage;
+    this.onCommUpdate = onCommUpdate;
+
+    this.onEventNotification = onEventNotification;
 
     this.assets = assets;
 
@@ -103,12 +102,26 @@ export class Game {
     );
 
     this.gameNetwork.on(WSMessageType.CHAT_MESSAGE, (payload: ChatPayload) => {
-      this.handleChatMessage(payload);
+      this.onChatMessage(payload);
     });
+
+    this.gameNetwork.on(
+      WSMessageType.COMM_UPDATE,
+      (payload: CommUpdatePayload) => {
+        this.onCommUpdate(payload);
+      },
+    );
 
     this.gameNetwork.on(WSMessageType.COMM_REQUEST, (payload: any) => {
       this.handleCommRequest(payload.request);
     });
+
+    this.gameNetwork.on(
+      WSMessageType.EVENT_NOTIFY,
+      (payload: EventNotifyPayload) => {
+        this.onEventNotification(payload);
+      },
+    );
 
     this.gameNetwork.on("WSOPEN", (payload: any) => {
       const playerEnterMsg: WSMessage = {
@@ -178,8 +191,13 @@ export class Game {
       );
   }
 
-  handleChatMessage(payload: ChatPayload) {
-    this.onChatMessage(payload);
+  sendEventSchedule(payload: EventSchedulePayload) {
+    const eventMsg: WSMessage = {
+      t: WSMessageType.EVENT_SCHEDULE,
+      s: this.localPlayer.username,
+      pl: payload,
+    };
+    this.gameNetwork.sendWSMessage(eventMsg);
   }
 
   sendChatMessage(message: string) {
@@ -216,7 +234,9 @@ export class Game {
       this.gameNetwork.sendWSMessage(playerStateMsg);
     }
     this.camera.update();
-    this.remotePlayers.forEach((player) => player.update());
+    this.remotePlayers.forEach((player) => {
+      player.update();
+    });
   }
 
   render() {
@@ -226,16 +246,9 @@ export class Game {
     this.camera.apply(this.ctx);
 
     this.ctx.drawImage(this.gameMapImg, 0, 0);
-    // this.camera.zoomOut();
     this.remotePlayers.forEach((player) => player.draw(this.ctx));
     this.localPlayer.draw(this.ctx);
-    // this.camera.zoomIn();
     this.ctx.drawImage(this.gameMapForegroundImg, 0, 0);
-
-    // TO DRAW COLLISION AREAS
-    // this.boundaries.forEach((boundary) => {
-    //   boundary.draw(this.ctx);
-    // });
   }
 
   gameloop() {

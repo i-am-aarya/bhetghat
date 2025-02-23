@@ -4,8 +4,15 @@ export enum WSMessageType {
   PLAYER_ENTER = "penter",
   PLAYER_LEAVE = "pleave",
   PLAYER_STATE = "pstate",
-  COMM_REQUEST = "comm",
   CHAT_MESSAGE = "chat",
+
+  // communication
+  COMM_REQUEST = "comm",
+  COMM_UPDATE = "comup",
+
+  // event
+  EVENT_SCHEDULE = "esched",
+  EVENT_NOTIFY = "enotify",
 }
 
 export type WSMessage = {
@@ -19,6 +26,9 @@ export type WSMessage = {
     | PlayerStatePayload
     | ChatPayload
     | PlayerLeavePayload
+    | CommUpdatePayload
+    | EventSchedulePayload
+    | EventNotifyPayload
     | null;
 };
 
@@ -59,9 +69,24 @@ export type ChatPayload = {
   m: string;
 };
 
-// export type Payload = PlayerEnterPayload | PositionPayload | ChatPayload
-
 export type PlayerLeavePayload = {
   // sender's username
   s: string;
+};
+
+export type CommUpdatePayload = {
+  nearby: string[];
+  roomHash: string;
+};
+
+export type EventSchedulePayload = {
+  title: string;
+  description: string;
+  delay: number;
+};
+
+export type EventNotifyPayload = {
+  title: string;
+  creator: string;
+  description: string;
 };

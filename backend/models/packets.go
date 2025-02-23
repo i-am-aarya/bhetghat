@@ -32,3 +32,14 @@ type PlayerEnterPayload struct {
 	Direction      string `json:"d"`
 	Frame          int    `json:"f"`
 }
+
+type CommUpdatePayload struct {
+	NearbyUsers []string `json:"nearby"`
+	RoomHash    string   `json:"roomHash"`
+}
+
+type EventSchedulePayload struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Delay       int    `json:"delay"`
+}
