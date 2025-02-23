@@ -16,8 +16,6 @@ interface CallControlsProps {
   toggleMic: () => void;
   cameraOn: boolean;
   toggleCamera: () => void;
-  screenSharingOn: boolean;
-  toggleScreenSharing: () => void;
 
   endCall: () => void;
 
@@ -29,10 +27,8 @@ const CallControls = ({
   inACall,
   micOn,
   cameraOn,
-  screenSharingOn,
   toggleMic,
   toggleCamera,
-  toggleScreenSharing,
   endCall,
 }: CallControlsProps) => {
   return (
@@ -58,17 +54,6 @@ const CallControls = ({
           disabled={!inACall}
         >
           {cameraOn ? <Camera /> : <CameraOff />}
-        </Button>
-
-        {/* screen sharing */}
-        <Button
-          onClick={toggleScreenSharing}
-          size={"icon"}
-          variant={screenSharingOn ? "secondary" : "ghost"}
-          title="Toggle Screen Share"
-          disabled={!inACall}
-        >
-          {screenSharingOn ? <MonitorUp /> : <MonitorOff />}
         </Button>
 
         {/* end call */}

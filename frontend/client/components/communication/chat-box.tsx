@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Loader, Loader2, Send, SendHorizonal } from "lucide-react";
+import {
+  Loader,
+  Loader2,
+  MessageCircle,
+  MessageCircleMore,
+  Send,
+  SendHorizonal,
+} from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
@@ -21,7 +28,7 @@ export interface Message {
 const ChatBox = ({ sendMessage: send, messages }: ChatBoxProps) => {
   const { user } = useAuth();
 
-  const [isVisible, setIsVisible] = useState(false);
+  const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
@@ -35,11 +42,11 @@ const ChatBox = ({ sendMessage: send, messages }: ChatBoxProps) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "c" && !isVisible) {
-        setIsVisible(true);
+      if (e.key === "Enter" && !open) {
+        setOpen(true);
         e.preventDefault();
-      } else if (e.key === "Escape" && isVisible) {
-        setIsVisible(false);
+      } else if (e.key === "Escape" && open) {
+        setOpen(false);
         inputRef.current?.blur();
       }
     };
@@ -47,13 +54,13 @@ const ChatBox = ({ sendMessage: send, messages }: ChatBoxProps) => {
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isVisible]);
+  }, [open]);
 
   useEffect(() => {
-    if (isVisible && inputRef.current) {
+    if (open && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isVisible]);
+  }, [open]);
 
   useEffect(() => {
     scrollToBottom();
@@ -72,11 +79,11 @@ const ChatBox = ({ sendMessage: send, messages }: ChatBoxProps) => {
     setIsSending(false);
   };
 
-  return (
+  return open ? (
     <div
       className={`
       fixed bottom-20 transition-all duration-300 ease-in-out
-      ${isVisible ? "left-4" : "-left-full"}
+      ${open ? "left-4" : "-left-full"}
     `}
     >
       <Card>
@@ -139,6 +146,16 @@ const ChatBox = ({ sendMessage: send, messages }: ChatBoxProps) => {
         </CardFooter>
       </Card>
     </div>
+  ) : (
+    <Button
+      className="py-4 px-4 fixed left-10 bottom-20"
+      onClick={() => {
+        setOpen(!open);
+      }}
+    >
+      <MessageCircleMore className="w-5 h-5" />
+      View Messages
+    </Button>
   );
 };
 

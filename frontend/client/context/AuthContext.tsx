@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/auth/v1/logout`, {
+    await fetch(`${process.env.NEXT_PUBLIC_GAME_SERVER}/auth/v1/logout`, {
       credentials: "include",
     });
     setUser(null);

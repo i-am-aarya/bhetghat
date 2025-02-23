@@ -203,7 +203,7 @@ export const VideoCall2 = ({ game, localplayerUsername }: VideoCall2Props) => {
 
       const transport = clientRef.current.transports?.[0]
       if(!transport) {
-        console.error("No WebRTC transport available");
+        console.log("No WebRTC transport available");
               return;
       }
 

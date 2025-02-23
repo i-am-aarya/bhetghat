@@ -20,7 +20,6 @@ export interface EventSchedulerProps {
 }
 
 const QUICK_DELAYS = [
-  { minutes: 1, label: "1 minutes", description: "Quick reminder" },
   { minutes: 5, label: "5 minutes", description: "Quick reminder" },
   { minutes: 15, label: "15 minutes", description: "Short break" },
   { minutes: 30, label: "30 minutes", description: "Team sync" },
@@ -28,8 +27,7 @@ const QUICK_DELAYS = [
 ];
 
 export const EventScheduler = ({ onSchedule }: EventSchedulerProps) => {
-  const { user } = useAuth();
-  const [isVisible, setIsVisible] = useState(false);
+  const [open, setOpen] = useState(false);
 
   // event
   const [title, setTitle] = useState("");
@@ -37,15 +35,14 @@ export const EventScheduler = ({ onSchedule }: EventSchedulerProps) => {
   const [selectedDelay, setSelectedDelay] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(true);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "e" && !isVisible) {
-        setIsVisible(true);
+      if (e.key === "e" && !open) {
+        setOpen(true);
         e.preventDefault();
-      } else if (e.key === "Escape" && isVisible) {
-        setIsVisible(false);
+      } else if (e.key === "Escape" && open) {
+        setOpen(false);
       }
     };
 
@@ -69,7 +66,7 @@ export const EventScheduler = ({ onSchedule }: EventSchedulerProps) => {
       setDescription("");
       setSelectedDelay(0);
     } catch (error) {
-      console.error("Failed to schedule event:", error);
+      console.log("Failed to schedule event:", error);
     } finally {
       setIsLoading(false);
     }
@@ -90,15 +87,11 @@ export const EventScheduler = ({ onSchedule }: EventSchedulerProps) => {
     ? formatTime(new Date(Date.now() + selectedDelay * 60 * 1000))
     : null;
 
-  return (
+  return open ? (
     <Card
       className={cn(`w-full max-w-2xl
-      fixed bottom-20 right-20 transition-all duration-300 ease-in-out
+      fixed top-20 right-10 transition-all duration-300 ease-in-out
       `)}
-
-      // inset-0 z-50
-      // mx-auto
-      // my-auto
     >
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -195,5 +188,15 @@ export const EventScheduler = ({ onSchedule }: EventSchedulerProps) => {
         </div>
       </CardFooter>
     </Card>
+  ) : (
+    <Button
+      className="py-4 px-4 fixed right-10 top-20"
+      onClick={() => {
+        setOpen(!open);
+      }}
+    >
+      <Calendar className="w-5 h-5" />
+      Schedule Event
+    </Button>
   );
 };

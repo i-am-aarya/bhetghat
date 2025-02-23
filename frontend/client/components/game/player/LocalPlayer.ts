@@ -23,6 +23,7 @@ export class LocalPlayer extends Player {
   }
 
   update(keys: Record<string, boolean>) {
+    // if (this.username !== "godfather") return;
     const now = performance.now();
     this.currentFrameIndex++;
     let moving = false;
@@ -106,21 +107,21 @@ export class LocalPlayer extends Player {
 
     c.save();
 
-    c.setTransform(1, 0, 0, 1, 0, 0);
-    c.lineWidth = 3;
-    c.font = "32px monospace";
-    c.strokeText(
-      `[ ${this.playerX}, ${this.playerY} ]`,
-      c.canvas.width - 500,
-      c.canvas.height - 50,
-    );
-    c.fillText(
-      `[ ${this.playerX}, ${this.playerY} ]`,
-      c.canvas.width - 500,
-      c.canvas.height - 50,
-    );
+    // c.setTransform(1, 0, 0, 1, 0, 0);
+    // c.lineWidth = 3;
+    // c.font = "32px monospace";
+    // c.strokeText(
+    //   `[ ${this.playerX}, ${this.playerY} ]`,
+    //   c.canvas.width - 500,
+    //   c.canvas.height - 50,
+    // );
+    // c.fillText(
+    //   `[ ${this.playerX}, ${this.playerY} ]`,
+    //   c.canvas.width - 500,
+    //   c.canvas.height - 50,
+    // );
 
-    c.restore();
+    // c.restore();
   }
 
   canMoveTo(x: number, y: number): boolean {

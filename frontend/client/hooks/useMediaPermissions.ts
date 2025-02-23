@@ -35,7 +35,7 @@ export const useMediaPermissions = () => {
       return { stream, audioAllowed: true, videoAllowed: true };
     } catch (error) {
       // console.log()
-      console.error("Media access failed:", error);
+      console.log("Media access failed:", error);
       return {
         stream: null,
         audioAllowed: micPermission === "granted",

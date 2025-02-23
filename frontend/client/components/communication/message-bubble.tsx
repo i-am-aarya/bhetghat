@@ -17,7 +17,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
       <div
         className={`rounded-xl px-4 py-2 ${user?.username === message.sender ? "bg-primary text-white" : "bg-gray-500 text-white"}`}
       >
-        <p>{message.content}</p>
+        <p className="flex-wrap">{message.content}</p>
       </div>
     </div>
   );

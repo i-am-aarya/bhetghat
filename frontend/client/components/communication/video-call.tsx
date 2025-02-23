@@ -31,7 +31,8 @@ const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
     useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
 
-  const signaling = process.env.NEXT_PUBLIC_SFU_SERVER_ADDRESS;
+  const signaling = process.env.NEXT_PUBLIC_SFU_WS;
+  console.log("SIGNALING: ", signaling);
 
   const [showRemoteStreams, setShowRemoteStreams] = useState();
 
@@ -84,7 +85,7 @@ const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
 
       setLocalStream(initialStream);
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
 
     signalRef.current = signal;
@@ -133,7 +134,7 @@ const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
         updatedStream.addTrack(newVideoTrack);
         setLocalStream(updatedStream);
       } catch (err) {
-        console.error("ERROR TOGGLING CAMERA: ", err);
+        console.log("ERROR TOGGLING CAMERA: ", err);
         return;
       }
     }
@@ -202,10 +203,8 @@ const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
       <CallControls
         cameraOn={cameraOn}
         micOn={micOn}
-        screenSharingOn={screenSharingOn}
         toggleMic={toggleMic}
         toggleCamera={toggleCamera}
-        toggleScreenSharing={toggleScreenSharing}
         endCall={endCall}
         inACall={inACall}
       />

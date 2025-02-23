@@ -1,40 +1,44 @@
-import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const {email, password} = await req.json()
+  const { email, password } = await req.json();
   try {
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/auth/v1/login`,
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_GAME_SERVER}/auth/v1/login`,
+      // `https://${process.env.NEXT_PUBLIC_GAME_SERVER}/auth/v1/login`,
       {
         method: "POST",
-        headers: {"content-type": "application/json"},
+        headers: { "content-type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({email, password})
-      }
-    )
+        body: JSON.stringify({ email, password }),
+      },
+    );
 
-    if(!response.ok){
-      return NextResponse.json({error: "Invalid Credentials"}, {status: 401})
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: "Invalid Credentials" },
+        { status: 401 },
+      );
     }
 
-    const data = await response.json()
+    const data = await response.json();
 
-    ;(await cookies()).set({
+    (await cookies()).set({
       name: "authToken",
       value: data.authToken,
       httpOnly: true,
-      // secure: 
+      // secure:
       path: "/",
       // sameSite: "strict",
-      expires: new Date(Date.now() + 4 * 60 * 60 * 1000)
-    })
+      expires: new Date(Date.now() + 4 * 60 * 60 * 1000),
+    });
 
-    return NextResponse.json({user: data.user}, {status: 200})
-
-
-  } catch(error) {
-
-    return NextResponse.json({error: "Something Went Wrong!"}, {status: 500})
+    return NextResponse.json({ user: data.user }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Something Went Wrong!" },
+      { status: 500 },
+    );
   }
 }

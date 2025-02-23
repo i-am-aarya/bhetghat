@@ -64,6 +64,14 @@ export class Game {
 
     this.assets = assets;
 
+    if (this.assets.backgroundMusic) {
+      this.assets.backgroundMusic.loop = true;
+      this.assets.backgroundMusic.volume = 0.1;
+      this.assets.backgroundMusic
+        .play()
+        .catch((err) => console.log("music play failed", err));
+    }
+
     this.remotePlayers = new Map<string, RemotePlayer>();
 
     this.ctx = ctx;

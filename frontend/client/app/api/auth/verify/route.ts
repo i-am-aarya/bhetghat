@@ -10,7 +10,8 @@ export async function GET() {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/auth/v1/verify`,
+      `${process.env.NEXT_PUBLIC_GAME_SERVER}/auth/v1/verify`,
+      // `https://${process.env.NEXT_PUBLIC_GAME_SERVER}/auth/v1/verify`,
       {
         headers: {
           cookie: `authToken=${authToken}`,

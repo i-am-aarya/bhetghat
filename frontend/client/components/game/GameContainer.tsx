@@ -65,10 +65,10 @@ const GameContainer = () => {
     ]);
   }, []);
 
-  const handleCommUpdate = useCallback((payload: CommUpdatePayload) => {
+  const handleCommUpdate = (payload: CommUpdatePayload) => {
     setRoomID(payload.roomHash);
     setNearbyUsers(payload.nearby);
-  }, []);
+  };
 
   const sendMessage = useCallback(
     (message: string) => {
@@ -91,11 +91,11 @@ const GameContainer = () => {
         toast({
           title: payload.title,
           description: payload.description,
-          action: <ToastAction altText="OKAYYYYYYY">OKAYYYY</ToastAction>,
+          action: <ToastAction altText="OKAY">OKAY</ToastAction>,
         });
         alert("Event Scheduled!");
       } catch (error) {
-        console.error("error sending event schedule", error);
+        console.log("error sending event schedule", error);
       }
     },
     [],
@@ -106,15 +106,15 @@ const GameContainer = () => {
     toast({
       title: payload.title,
       description: payload.description,
-      action: <ToastAction altText="OKAYYYYY">OK</ToastAction>,
+      action: <ToastAction altText="OKAY">OK</ToastAction>,
     });
 
     alert(
-      `ALERT!!!! REMAINDER!!! EVENT: ${payload.title} ${payload.description}, by ${payload.creator}`,
+      `EVENT: ${payload.title}\n\n${payload.description}\n\n\n\nOrganizer: ${payload.creator}`,
     );
   };
 
-  const WSURL = process.env.NEXT_PUBLIC_WS_URL;
+  const WSURL = process.env.NEXT_PUBLIC_GAME_WS;
   useEffect(() => {
     console.log("loading...");
 
@@ -146,8 +146,10 @@ const GameContainer = () => {
     if (!ctx) return;
     ctx.imageSmoothingEnabled = false;
 
-    if (!WSURL) return;
-    if (!user) return;
+    if (!WSURL) {
+      alert("wsurl not found");
+      return;
+    }
 
     const initGame = async () => {
       try {
@@ -188,10 +190,6 @@ const GameContainer = () => {
 
     initGame();
   }, [assets, user]);
-
-  useEffect(() => {}, []);
-
-  // const sendMessage = () => {};
 
   return (
     <div>
