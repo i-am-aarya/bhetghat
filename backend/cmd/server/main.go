@@ -6,18 +6,18 @@ import (
 	"log"
 	"time"
 
+	"github.com/redis/go-redis/v9"
+
 	db "bhetghat-server/database"
 	"bhetghat-server/hub"
 	"bhetghat-server/server"
-
-	"github.com/redis/go-redis/v9"
 )
 
 func main() {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancelFunc()
 
-	//redis
+	// redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",
@@ -27,7 +27,7 @@ func main() {
 	if err := rdb.Ping(context.Background()).Err(); err != nil {
 		log.Fatal("Redis connection failed:", err)
 	}
-	log.Printf("Connected to Redis\n")
+	// log.Printf("Connected to Redis\n")
 
 	err := db.ConnectDB(ctx)
 	if err != nil {

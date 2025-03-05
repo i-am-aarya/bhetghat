@@ -32,7 +32,7 @@ const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
   const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
 
   const signaling = process.env.NEXT_PUBLIC_SFU_WS;
-  console.log("SIGNALING: ", signaling);
+  // console.log("SIGNALING: ", signaling);
 
   const [showRemoteStreams, setShowRemoteStreams] = useState();
 
