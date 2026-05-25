@@ -1,15 +1,12 @@
 package hub
 
 import (
-	"context"
 	"crypto/sha256"
 	"fmt"
 	"sort"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/redis/go-redis/v9"
 )
 
 type Room struct {
@@ -20,9 +17,8 @@ type Room struct {
 }
 
 type RoomManager struct {
-	Rooms       map[string]*Room
-	RedisClient *redis.Client
-	mutex       sync.RWMutex
+	Rooms map[string]*Room
+	mutex sync.RWMutex
 }
 
 func (rm *RoomManager) CreateRoom(members []string) string {
@@ -49,8 +45,6 @@ func (rm *RoomManager) CreateRoom(members []string) string {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	rm.RedisClient.Set(context.Background(), "room:"+roomID, strings.Join(members, ", "), 1*time.Hour)
-
 	return roomID
 }
 
@@ -62,7 +56,6 @@ func (rm *RoomManager) CleanupExpiredRooms() {
 		for id, room := range rm.Rooms {
 			if time.Now().After(room.ExpiresAt) {
 				delete(rm.Rooms, id)
-				rm.RedisClient.Del(context.Background(), "room:"+id)
 			}
 		}
 		rm.mutex.Unlock()

@@ -55,13 +55,19 @@ func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {
 		Path:     "/",
 		HTTPOnly: true,
 		Expires:  time.Now().Add(4 * time.Hour),
-		SameSite: "Strict",
+		SameSite: "Lax",
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"user":      user,
 		"authToken": token,
 	})
+}
+
+func (h *UserHandler) RefreshHandler(c *fiber.Ctx) error {
+	// refreshToken := c.Cookies
+
+	return nil
 }
 
 func (h *UserHandler) VerificationHandler(c *fiber.Ctx) error {

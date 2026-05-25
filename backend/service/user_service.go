@@ -108,12 +108,12 @@ func (s *UserService) CreateTokenFromUser(user *models.User) string {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	SECRET_KEY, exists := os.LookupEnv("JWT_SECRET")
+	jwtSecret, exists := os.LookupEnv("JWT_SECRET")
 	if !exists {
 		log.Fatal("JWT SECRET KEY NOT FOUND")
 	}
 
-	tokenString, err := token.SignedString([]byte(SECRET_KEY))
+	tokenString, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
 		return ""
 	}
