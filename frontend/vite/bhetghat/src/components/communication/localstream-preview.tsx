@@ -1,4 +1,3 @@
-import { Camera, Monitor, MonitorUp } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 interface LocalStreamPreviewProps {
@@ -13,6 +12,8 @@ export default function LocalStreamPreview({
   const screenShareVideoRef = useRef<HTMLVideoElement | null>(null);
   useEffect(() => {
     if (cameraFeedVideoRef.current && cameraFeed) {
+      console.log("camera active");
+
       cameraFeedVideoRef.current.srcObject = cameraFeed;
     }
 

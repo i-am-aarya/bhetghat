@@ -1,9 +1,7 @@
 import { Camera } from "./Camera";
-import { GameMap } from "./GameMap";
 import { GameNetwork } from "./GameNetwork";
-import { Player } from "./player/Player";
-import { GameAssets } from "./assets";
-import {
+import type { GameAssets } from "./assets";
+import type {
   ChatPayload,
   CommUpdatePayload,
   EventNotifyPayload,
@@ -12,13 +10,10 @@ import {
   PlayerLeavePayload,
   PlayerStatePayload,
   WSMessage,
-  WSMessageType,
 } from "./packet";
+import { WSMessageType } from "./packet";
 import { LocalPlayer } from "./player/LocalPlayer";
 import { RemotePlayer } from "./player/RemotePlayer";
-import { Boundary } from "./Boundary";
-import { collisions, GetCollisionsMap } from "./collisions";
-import { SpatialAudioManager } from "@/lib/spatialAudio";
 
 export class Game {
   localPlayer: LocalPlayer;
@@ -46,6 +41,11 @@ export class Game {
   onCommUpdate: (commUpdate: CommUpdatePayload) => void;
 
   onEventNotification: (event: EventNotifyPayload) => void;
+
+  // fps count
+  private fpsFrames = 0;
+  private fpsLastTime = performance.now();
+  private fps = 0;
 
   constructor(
     localPlayer: LocalPlayer,
@@ -131,7 +131,7 @@ export class Game {
       },
     );
 
-    this.gameNetwork.on("WSOPEN", (payload: any) => {
+    this.gameNetwork.on("WSOPEN", () => {
       const playerEnterMsg: WSMessage = {
         t: WSMessageType.PLAYER_ENTER,
         s: this.localPlayer.username,
@@ -249,17 +249,34 @@ export class Game {
 
   render() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
     this.ctx.save();
-    this.camera.update();
+
     this.camera.apply(this.ctx);
 
     this.ctx.drawImage(this.gameMapImg, 0, 0);
     this.remotePlayers.forEach((player) => player.draw(this.ctx));
+
     this.localPlayer.draw(this.ctx);
     this.ctx.drawImage(this.gameMapForegroundImg, 0, 0);
+
+    this.ctx.restore();
+    // fps
+    this.ctx.fillStyle = "yellow";
+    this.ctx.font = "20px monospace";
+    this.ctx.fillText(`FPS: ${this.fps}`, 20, 70);
   }
 
   gameloop() {
+    // fps
+    this.fpsFrames++;
+    const now = performance.now();
+    if (now - this.fpsLastTime >= 1000) {
+      this.fps = this.fpsFrames;
+      this.fpsFrames = 0;
+      this.fpsLastTime = now;
+    }
+
     this.update();
     this.render();
 

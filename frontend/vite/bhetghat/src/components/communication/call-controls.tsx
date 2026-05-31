@@ -1,13 +1,4 @@
-import React from "react";
-import {
-  Camera,
-  CameraOff,
-  Mic,
-  MicOff,
-  MonitorOff,
-  MonitorUp,
-  PhoneOff,
-} from "lucide-react";
+import { Camera, CameraOff, Mic, MicOff, PhoneOff } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface CallControlsProps {
@@ -34,7 +25,7 @@ const CallControls = ({
   return (
     inACall && (
       <div
-        className={`fixed bottom-0 flex justify-center gap-8 bg-black bg-opacity-50 w-screen p-4 ${className}`}
+        className={`fixed bottom-0 flex justify-center gap-8 bg-black/50 w-screen p-4 ${className}`}
       >
         {/* mic */}
         <Button

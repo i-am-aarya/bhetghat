@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SpriteAnimation from "../../components/character-selection/sprite-animation";
+import SpriteAnimation from "@/components/character-selection/sprite-animation";
 
 export interface Character {
   id: number;

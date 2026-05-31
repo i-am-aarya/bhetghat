@@ -1,7 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import internal from "stream";
-import { Character } from "./character-selector";
+import type { Character } from "@/pages/character/CharacterSelectionPage";
+import { useEffect, useRef } from "react";
 
 export interface SpriteAnimationProps {
   spriteSheet: string;

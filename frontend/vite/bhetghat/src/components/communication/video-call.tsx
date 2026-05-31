@@ -1,10 +1,10 @@
-import LocalStreamPreview from "@/components/localstream-preview";
 import { Client, LocalStream } from "ion-sdk-js";
 import { IonSFUJSONRPCSignal } from "ion-sdk-js/lib/signal/json-rpc-impl";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StreamsView from "./streams-view";
 import CallControls from "./call-controls";
-import TopBar from "../top-bar";
+// import useAuth from "@/hooks/useAuth";
+import LocalStreamPreview from "./localstream-preview";
 import useAuth from "@/hooks/useAuth";
 
 interface VideoCallProps {
@@ -13,11 +13,12 @@ interface VideoCallProps {
 }
 
 const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
+  // just to shut the compiler up
+  console.log("NEARBY USERS: ", nearbyUsers);
   const { user } = useAuth();
 
   const [micOn, setMicOn] = useState<boolean>(true);
   const [cameraOn, setCameraOn] = useState<boolean>(true);
-  const [screenSharingOn, setScreenSharingOn] = useState(false);
 
   const [inACall, setInACall] = useState(false);
 
@@ -28,68 +29,88 @@ const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
   const [screenShareStream, setScreenShareStream] =
     useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
+  const streamsRef = useRef(new Map());
 
   const signaling = import.meta.env.VITE_SFU_WS;
 
-  const [showRemoteStreams, setShowRemoteStreams] = useState();
-
-  useEffect(() => {
-    if (roomID.length == 0) {
-      endCall();
-    } else {
-      startCall();
-    }
-    console.log("endcall wala useEffect called. k ree");
-  }, [roomID]);
-
-  const startCall = async () => {
-    if (!signaling) return;
-    if (!user) return;
+  const startCall = async (room: string) => {
+    console.log("inside startCall");
+    if (!signaling || !user) return;
 
     const signal = new IonSFUJSONRPCSignal(signaling);
-    signal.onopen = () => {
-      alert("connected to signaling server");
-    };
+
     const client = new Client(signal, {
       codec: "vp8",
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
 
-    signal.onopen = () => {
-      console.log("websocket connection established");
-      client.join(roomID, user.username);
+    signal.onopen = async () => {
+      console.log("signaling server websocket connection established");
+      console.log("awaiting client.join!");
+      await client.join(room, user.username);
+      console.log("joined room!");
+
+      try {
+        const initialStream = await LocalStream.getUserMedia({
+          codec: "vp8",
+          resolution: "fhd",
+          audio: micOn,
+          video: cameraOn,
+        });
+        client.publish(initialStream);
+        setLocalStream(initialStream);
+        console.log("call started!");
+
+        setInACall(true);
+      } catch (err) {
+        console.error("could not set local stream:", err);
+      }
+
+      signalRef.current = signal;
+      clientRef.current = client;
     };
 
     signal.onerror = (error) => {
-      console.log("websocket error: ", error);
+      console.error("signaling websocket error: ", error);
     };
 
     client.ontrack = (track, stream) => {
-      console.log("TRACK RECEIVED: ", track);
-      if (track.kind === "video") {
+      console.log("track received");
+      if (!streamsRef.current.has(stream.id)) {
+        streamsRef.current.set(stream.id, stream);
+        console.log("new stream added!");
         setRemoteStreams((prev) => [...prev, stream]);
       }
+
+      track.onended = () => {
+        console.log("track ended: ", track.kind);
+      };
     };
-
-    try {
-      const initialStream = await LocalStream.getUserMedia({
-        codec: "vp8",
-        resolution: "fhd",
-        audio: micOn,
-        video: cameraOn,
-      });
-      client.publish(initialStream);
-
-      setLocalStream(initialStream);
-    } catch (err) {
-      console.log(err);
-    }
-
-    signalRef.current = signal;
-    clientRef.current = client;
-
-    setInACall(true);
   };
+
+  const endCall = () => {
+    if (clientRef.current) {
+      clientRef.current.close();
+    }
+    if (signalRef.current) {
+      signalRef.current.close();
+    }
+    localStream?.getTracks().forEach((track) => track.stop());
+    screenShareStream?.getTracks().forEach((track) => track.stop());
+    setInACall(false);
+    setLocalStream(null);
+    setScreenShareStream(null);
+    setRemoteStreams([]);
+  };
+
+  useEffect(() => {
+    console.log("roomID changed: ", roomID);
+    if (roomID.length == 0) {
+      endCall();
+    } else {
+      startCall(roomID);
+    }
+  }, [roomID]);
 
   const toggleCamera = async () => {
     if (!localStream || !clientRef.current) return;
@@ -140,54 +161,40 @@ const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
   };
 
   const toggleMic = async () => {
-    if (!localStream || !clientRef.current) return;
+    if (!localStream) {
+      console.log("!localStream");
+      return;
+    }
+    if (!clientRef.current) {
+      console.log("!clientRef");
+      return;
+    }
     localStream
       .getAudioTracks()
       .forEach((track) => (track.enabled = !track.enabled));
     setMicOn(!micOn);
   };
 
-  const toggleScreenSharing = async () => {
-    // toggle screen sharing
-    setScreenSharingOn(!screenSharingOn);
-  };
+  useEffect(() => {
+    console.log("remote streams count: ", remoteStreams.length);
+  }, [remoteStreams]);
 
-  const endCall = () => {
-    if (clientRef.current) {
-      clientRef.current.close();
-    }
-    if (signalRef.current) {
-      signalRef.current.close();
-    }
-    localStream?.getTracks().forEach((track) => track.stop());
-    screenShareStream?.getTracks().forEach((track) => track.stop());
-    setInACall(false);
-    setLocalStream(null);
-    setScreenShareStream(null);
-    setRemoteStreams([]);
-  };
-
-  const startPreview = async () => {
-    const initialStream = await LocalStream.getUserMedia({
-      codec: "vp8",
-      resolution: "fhd",
-      audio: false,
-      video: true,
-    });
-    setLocalStream(initialStream);
-  };
+  useEffect(() => {
+    console.log("IN A CALL: ", inACall);
+  }, [inACall]);
 
   return (
     <div className="relative">
-      <TopBar
+      {/*<TopBar
         startCall={startCall}
         username={user?.username || "N/A"}
         roomID={roomID}
         startPreview={startPreview}
-      />
+      />*/}
 
       <div className="absolute top-56 left-1/2 -translate-x-1/2 flex justify-center">
         <StreamsView streams={remoteStreams} />
+        {/*{remoteStreams.length > 0 && <StreamsView streams={remoteStreams} />}*/}
       </div>
 
       <div className="">

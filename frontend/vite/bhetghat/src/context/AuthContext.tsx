@@ -103,11 +103,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           withCredentials: true,
         },
       );
+      console.log("login successful1");
       setUser(response.data.user);
-      navigate("/character");
+      console.log("login successful2");
+      setUser(response.data.user);
+      console.log("login successful3");
       localStorage.setItem("authToken", response.data.authToken);
+
+      console.log("token set successfully");
+      const tok = localStorage.getItem("authToken");
+      console.log("token got successfully: ", tok);
+
+      console.log("login successful4");
+      navigate("/character");
+      console.log("login successful5");
     } catch (error) {
-      console.error(error);
+      console.error("ERROR Logging in:", error);
     } finally {
       setLoading(false);
     }

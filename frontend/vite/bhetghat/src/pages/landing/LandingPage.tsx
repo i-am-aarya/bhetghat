@@ -3,7 +3,7 @@
 // import { useRouter } from "next/navigation";
 import { MessageSquare, Users, Video, Volume2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 function LandingPage() {

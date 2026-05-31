@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardDescription, CardFooter, CardHeader } from "../ui/card";
 import SpriteAnimation from "./sprite-animation";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";

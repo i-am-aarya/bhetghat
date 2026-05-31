@@ -131,7 +131,7 @@ const Login = () => {
 
         <p className="flex justify-center gap-2 items-center text-center text-sm text-gray-600">
           New User?{" "}
-          <Link to="/register" className="text-[#d91656] hover:underline">
+          <Link to="/signup" className="text-[#d91656] hover:underline">
             Sign Up Here
           </Link>
         </p>

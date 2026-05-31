@@ -1,25 +1,30 @@
-"use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Game } from "./Game";
 import { Player } from "./player/Player";
 import { Camera } from "./Camera";
 import LoadingScreen from "../loading-screen";
 import { Progress } from "../ui/progress";
-import { GameAssets, loadAssets } from "./assets";
-import useAuth from "@/hooks/useAuth";
+import type { GameAssets } from "./assets";
+import { loadAssets } from "./assets";
+// import useAuth from "@/hooks/useAuth";
 import { LocalPlayer } from "./player/LocalPlayer";
-import ChatBox, { Message } from "../communication/chat-box";
-import VideoCall from "../communication/old-video-call";
-import {
+import ChatBox from "../communication/chat-box";
+import type { Message } from "../communication/chat-box";
+
+import type {
   ChatPayload,
   CommUpdatePayload,
   EventNotifyPayload,
   EventSchedulePayload,
 } from "./packet";
-import { useMediaPermissions } from "@/hooks/useMediaPermissions";
-import { useToast } from "@/hooks/use-toast";
+// import { useMediaPermissions } from "@/hooks/useMediaPermissions";
+// import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
 import { EventScheduler } from "../communication/event-scheduler";
+import VideoCall from "../communication/video-call";
+import useAuth from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { useMediaPermissions } from "@/hooks/useMediaPermissions";
 
 const GameContainer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -98,7 +103,7 @@ const GameContainer = () => {
         console.log("error sending event schedule", error);
       }
     },
-    [],
+    [toast],
   );
 
   const handleEventNotification = (payload: EventNotifyPayload) => {
@@ -145,6 +150,7 @@ const GameContainer = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.imageSmoothingEnabled = false;
+    if (!user) return;
 
     if (!WSURL) {
       alert("wsurl not found");
@@ -214,7 +220,7 @@ const GameContainer = () => {
           <Progress value={progress} />
         </div>
       </LoadingScreen>
-      {/*<VideoCall roomID={roomID} nearbyUsers={nearbyUsers} />*/}
+      <VideoCall roomID={roomID} nearbyUsers={nearbyUsers} />
     </div>
   );
 };

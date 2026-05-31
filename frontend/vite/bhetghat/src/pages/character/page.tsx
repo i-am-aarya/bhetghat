@@ -1,7 +1,6 @@
 import CharacterSelector from "@/components/character-selection/character-selector";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import React from "react";
 
 const RoomsPage = () => {
   const rooms: RoomCardProps[] = [
@@ -20,18 +19,18 @@ const RoomsPage = () => {
         <CharacterSelector />
       </div>
 
-      {/* <div className="flex justify-between">
+      <div className="flex justify-between">
         <p className="text-5xl font-bold">Rooms</p>
         <Button size={"icon"}>
           <Plus />
         </Button>
       </div>
- */}
-      {/* <div className="flex gap-3">
+
+      <div className="flex gap-3">
         {rooms.map((props, i) => (
           <RoomCard name={props.name} key={i} />
         ))}
-      </div> */}
+      </div>
     </div>
   );
 };

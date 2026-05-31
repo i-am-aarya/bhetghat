@@ -8,8 +8,6 @@ import {
 
 const TILE_SIZE = 32;
 
-const TRIGGER_RADIUS = TILE_SIZE * 6;
-
 export class LocalPlayer extends Player {
   lastNetworkUpdate: number = 0;
   collisionsMap: number[][];
@@ -104,24 +102,6 @@ export class LocalPlayer extends Player {
 
   draw(c: CanvasRenderingContext2D) {
     super.draw(c, this.playerX, this.playerY);
-
-    c.save();
-
-    // c.setTransform(1, 0, 0, 1, 0, 0);
-    // c.lineWidth = 3;
-    // c.font = "32px monospace";
-    // c.strokeText(
-    //   `[ ${this.playerX}, ${this.playerY} ]`,
-    //   c.canvas.width - 500,
-    //   c.canvas.height - 50,
-    // );
-    // c.fillText(
-    //   `[ ${this.playerX}, ${this.playerY} ]`,
-    //   c.canvas.width - 500,
-    //   c.canvas.height - 50,
-    // );
-
-    // c.restore();
   }
 
   canMoveTo(x: number, y: number): boolean {

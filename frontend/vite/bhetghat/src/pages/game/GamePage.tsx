@@ -1,5 +1,4 @@
-import React from "react";
-import GameContainer from "../../components/game/GameContainer";
+import GameContainer from "@/components/game/GameContainer";
 
 const GamePage = () => {
   return (

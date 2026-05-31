@@ -1,12 +1,13 @@
-import { Fullscreen, Maximize, Maximize2, Minimize2, User } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import { Button } from "../ui/button";
+import { useEffect, useRef, useState } from "react";
 
 interface StreamsViewProps {
   streams: MediaStream[];
 }
 
 const StreamsView = ({ streams }: StreamsViewProps) => {
+  useEffect(() => {
+    console.log("streams view is here");
+  }, []);
   return (
     <div>
       {streams.length > 0 && (
@@ -27,25 +28,18 @@ interface VideoElementProps {
 }
 const VideoElement = ({ stream }: VideoElementProps) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const [videoEnabled, setVideoEnabled] = useState(true);
 
   const [isSpeaking, setIsSpeaking] = useState(false);
-
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  const [largeViewEnabled, setLargeViewEnabled] = useState(false);
 
   useEffect(() => {
     if (videoRef.current && stream) {
       videoRef.current.srcObject = stream;
     }
-    if (audioRef.current && stream) {
-      audioRef.current.srcObject = stream;
-    }
+    // if (audioRef.current && stream) {
+    //   audioRef.current.srcObject = stream;
+    // }
 
-    const videoTrack = stream?.getVideoTracks()[0];
+    // const videoTrack = stream?.getVideoTracks()[0];
 
     // videoTrack?.addEventListener("mute", () => {
     //   console.log("video muted")
@@ -74,6 +68,9 @@ const VideoElement = ({ stream }: VideoElementProps) => {
         requestAnimationFrame(checkVolume);
       };
       checkVolume();
+      return () => {
+        audioContext.close();
+      };
     }
 
     return () => {
@@ -81,43 +78,19 @@ const VideoElement = ({ stream }: VideoElementProps) => {
     };
   }, [stream]);
 
-  const toggleFullscreen = () => {
-    if (videoRef.current) {
-      if (!isFullscreen) {
-        if (videoRef.current.requestFullscreen) {
-          videoRef.current.requestFullscreen();
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-      setIsFullscreen(!isFullscreen);
-    }
-  };
-
-  const toggleLargeView = () => {};
-
   return (
     <div className="flex w-72 h-40 justify-center items-center hover:cursor-pointer rounded-lg relative">
-      <audio className="hidden" ref={audioRef} autoPlay></audio>
-
       <div
-        className={`w-full h-full transition-all duration-500 rounded-lg ${isSpeaking ? "outline outline-4 outline-blue-300" : "outline-none"}`}
+        className={`w-full h-full transition-all duration-500 rounded-lg ${isSpeaking ? "outline outline-blue-300" : "outline-none"}`}
       >
-        {videoEnabled ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            className={`rounded-lg bg-black w-full h-full object-cover`}
-          ></video>
-        ) : (
-          <User size={100} />
-        )}
+        <video
+          ref={videoRef}
+          autoPlay
+          className={`rounded-lg bg-black w-full h-full object-cover`}
+        ></video>
       </div>
 
-      <div className="w-full h-full rounded-lg absolute opacity-0 bg-opacity-0 hover:bg-opacity-40 hover:opacity-100 bg-black flex justify-center items-center gap-4 transition-all duration-200">
+      {/*<div className="w-full h-full rounded-lg absolute opacity-0 bg-opacity-0 hover:bg-opacity-40 hover:opacity-100 bg-black flex justify-center items-center gap-4 transition-all duration-200">
         <Button size={"icon"} onClick={toggleLargeView}>
           {largeViewEnabled ? <Minimize2 /> : <Maximize2 />}
         </Button>
@@ -125,7 +98,7 @@ const VideoElement = ({ stream }: VideoElementProps) => {
         <Button size={"icon"} onClick={toggleFullscreen} className="text-white">
           <Maximize />
         </Button>
-      </div>
+      </div>*/}
     </div>
   );
 };

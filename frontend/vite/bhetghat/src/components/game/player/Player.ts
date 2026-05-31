@@ -1,24 +1,26 @@
-import { GameAssets } from "../assets";
-import { GetCollisionsMap } from "../collisions";
+import type { GameAssets } from "../assets";
 
-export enum Direction {
-  UP = "up",
-  DOWN = "dn",
-  LEFT = "lf",
-  RIGHT = "rt",
-}
+export const Direction = {
+  UP: "up",
+  DOWN: "dn",
+  LEFT: "lf",
+  RIGHT: "rt",
+} as const;
+export type Direction = (typeof Direction)[keyof typeof Direction];
 
-export enum AnimationState {
-  IDLE = "i",
-  IDLE_UP = "iu",
-  IDLE_DOWN = "id",
-  IDLE_LEFT = "il",
-  IDLE_RIGHT = "ir",
-  WALK_UP = "wu",
-  WALK_DOWN = "wd",
-  WALK_LEFT = "wl",
-  WALK_RIGHT = "wr",
-}
+export const AnimationState = {
+  IDLE: "i",
+  IDLE_UP: "iu",
+  IDLE_DOWN: "id",
+  IDLE_LEFT: "il",
+  IDLE_RIGHT: "ir",
+  WALK_UP: "wu",
+  WALK_DOWN: "wd",
+  WALK_LEFT: "wl",
+  WALK_RIGHT: "wr",
+} as const;
+export type AnimationState =
+  (typeof AnimationState)[keyof typeof AnimationState];
 
 export type Animation = {
   row: number;
@@ -124,7 +126,7 @@ export abstract class Player {
     const destY = y;
 
     // c.font = "16px Arial";
-    c.font = "10px Arial";
+    c.font = "11px monospace";
     c.textAlign = "center";
     c.fillStyle = "white";
     c.strokeStyle = "black";

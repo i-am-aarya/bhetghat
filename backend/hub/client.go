@@ -57,6 +57,7 @@ func (c *Client) ReadPump() {
 			c.Hub.Proximity.UpdatePosition(c.Username, state.X, state.Y)
 
 			nearby := c.Hub.Proximity.GetNearbyPlayers(c.Username)
+			log.Println("Getting Nearby players: ", nearby)
 
 			roomHash := c.Hub.Proximity.GetRoomHash(c.Username)
 
@@ -127,8 +128,9 @@ func (c *Client) ReadPump() {
 
 		default:
 			log.Printf("unknown packet type from client %s: %s", c.Username, pkt.Type)
+			log.Printf("UNKNOWN PACKET: %v\n", pkt)
 			// c.Hub.UnregisterCh <- c
-			// c.Conn.Close()
+			// c.Conn.Cl
 			return
 		}
 
@@ -140,24 +142,25 @@ func (c *Client) ReadPump() {
 func (c *Client) WritePump() {
 	defer c.Conn.Close()
 	for {
-		select {
-		case message, ok := <-c.Send:
-			if !ok {
-				if err := c.Conn.Close(); err != nil {
-					log.Printf("error closing connection %s", err)
-				}
-				return
+		// fmt.Println("WRITE PUMP PUMPING")
+		// select {
+		message, ok := <-c.Send
+		if !ok {
+			if err := c.Conn.Close(); err != nil {
+				log.Printf("error closing connection %s", err)
 			}
-			if message.Sender == c.Username {
-				continue
-			}
-			if err := c.Conn.WriteJSON(message); err != nil {
-				log.Printf("Error writing JSON to client %s: %v", c.Username, err)
-				return
-			}
-			// log.Printf("message from %s written to %s", message.Sender, c.PlayerState.Username)
-
+			return
 		}
+		if message.Sender == c.Username {
+			continue
+		}
+		if err := c.Conn.WriteJSON(message); err != nil {
+			log.Printf("Error writing JSON to client %s: %v", c.Username, err)
+			return
+		}
+		// log.Printf("message from %s written to %s", message.Sender, c.PlayerState.Username)
+
+		// }
 	}
 
 }

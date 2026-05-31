@@ -1,19 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Loader,
-  Loader2,
-  MessageCircle,
-  MessageCircleMore,
-  Send,
-  SendHorizonal,
-} from "lucide-react";
-import useAuth from "@/hooks/useAuth";
+import { Loader2, MessageCircleMore, SendHorizonal } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import EmojiPicker from "./emoji-picker";
 import MessageBubble from "./message-bubble";
+import useAuth from "@/hooks/useAuth";
+// import useAuth from "../../hooks/useAuth";
 
 interface ChatBoxProps {
   sendMessage: (message: string) => void;
@@ -33,7 +27,6 @@ const ChatBox = ({ sendMessage: send, messages }: ChatBoxProps) => {
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   // const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessages, setNewMessages] = useState(0);
   const [inputMessage, setInputMessage] = useState("");
 
   const [isSending, setIsSending] = useState(false);

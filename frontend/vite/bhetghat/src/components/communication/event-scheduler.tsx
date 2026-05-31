@@ -1,5 +1,4 @@
-import useAuth from "@/hooks/useAuth";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,12 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { cn } from "@/lib/utils";
-import { EventSchedulePayload } from "../game/packet";
-import { Calendar, Clock, Loader2, Plus, Sparkles, Timer } from "lucide-react";
+// import { cn } from "@/lib/utils";
+import type { EventSchedulePayload } from "../game/packet";
+import { Calendar, Clock, Loader2, Timer } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+// import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 export interface EventSchedulerProps {
   onSchedule: (event: EventSchedulePayload) => void;

@@ -1,5 +1,6 @@
+// import useAuth from "@/hooks/useAuth";
 import useAuth from "@/hooks/useAuth";
-import { Message } from "./chat-box";
+import type { Message } from "./chat-box";
 
 export interface MessageBubbleProps {
   message: Message;

@@ -9,6 +9,9 @@ export default function EmojiPicker({
 }) {
   const [open, setOpen] = useState(false);
 
+  const doNothing = () => {
+    onSelect("emoji doesn't work");
+  };
   return (
     <div className="relative">
       <Button onClick={() => setOpen(!open)} variant={"ghost"} type="button">
@@ -16,17 +19,11 @@ export default function EmojiPicker({
       </Button>
 
       {open && (
-        <div className="absolute bottom-10 -right-40 border shadow rounded-xl">
+        <div
+          className="absolute bottom-10 -right-40 border shadow rounded-xl"
+          onClick={doNothing}
+        >
           EMOJI PICKER
-          {/*<Picker
-            theme="light"
-            data={data}
-            onEmojiSelect={(emoji: any) => {
-              onSelect(emoji.native);
-            }}
-            // previewPosition="none"
-            // searchPosition="none"
-          />*/}
         </div>
       )}
     </div>

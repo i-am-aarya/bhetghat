@@ -1,19 +1,21 @@
 import { AnimationState, Direction } from "./player/Player";
 
-export enum WSMessageType {
-  PLAYER_ENTER = "penter",
-  PLAYER_LEAVE = "pleave",
-  PLAYER_STATE = "pstate",
-  CHAT_MESSAGE = "chat",
+export const WSMessageType = {
+  PLAYER_ENTER: "penter",
+  PLAYER_LEAVE: "pleave",
+  PLAYER_STATE: "pstate",
+  CHAT_MESSAGE: "chat",
 
   // communication
-  COMM_REQUEST = "comm",
-  COMM_UPDATE = "comup",
+  COMM_REQUEST: "comm",
+  COMM_UPDATE: "comup",
 
   // event
-  EVENT_SCHEDULE = "esched",
-  EVENT_NOTIFY = "enotify",
-}
+  EVENT_SCHEDULE: "esched",
+  EVENT_NOTIFY: "enotify",
+} as const;
+
+export type WSMessageType = (typeof WSMessageType)[keyof typeof WSMessageType];
 
 export type WSMessage = {
   // type

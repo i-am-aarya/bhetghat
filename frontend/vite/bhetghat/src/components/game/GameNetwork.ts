@@ -1,5 +1,6 @@
 import { EventEmitter } from "./EventEmitter";
-import { WSMessage, WSMessageType } from "./packet";
+import type { WSMessage } from "./packet";
+import { WSMessageType } from "./packet";
 
 export class GameNetwork extends EventEmitter {
   ws: WebSocket;
@@ -76,7 +77,7 @@ export class GameNetwork extends EventEmitter {
       if (this.ws.readyState === WebSocket.OPEN) {
         this.ws.send(JSON.stringify(msg));
       } else {
-        console.log("websocket not open");
+        console.log("websocket not open: ");
       }
     } catch (error) {
       console.log("error sending message from WS: ", error);

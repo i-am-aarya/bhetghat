@@ -47,6 +47,8 @@ func (hub *Hub) Run() {
 		case client := <-hub.RegisterCh:
 
 			for username, state := range hub.PlayerStates {
+				fmt.Printf("username: %s\t state: %v\n", username, state)
+				fmt.Println(hub.PlayerStates)
 
 				if username == client.Username {
 					continue
@@ -71,7 +73,7 @@ func (hub *Hub) Run() {
 
 				client.Send <- existingPkt
 				log.Printf("Sent %s's player data to new client: %s", existingPkt.Sender, client.Username)
-				hub.Proximity.Cleanup(client.Username)
+				// hub.Proximity.Cleanup(client.Username)
 
 			}
 
@@ -101,6 +103,10 @@ func (hub *Hub) Run() {
 					Payload: json.RawMessage(fmt.Sprintf(`{"s":"%s"}`, client.Username)),
 				}
 				hub.BroadcastCh <- pkt
+
+				fmt.Println("CURRENT PLAYERS: ", hub.Clients)
+				delete(hub.PlayerStates, client.Username)
+				hub.Proximity.Cleanup(client.Username)
 
 			}
 

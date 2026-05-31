@@ -9,6 +9,8 @@ import (
 	db "bhetghat-server/database"
 	"bhetghat-server/hub"
 	"bhetghat-server/server"
+	"net/http"
+	_ "net/http/pprof"
 )
 
 func main() {
@@ -37,6 +39,11 @@ func main() {
 	go globalHub.Run()
 
 	server := server.NewServer()
+
+	// In main():
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 
 	log.Fatal(server.App.Listen(":8000"))
 }

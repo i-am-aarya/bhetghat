@@ -24,7 +24,7 @@ func NewServer() *Server {
 
 	// CORS
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:5173",
+		AllowOrigins:     "http://192.168.101.11:5173, http://192.168.101.8:5173, https://e4a6-2404-7c00-49-2014-8196-bdb9-21ce-ba82.ngrok-free.app, http://localhost:5173, http://localhost:4173",
 		AllowHeaders:     "Origin, Content-Type, Accpet, Authorization",
 		AllowCredentials: true,
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",

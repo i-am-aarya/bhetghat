@@ -1,4 +1,4 @@
 /* member */
-interface Member {
+export interface Member {
   name: string;
 }
