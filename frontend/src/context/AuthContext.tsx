@@ -63,28 +63,48 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     password: string,
     confirmPassword: string,
   ) => {
-    const response = await fetch("/auth/v1/register", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        firstname,
-        lastname,
-        username,
-        email,
-        password,
-        confirmPassword,
-      }),
-    });
+    // const response = await fetch("/auth/v1/register", {
+    //   method: "POST",
+    //   headers: { "content-type": "application/json" },
+    //   credentials: "include",
+    //   body: JSON.stringify({
+    //     firstname,
+    //     lastname,
+    //     username,
+    //     email,
+    //     password,
+    //     confirmPassword,
+    //   }),
+    // });
 
-    if (response.ok) {
-      const data = await response.json();
-      setUser(data.user);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_GAME_SERVER}/auth/v1/register`,
+        {
+          firstname,
+          lastname,
+          username,
+          email,
+          password,
+          confirmPassword,
+        },
+        { withCredentials: true },
+      );
+      setUser(response.data.user);
 
       navigate("/login");
-    } else {
+    } catch (error) {
+      console.error(error);
       throw new Error("Registration Failed!");
     }
+    // if (response.ok) {
+    //   const data = await response.json();
+    //   setUser(data.user);
+
+    //   navigate("/login");
+    // } else {
+    //   throw new Error("Registration Failed!");
+    // }
   };
 
   const login = async (email: string, password: string) => {

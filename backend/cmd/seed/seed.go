@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
 
-	db "bhetghat-server/database"
 	"bhetghat-server/models"
 	"bhetghat-server/repository"
 )
@@ -63,7 +63,12 @@ func SeedUsers(mongoUserRepo *repository.MongoUserRepo, users []*models.User) er
 
 func main() {
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(db.DBURI))
+	dbUri, exists := os.LookupEnv("MONGODB_URI")
+	if !exists {
+		log.Fatal("database uri not found")
+	}
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dbUri))
 	if err != nil {
 		log.Fatal("ERROR CONNECTING TO DATABASE: ", err)
 	}
