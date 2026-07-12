@@ -43,3 +43,8 @@ type EventSchedulePayload struct {
 	Description string `json:"description"`
 	Delay       int    `json:"delay"`
 }
+
+type AuthPayload struct {
+	Type  string `json:"type"`
+	Token string `json:"token"`
+}

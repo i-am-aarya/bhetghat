@@ -1,5 +1,4 @@
-// import useAuth from "@/hooks/useAuth";
-import useAuth from "@/hooks/useAuth";
+import { useAuthStore } from "@/stores/authStore";
 import type { Message } from "./chat-box";
 
 export interface MessageBubbleProps {
@@ -7,7 +6,7 @@ export interface MessageBubbleProps {
 }
 
 export default function MessageBubble({ message }: MessageBubbleProps) {
-  const { user } = useAuth();
+  const user = useAuthStore((s) => s.user);
   return (
     <div>
       {message.sender === user?.username ? (

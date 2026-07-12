@@ -6,8 +6,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import EmojiPicker from "./emoji-picker";
 import MessageBubble from "./message-bubble";
-import useAuth from "@/hooks/useAuth";
-// import useAuth from "../../hooks/useAuth";
+import { useAuthStore } from "@/stores/authStore";
 
 interface ChatBoxProps {
   sendMessage: (message: string) => void;
@@ -20,7 +19,7 @@ export interface Message {
 }
 
 const ChatBox = ({ sendMessage: send, messages }: ChatBoxProps) => {
-  const { user } = useAuth();
+  const user = useAuthStore((s) => s.user);
 
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);

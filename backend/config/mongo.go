@@ -1,4 +1,4 @@
-package db
+package config
 
 import (
 	"context"
@@ -12,30 +12,24 @@ import (
 
 var MongoClient *mongo.Client
 
-func ConnectDB(ctx context.Context) error {
+func InitMongo(ctx context.Context) error {
 
 	dbUri, exists := os.LookupEnv("MONGODB_URI")
 	if !exists {
 		log.Fatal("database uri not found")
 	}
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
 	fmt.Println("DBURI", dbUri)
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
-	fmt.Println("DBURI")
 
 	var err error
 	MongoClient, err = mongo.Connect(ctx, options.Client().ApplyURI(dbUri))
+	if err != nil {
+		log.Printf("error : %v", err)
+		return err
+	}
 
 	err = MongoClient.Ping(ctx, nil)
 	if err != nil {
+		log.Printf("error in database ping: %v", err)
 		return err
 	}
 

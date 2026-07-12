@@ -3,11 +3,12 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
-import useAuth from "../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/stores/authStore";
 
 const Login = () => {
-  const { login, loading } = useAuth();
+  const login = useAuthStore((s) => s.login);
+  const loading = useAuthStore((s) => s.isSubmitting);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

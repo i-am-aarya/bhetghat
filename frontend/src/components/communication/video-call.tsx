@@ -3,9 +3,8 @@ import { IonSFUJSONRPCSignal } from "ion-sdk-js/lib/signal/json-rpc-impl";
 import { useEffect, useRef, useState } from "react";
 import StreamsView from "./streams-view";
 import CallControls from "./call-controls";
-// import useAuth from "@/hooks/useAuth";
 import LocalStreamPreview from "./localstream-preview";
-import useAuth from "@/hooks/useAuth";
+import { useAuthStore } from "@/stores/authStore";
 
 interface VideoCallProps {
   roomID: string;
@@ -15,7 +14,7 @@ interface VideoCallProps {
 const VideoCall = ({ roomID, nearbyUsers }: VideoCallProps) => {
   // just to shut the compiler up
   console.log("NEARBY USERS: ", nearbyUsers);
-  const { user } = useAuth();
+  const user = useAuthStore((s) => s.user);
 
   const [micOn, setMicOn] = useState<boolean>(true);
   const [cameraOn, setCameraOn] = useState<boolean>(true);

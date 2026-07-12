@@ -3,161 +3,188 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
-	"log"
-	"os"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 
+	"bhetghat-server/jwt"
 	"bhetghat-server/models"
 	"bhetghat-server/repository"
 )
 
 type UserService struct {
-	userRepository repository.UserRepository
+	userRepo    repository.UserRepository
+	refreshRepo repository.RedisRefreshTokenRepo
+	jwt         *jwt.JWT
 }
 
-func NewUserService(userRepo repository.UserRepository) *UserService {
+func NewUserService(userRepo repository.UserRepository, refreshRepo repository.RedisRefreshTokenRepo, jwtSecret string) *UserService {
 	return &UserService{
-		userRepository: userRepo,
+		userRepo:    userRepo,
+		refreshRepo: refreshRepo,
+		jwt:         jwt.New(jwtSecret),
 	}
 }
 
-func (s *UserService) CreateUser(
-	ctx context.Context,
-	params *models.CreateUserParams,
-) (*models.User, error) {
-	existingUser, err := s.userRepository.GetByField(ctx, "email", params.Email)
+func (s *UserService) RegisterUser(ctx context.Context, params *models.CreateUserParams) (*models.User, models.TokenPair, error) {
+
+	existingUser, err := s.userRepo.GetByField(ctx, "email", params.Email)
 	if err != nil {
-		return nil, err
+		return nil, models.TokenPair{}, err
 	}
 	if existingUser != nil {
-		return nil, errors.New("email already in use")
+		return nil, models.TokenPair{}, errors.New("email already in use")
 	}
 
-	existingUser, err = s.userRepository.GetByField(ctx, "username", params.Username)
+	existingUser, err = s.userRepo.GetByField(ctx, "username", params.Username)
 	if err != nil {
-		return nil, err
+		return nil, models.TokenPair{}, err
 	}
 	if existingUser != nil {
-		return nil, errors.New("username already in use")
+		return nil, models.TokenPair{}, errors.New("username already in use")
 	}
 
 	if len(params.Password) < 8 {
-		return nil, errors.New("password too short")
+		return nil, models.TokenPair{}, errors.New("password too short")
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return nil, models.TokenPair{}, err
 	}
 
 	user := &models.User{
-		FirstName:      params.FirstName,
-		LastName:       params.LastName,
 		Email:          params.Email,
 		Username:       params.Username,
 		HashedPassword: string(hashedPassword),
 	}
 
-	return user, nil
-}
-
-func (s *UserService) RegisterUser(ctx context.Context, user *models.User) (*models.User, error) {
-	user, err := s.userRepository.Insert(ctx, user)
+	user, err = s.userRepo.Insert(ctx, user)
 	if err != nil {
-		return nil, err
+		return nil, models.TokenPair{}, err
 	}
-	return user, nil
+
+	tokens, err := s.generateTokenPair(user)
+	if err != nil {
+		return nil, models.TokenPair{}, err
+	}
+
+	if err := s.refreshRepo.Store(ctx, user.ID.Hex(), tokens.RefreshToken, 7*24*time.Hour); err != nil {
+		return nil, models.TokenPair{}, err
+	}
+
+	return user, tokens, nil
 }
 
 func (s *UserService) LoginUser(
 	ctx context.Context,
 	login *models.LoginUserParams,
-) (*models.User, string, error) {
-	user, err := s.userRepository.GetByField(ctx, "email", login.Email)
+) (*models.User, models.TokenPair, error) {
+	user, err := s.userRepo.GetByField(ctx, "username", login.Username)
 	if err != nil {
-		return nil, "", err
+		return nil, models.TokenPair{}, err
 	}
 	if user == nil {
-		return nil, "", errors.New("invalid username or password")
+		return nil, models.TokenPair{}, errors.New("invalid username or password")
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(login.Password))
 	if err != nil {
-		return nil, "", errors.New("invalid username or password")
+		return nil, models.TokenPair{}, errors.New("invalid username or password")
 	}
 
-	token := s.CreateTokenFromUser(user)
-	if token == "" {
-		return nil, "", errors.New("error logging in")
+	tokenPair, err := s.generateTokenPair(user)
+	if err != nil {
+		return nil, models.TokenPair{}, err
 	}
-	return user, token, nil
+
+	if err := s.refreshRepo.Store(ctx, user.ID.Hex(), tokenPair.RefreshToken, 7*24*time.Hour); err != nil {
+		return nil, models.TokenPair{}, err
+	}
+
+	return user, tokenPair, nil
 }
 
-func (s *UserService) CreateTokenFromUser(user *models.User) string {
-	claims := jwt.MapClaims{
-		"userID":   user.ID,
-		"username": user.Username,
-		"email":    user.Email,
-		"isAdmin":  user.IsAdmin,
-		"expires":  time.Now().Add(4 * time.Hour).Unix(),
-		// TODO ADD USER ROLE
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	jwtSecret, exists := os.LookupEnv("JWT_SECRET")
-	if !exists {
-		log.Fatal("JWT SECRET KEY NOT FOUND")
-	}
-
-	tokenString, err := token.SignedString([]byte(jwtSecret))
+func (s *UserService) generateTokenPair(user *models.User) (models.TokenPair, error) {
+	accessToken, err := s.jwt.GenerateAccessToken(user)
 	if err != nil {
-		return ""
+		return models.TokenPair{}, err
 	}
-	return tokenString
+	refreshToken, err := s.jwt.GenerateRefreshToken(user)
+	if err != nil {
+		return models.TokenPair{}, err
+	}
+	return models.TokenPair{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
 }
 
-func (s *UserService) VerifyUser(
-	ctx context.Context,
-	tokenString string,
-) (*models.User, *jwt.MapClaims, error) {
-	SECRET_KEY, exists := os.LookupEnv("JWT_SECRET")
-	if !exists {
-		return nil, nil, errors.New("Environment variable JWT_SECRET not set")
-	}
-
-	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-		}
-		return []byte(SECRET_KEY), nil
-	})
+func (s *UserService) VerifyAccessToken(ctx context.Context, tokenString string) (*models.User, error) {
+	claims, err := s.jwt.ParseAccessToken(tokenString)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
-		return nil, nil, fmt.Errorf("invalid token")
-	}
-
-	if exp, ok := claims["exp"].(float64); ok {
-		if time.Unix(int64(exp), 0).Before(time.Now()) {
-			return nil, nil, fmt.Errorf("token has expired")
-		}
-	}
-
-	emailFromClaims, exists := claims["email"]
-	if !exists {
-		return nil, nil, fmt.Errorf("email not found in claims\n")
-	}
-	user, err := s.userRepository.GetByField(ctx, "email", emailFromClaims)
+	userID, err := primitive.ObjectIDFromHex(claims["userID"].(string))
 	if err != nil {
-		return nil, nil, fmt.Errorf("error finding user: %s\n", err.Error())
+		return nil, err
 	}
 
-	return user, &claims, nil
+	return s.userRepo.GetByID(ctx, userID)
+}
+
+func (s *UserService) RefreshTokens(ctx context.Context, refreshToken string) (models.TokenPair, error) {
+	claims, err := s.jwt.ParseRefreshToken(refreshToken)
+	if err != nil {
+		return models.TokenPair{}, err
+	}
+
+	userIDStr, ok := claims["userID"].(string)
+	if !ok {
+		return models.TokenPair{}, errors.New("invalid userID type")
+	}
+
+	userID, err := primitive.ObjectIDFromHex(userIDStr)
+	if err != nil {
+		return models.TokenPair{}, errors.New("invalid userID")
+	}
+
+	if !s.refreshRepo.IsValid(ctx, userIDStr, refreshToken) {
+		return models.TokenPair{}, errors.New("invalid token")
+	}
+
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil || user == nil {
+		return models.TokenPair{}, errors.New("user not found")
+	}
+
+	if err := s.refreshRepo.Delete(ctx, user.ID.Hex(), refreshToken); err != nil {
+		return models.TokenPair{}, err
+	}
+
+	tokenPair, err := s.generateTokenPair(user)
+	if err != nil {
+		return models.TokenPair{}, err
+	}
+
+	if err := s.refreshRepo.Store(ctx, user.ID.Hex(), tokenPair.RefreshToken, time.Hour*24*7); err != nil {
+		return models.TokenPair{}, err
+	}
+
+	return tokenPair, nil
+}
+
+func (s *UserService) LogoutUser(ctx context.Context, refreshToken string) error {
+	claims, err := s.jwt.ParseRefreshToken(refreshToken)
+	if err != nil {
+		return err
+	}
+
+	userID, ok := claims["userID"].(string)
+	if !ok {
+		return errors.New("bad token")
+	}
+
+	return s.refreshRepo.Delete(ctx, userID, refreshToken)
 }

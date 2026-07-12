@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,22 +15,29 @@ func (h *UserHandler) RegisterHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "bad request"})
 	}
 
-	userFromParams, err := h.userService.CreateUser(c.Context(), &registerParams)
-	if err != nil {
-		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": err.Error()})
+	if err := registerParams.Validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "bad request"})
 	}
 
-	if err := userFromParams.Validate(); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	user, tokenPair, err := h.userService.RegisterUser(c.Context(), &registerParams)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "bad request"})
 	}
 
-	userFromParams, err = h.userService.RegisterUser(c.Context(), userFromParams)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
+	c.Cookie(&fiber.Cookie{
+		Name:     "refreshToken",
+		Value:    tokenPair.RefreshToken,
+		Path:     "/auth/refresh",
+		HTTPOnly: true,
+		Expires:  time.Now().Add(15 * time.Minute),
+		SameSite: "Strict",
+	})
 
 	return c.Status(fiber.StatusCreated).
-		JSON(fiber.Map{"msg": "registered", "user": userFromParams})
+		JSON(models.TokenResponse{
+			User:        user,
+			AccessToken: tokenPair.AccessToken,
+		})
 }
 
 func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {
@@ -41,60 +47,65 @@ func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "bad request"})
 	}
 
-	user, token, err := h.userService.LoginUser(c.Context(), &loginParams)
+	user, tokens, err := h.userService.LoginUser(c.Context(), &loginParams)
 	if err != nil {
-		if user == nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
-		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "unauthorized"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
 	}
 
 	c.Cookie(&fiber.Cookie{
-		Name:     "authToken",
-		Value:    token,
-		Path:     "/",
+		Name:     "refreshToken",
+		Value:    tokens.RefreshToken,
+		Path:     "/auth/refresh",
 		HTTPOnly: true,
 		Expires:  time.Now().Add(4 * time.Hour),
-		SameSite: "Lax",
+		SameSite: "Strict",
 	})
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"user":      user,
-		"authToken": token,
+	return c.Status(fiber.StatusOK).JSON(models.TokenResponse{
+		User:        user,
+		AccessToken: tokens.AccessToken,
 	})
 }
 
 func (h *UserHandler) RefreshHandler(c *fiber.Ctx) error {
-	// refreshToken := c.Cookies
-
-	return nil
-}
-
-func (h *UserHandler) VerificationHandler(c *fiber.Ctx) error {
-	jwtTokenString := c.Cookies("authToken")
-	if jwtTokenString == "" {
-		log.Println("TOKEN NOT FOUND IN COOKIES")
+	refreshToken := c.Cookies("refreshToken")
+	if refreshToken == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
 	}
-	log.Println("TOKEN FOUND IN COOKIES")
 
-	user, _, err := h.userService.VerifyUser(c.Context(), jwtTokenString)
-	// log.Println("JWT CLAIMS: ", claims)
+	tokenPair, err := h.userService.RefreshTokens(c.Context(), refreshToken)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"user": user,
+	c.Cookie(&fiber.Cookie{
+		Name:     "refreshToken",
+		Value:    tokenPair.RefreshToken,
+		Path:     "/auth/refresh",
+		HTTPOnly: true,
+		Expires:  time.Now().Add(4 * time.Hour),
+		SameSite: "Strict",
+	})
+
+	return c.Status(fiber.StatusOK).JSON(models.RefreshResponse{
+		AccessToken: tokenPair.AccessToken,
 	})
 }
 
 func (h *UserHandler) LogOutHandler(c *fiber.Ctx) error {
-	// cookie := c.Cookies("authToken")
+
+	refreshToken := c.Cookies("refreshToken")
+
+	if refreshToken != "" {
+		if err := h.userService.LogoutUser(c.Context(), refreshToken); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"msg": "server error"})
+		}
+	}
+
 	c.Cookie(&fiber.Cookie{
-		Name:   "authToken",
+		Name:   "refreshToken",
 		Value:  "",
-		Path:   "/",
+		Path:   "/auth/refresh",
 		MaxAge: -1,
 	})
 

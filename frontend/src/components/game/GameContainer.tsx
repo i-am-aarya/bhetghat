@@ -6,7 +6,6 @@ import LoadingScreen from "../loading-screen";
 import { Progress } from "../ui/progress";
 import type { GameAssets } from "./assets";
 import { loadAssets } from "./assets";
-// import useAuth from "@/hooks/useAuth";
 import { LocalPlayer } from "./player/LocalPlayer";
 import ChatBox from "../communication/chat-box";
 import type { Message } from "../communication/chat-box";
@@ -17,21 +16,20 @@ import type {
   EventNotifyPayload,
   EventSchedulePayload,
 } from "./packet";
-// import { useMediaPermissions } from "@/hooks/useMediaPermissions";
-// import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
 import { EventScheduler } from "../communication/event-scheduler";
 import VideoCall from "../communication/video-call";
-import useAuth from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useMediaPermissions } from "@/hooks/useMediaPermissions";
+import { useAuthStore } from "@/stores/authStore";
 
 const GameContainer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const { toast } = useToast();
 
-  const { user } = useAuth();
+  const user = useAuthStore((s) => s.user);
+
   const { requestMediaAccess } = useMediaPermissions();
 
   const [loaded, setLoaded] = useState(false);
