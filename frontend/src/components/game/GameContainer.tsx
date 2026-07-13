@@ -42,6 +42,8 @@ const GameContainer = () => {
 
   const gameRef = useRef<Game | null>(null);
 
+  const cameraRef = useRef<Camera | null>(null)
+
   const [messages, setMessages] = useState<Message[]>([]);
 
   const [roomID, setRoomID] = useState("");
@@ -57,6 +59,15 @@ const GameContainer = () => {
       })
       .catch((error) => console.log("error loading assets: ", error));
   }, []);
+
+  useEffect(() => {
+    console.log("loaded: ", loaded)
+  }, [loaded])
+
+
+    useEffect(() => {
+      console.log("progress: ", progress)
+    }, [progress])
 
   const handleChatMessages = useCallback((payload: ChatPayload) => {
     setMessages((prev) => [
@@ -131,6 +142,12 @@ const GameContainer = () => {
 
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.imageSmoothingEnabled = false;
+
+
+      if (cameraRef.current) {
+        cameraRef.current.setViewport(canvas.width, canvas.height)
+      }
+
     };
 
     window.addEventListener("resize", resizeCanvas);
@@ -170,6 +187,7 @@ const GameContainer = () => {
           characterSprite,
         );
         const camera = new Camera(player, ctx.canvas.width, ctx.canvas.height);
+        cameraRef.current = camera
         const game = new Game(
           player,
           ctx,

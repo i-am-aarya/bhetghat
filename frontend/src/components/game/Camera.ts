@@ -41,4 +41,9 @@ export class Camera {
   zoomOut() {
     this.scale = 1;
   }
+
+  setViewport(vw: number, vh: number) {
+    this.viewportWidth = vw
+    this.viewportHeight = vh
+  }
 }

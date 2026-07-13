@@ -29,7 +29,7 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login({ username: data.username, password: data.password })
-      navigate("/lobby")
+      navigate("/character")
     } catch (error) {
       console.error(error)
     } finally {

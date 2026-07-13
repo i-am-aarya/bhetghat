@@ -13,7 +13,7 @@ export default function GuestRoute() {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/lobby" replace />
+    return <Navigate to="/character" replace />
   }
 
   return <Outlet/>
