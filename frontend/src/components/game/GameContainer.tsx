@@ -49,6 +49,9 @@ const GameContainer = () => {
   const [roomID, setRoomID] = useState("");
   const [nearbyUsers, setNearbyUsers] = useState<string[]>([]);
 
+  const GAME_WIDTH = 1280
+  const GAME_HEIGHT = 700
+
   useEffect(() => {
     requestMediaAccess(true, true);
     loadAssets()
@@ -137,12 +140,31 @@ const GameContainer = () => {
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = GAME_WIDTH;
+      canvas.height = GAME_HEIGHT;
+
+      // resize
+      const ratio = 16/9
+      let w, h
+      // const margin = 10
+
+      const availableHeight = window.innerHeight
+      const availableWidth = window.innerWidth
+
+      if (availableWidth / availableHeight > ratio) {
+        // wider than 16:9 -> update width to maintain 16:9 ratio with availableWidth
+        w = availableHeight * ratio
+        h = availableHeight
+      } else {
+        // taller than 16:9 -> update height to maintain 16:9 ratio with availableWidth
+        w = availableWidth
+        h = availableWidth * (1/ratio)
+      }
 
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.imageSmoothingEnabled = false;
-
+      ctx.canvas.style.width = `${w}px`
+      ctx.canvas.style.height = `${h}px`
 
       if (cameraRef.current) {
         cameraRef.current.setViewport(canvas.width, canvas.height)
@@ -214,18 +236,20 @@ const GameContainer = () => {
   }, [assets, user]);
 
   return (
-    <div>
+    <div className="w-screen h-screen">
+      <div className="w-full h-full flex justify-center items-center">
       <canvas
         ref={canvasRef}
-        className="-z-50"
+        // className="-z-50"
         style={{
           imageRendering: "pixelated",
           display: "block",
-          position: "absolute",
-          top: 0,
-          left: 0,
+          // position: "absolute",
+          // top: 0,
+          // left: 0,
         }}
       />
+      </div>
 
       <ChatBox messages={messages} sendMessage={sendMessage} />
       <EventScheduler onSchedule={sendEventScheduleMessage} />

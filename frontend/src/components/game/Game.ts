@@ -15,6 +15,10 @@ import { WSMessageType } from "./packet";
 import { LocalPlayer } from "./player/LocalPlayer";
 import { RemotePlayer } from "./player/RemotePlayer";
 
+// export interface GameConfig {
+//   canvas;
+// }
+
 export class Game {
   localPlayer: LocalPlayer;
   remotePlayers: Map<string, RemotePlayer>;
@@ -277,13 +281,26 @@ export class Game {
       this.fpsLastTime = now;
     }
 
+    const t0 = performance.now()
+
     this.update();
+    const t1 = performance.now()
+
     this.render();
+    const t2 = performance.now()
+
+    if (this.fpsFrames % 60 === 0) {
+      console.log(`UpdateL ${(t1-t0).toFixed(2)}ms, Render: ${(t2-t1).toFixed(2)}ms`)
+    }
 
     this.animationFrame = requestAnimationFrame(this.gameloop.bind(this));
   }
 
   stop() {
     cancelAnimationFrame(this.animationFrame);
+  }
+
+  resizeCanvas() {
+
   }
 }
