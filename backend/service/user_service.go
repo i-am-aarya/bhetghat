@@ -134,45 +134,45 @@ func (s *UserService) VerifyAccessToken(ctx context.Context, tokenString string)
 	return s.userRepo.GetByID(ctx, userID)
 }
 
-func (s *UserService) RefreshTokens(ctx context.Context, refreshToken string) (models.TokenPair, error) {
+func (s *UserService) RefreshTokens(ctx context.Context, refreshToken string) (*models.User, models.TokenPair, error) {
 	claims, err := s.jwt.ParseRefreshToken(refreshToken)
 	if err != nil {
-		return models.TokenPair{}, err
+		return nil, models.TokenPair{}, err
 	}
 
 	userIDStr, ok := claims["userID"].(string)
 	if !ok {
-		return models.TokenPair{}, errors.New("invalid userID type")
+		return nil, models.TokenPair{}, errors.New("invalid userID type")
 	}
 
 	userID, err := primitive.ObjectIDFromHex(userIDStr)
 	if err != nil {
-		return models.TokenPair{}, errors.New("invalid userID")
+		return nil, models.TokenPair{}, errors.New("invalid userID")
 	}
 
 	if !s.refreshRepo.IsValid(ctx, userIDStr, refreshToken) {
-		return models.TokenPair{}, errors.New("invalid token")
+		return nil, models.TokenPair{}, errors.New("invalid token")
 	}
 
 	user, err := s.userRepo.GetByID(ctx, userID)
 	if err != nil || user == nil {
-		return models.TokenPair{}, errors.New("user not found")
+		return nil, models.TokenPair{}, errors.New("user not found")
 	}
 
 	if err := s.refreshRepo.Delete(ctx, user.ID.Hex(), refreshToken); err != nil {
-		return models.TokenPair{}, err
+		return nil, models.TokenPair{}, err
 	}
 
 	tokenPair, err := s.generateTokenPair(user)
 	if err != nil {
-		return models.TokenPair{}, err
+		return nil, models.TokenPair{}, err
 	}
 
 	if err := s.refreshRepo.Store(ctx, user.ID.Hex(), tokenPair.RefreshToken, time.Hour*24*7); err != nil {
-		return models.TokenPair{}, err
+		return nil, models.TokenPair{}, err
 	}
 
-	return tokenPair, nil
+	return user, tokenPair, nil
 }
 
 func (s *UserService) LogoutUser(ctx context.Context, refreshToken string) error {

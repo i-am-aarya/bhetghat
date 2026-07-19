@@ -61,6 +61,7 @@ export class Game {
     onCommUpdate: (commUpdate: CommUpdatePayload) => void,
     onEventNotification: (event: EventNotifyPayload) => void,
   ) {
+    console.log("inside game constructor")
     this.onChatMessage = onChatMessage;
     this.onCommUpdate = onCommUpdate;
 

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/authStore";
-import { Eye, EyeOff, Lock, LockKeyhole, User } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, User } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ interface LoginFormData {
 
 const LoginPage = () => {
 
-  const [error, setError] = useState("")
+  // const [error, setError] = useState("")
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const isLoading = useAuthStore((s) => s.isSubmitting)

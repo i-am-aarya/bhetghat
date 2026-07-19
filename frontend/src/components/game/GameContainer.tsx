@@ -240,13 +240,9 @@ const GameContainer = () => {
       <div className="w-full h-full flex justify-center items-center">
       <canvas
         ref={canvasRef}
-        // className="-z-50"
         style={{
           imageRendering: "pixelated",
           display: "block",
-          // position: "absolute",
-          // top: 0,
-          // left: 0,
         }}
       />
       </div>

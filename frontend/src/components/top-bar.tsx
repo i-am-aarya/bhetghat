@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import useAuth from "../hooks/useAuth";
+import { useAuthStore } from "@/stores/authStore";
 
 interface TopBarProps {
   username: string;
 }
 
 const TopBar = ({ username }: TopBarProps) => {
-  const { user } = useAuth();
+  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     console.log("top bar has been mounted");

@@ -73,7 +73,7 @@ func (h *UserHandler) RefreshHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
 	}
 
-	tokenPair, err := h.userService.RefreshTokens(c.Context(), refreshToken)
+	user, tokenPair, err := h.userService.RefreshTokens(c.Context(), refreshToken)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
 	}
@@ -87,8 +87,9 @@ func (h *UserHandler) RefreshHandler(c *fiber.Ctx) error {
 		SameSite: "Strict",
 	})
 
-	return c.Status(fiber.StatusOK).JSON(models.RefreshResponse{
+	return c.Status(fiber.StatusOK).JSON(models.TokenResponse{
 		AccessToken: tokenPair.AccessToken,
+		User:        user,
 	})
 }
 

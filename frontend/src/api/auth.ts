@@ -11,7 +11,7 @@ export interface RegisterPayload {
   password: string;
 }
 
-interface AuthResponse {
+interface TokenResponse {
   user: {
     username: string;
     email: string;
@@ -24,13 +24,13 @@ interface AuthResponse {
 
 export const authApi = {
   login: (payload: LoginPayload) =>
-    api.post<AuthResponse>("/auth/login", payload),
+    api.post<TokenResponse>("/auth/login", payload),
 
   register: (payload: RegisterPayload) =>
-    api.post<AuthResponse>("/auth/register", payload),
+    api.post<TokenResponse>("/auth/register", payload),
 
   logout: () => api.post("/auth/logout"),
 
   refresh: () =>
-    api.post<{ accessToken: string }>("/auth/refresh"),
+    api.post<TokenResponse>("/auth/refresh"),
 };

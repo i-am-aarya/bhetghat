@@ -5,20 +5,21 @@ import CharacterSelectionPage from "./pages/character/CharacterSelectionPage";
 import LandingPage from "./pages/landing/LandingPage";
 import SignupPage from "./pages/signup/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "./stores/authStore";
 import LobbyPage from "./pages/lobby/LobbyPage";
 import GuestRoute from "./components/GuestRoute";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth)
-  const hasRun = useRef(false)
+  // const hasRun = useRef(false)
 
   useEffect(() => {
-    if (!hasRun.current) {
-      hasRun.current = true
+    console.log("initauth running")
+    // if (!hasRun.current) {
+      // hasRun.current = true
       initAuth()
-    }
+    // }
   }, [initAuth])
 
   return (
