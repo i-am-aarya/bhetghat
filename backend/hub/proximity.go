@@ -20,7 +20,7 @@ type ProximityManager struct {
 	positions   map[string]Position
 	activeRooms map[string][]string
 	mutex       sync.RWMutex
-	RoomManager *RoomManager
+	RoomManager *SessionManager
 }
 
 func NewProximityManager() *ProximityManager {

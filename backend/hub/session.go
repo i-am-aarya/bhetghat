@@ -9,19 +9,20 @@ import (
 	"time"
 )
 
-type Room struct {
+// call session
+type Session struct {
 	ID        string
 	Members   map[string]bool
 	CreatedAt time.Time
 	ExpiresAt time.Time
 }
 
-type RoomManager struct {
-	Rooms map[string]*Room
-	mutex sync.RWMutex
+type SessionManager struct {
+	Sessions map[string]*Session
+	mutex    sync.RWMutex
 }
 
-func (rm *RoomManager) CreateRoom(members []string) string {
+func (rm *SessionManager) CreateRoom(members []string) string {
 	if len(members) < 2 {
 		return ""
 	}
@@ -33,12 +34,12 @@ func (rm *RoomManager) CreateRoom(members []string) string {
 	rm.mutex.Lock()
 	defer rm.mutex.Unlock()
 
-	if room, exists := rm.Rooms[roomID]; exists {
+	if room, exists := rm.Sessions[roomID]; exists {
 		room.ExpiresAt = time.Now().Add(1 * time.Hour)
 		return roomID
 	}
 
-	rm.Rooms[roomID] = &Room{
+	rm.Sessions[roomID] = &Session{
 		ID:        roomID,
 		Members:   make(map[string]bool),
 		CreatedAt: time.Now(),
@@ -48,14 +49,14 @@ func (rm *RoomManager) CreateRoom(members []string) string {
 	return roomID
 }
 
-func (rm *RoomManager) CleanupExpiredRooms() {
+func (rm *SessionManager) CleanupExpiredRooms() {
 	ticker := time.NewTimer(5 * time.Minute)
 
 	for range ticker.C {
 		rm.mutex.Lock()
-		for id, room := range rm.Rooms {
+		for id, room := range rm.Sessions {
 			if time.Now().After(room.ExpiresAt) {
-				delete(rm.Rooms, id)
+				delete(rm.Sessions, id)
 			}
 		}
 		rm.mutex.Unlock()

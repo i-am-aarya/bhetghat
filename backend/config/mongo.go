@@ -2,7 +2,6 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -18,7 +17,6 @@ func InitMongo(ctx context.Context) error {
 	if !exists {
 		log.Fatal("database uri not found")
 	}
-	fmt.Println("DBURI", dbUri)
 
 	var err error
 	MongoClient, err = mongo.Connect(ctx, options.Client().ApplyURI(dbUri))

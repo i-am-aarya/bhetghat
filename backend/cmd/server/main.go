@@ -12,13 +12,21 @@ import (
 	"bhetghat-server/server"
 	"net/http"
 	_ "net/http/pprof"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("error loading .env file: ", err)
+	}
+
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancelFunc()
 
-	err := config.InitMongo(ctx)
+	err = config.InitMongo(ctx)
 	if err != nil {
 		log.Fatal("ERROR CONNECTING TO DATABASE", err)
 	}
@@ -29,8 +37,8 @@ func main() {
 		log.Fatal("Redis failed: ", err)
 	}
 
-	roomManager := &hub.RoomManager{
-		Rooms: make(map[string]*hub.Room),
+	roomManager := &hub.SessionManager{
+		Sessions: make(map[string]*hub.Session),
 	}
 
 	globalHub := hub.GetHubInstance()
