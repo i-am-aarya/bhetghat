@@ -29,7 +29,7 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login({ username: data.username, password: data.password })
-      navigate("/character")
+      navigate("/lobby")
     } catch (error) {
       console.error(error)
     } finally {
@@ -47,7 +47,7 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center flex-col gap-2">
+    <div className="min-h-[calc(100vh-8rem)] flex justify-center items-center flex-col gap-2">
 
 
       <div className="p-10 border border-border rounded-xl">

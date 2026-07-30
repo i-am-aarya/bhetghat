@@ -12,14 +12,9 @@ import GuestRoute from "./components/GuestRoute";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth)
-  // const hasRun = useRef(false)
 
   useEffect(() => {
-    console.log("initauth running")
-    // if (!hasRun.current) {
-      // hasRun.current = true
       initAuth()
-    // }
   }, [initAuth])
 
   return (

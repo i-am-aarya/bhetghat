@@ -1,5 +1,7 @@
 import { useAuthStore } from "@/stores/authStore";
 import { Navigate, Outlet } from "react-router-dom";
+import NavBar from "./NavBar";
+import Footer from "./Footer";
 
 export default function GuestRoute() {
 
@@ -13,8 +15,12 @@ export default function GuestRoute() {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/character" replace />
+    return <Navigate to="/lobby" replace />
   }
 
-  return <Outlet/>
+  return <div>
+    <NavBar/>
+    <Outlet/>
+    <Footer/>
+  </div>
 }
