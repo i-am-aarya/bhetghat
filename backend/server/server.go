@@ -9,6 +9,7 @@ import (
 
 	"bhetghat-server/api/handler"
 	"bhetghat-server/config"
+	"bhetghat-server/jwt"
 
 	"bhetghat-server/repository"
 	"bhetghat-server/server/routes"
@@ -21,7 +22,7 @@ type Server struct {
 
 // initialize a Server struct
 func NewServer() *Server {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{EnablePrintRoutes: true})
 
 	app.Use(logger.New())
 
@@ -37,13 +38,18 @@ func NewServer() *Server {
 	if jwtSecret == "" {
 		panic("jwt secret env var not set!!!")
 	}
+	jwt := jwt.New(jwtSecret)
 
 	userRepo := repository.NewMongoUserRepo(config.MongoClient.Database("bhetghat"), "users")
 	refreshRepo := repository.NewRedisRefreshTokenRepo(config.RedisClient)
-	userService := service.NewUserService(userRepo, *refreshRepo, jwtSecret)
+	userService := service.NewUserService(userRepo, *refreshRepo, jwt)
 	userHandler := handler.NewUserHandler(userService)
 
-	routes.SetupRoutes(app, userHandler, userService)
+	roomRepo := repository.NewMongoRoomRepo(config.MongoClient.Database("bhetghat"), "rooms")
+	roomService := service.NewRoomService(roomRepo, userRepo)
+	roomHandler := handler.NewRoomHandler(roomService)
+
+	routes.SetupRoutes(app, userService, userHandler, roomHandler)
 
 	return &Server{
 		App: app,

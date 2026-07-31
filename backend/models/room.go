@@ -25,7 +25,8 @@ type JoinRoomParams struct {
 }
 
 type UpdateRoomParams struct {
-	Name     string `json:"name,omitempty"`
-	Password string `json:"password,omitempty"`
-	Capacity int    `json:"capacity,omitempty"`
+	Name             string `json:"name,omitempty" bson:"name,omitempty"`
+	Password         string `json:"password,omitempty" bson:"password,omitempty"`
+	Capacity         int    `json:"capacity,omitempty" bson:"capacity,omitempty"`
+	RequiresPassword bool   `json:"requiresPassword,omitempty" bson:"requiresPassword,omitempty"`
 }

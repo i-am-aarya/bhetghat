@@ -41,14 +41,13 @@ func (p *CreateUserParams) Validate() error {
 
 // Params for updating User
 type UpdateUserParams struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	FirstName string `json:"firstName,omitempty" bson:"firstName,omitempty"`
+	LastName  string `json:"lastName,omitempty" bson:"lastName,omitempty"`
 }
 
 type LoginUserParams struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
-	// Username string `json:"username"`
 }
 
 func isEmailValid(email string) bool {

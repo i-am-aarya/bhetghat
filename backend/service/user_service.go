@@ -19,17 +19,17 @@ type UserService struct {
 	jwt         *jwt.JWT
 }
 
-func NewUserService(userRepo repository.UserRepository, refreshRepo repository.RedisRefreshTokenRepo, jwtSecret string) *UserService {
+func NewUserService(userRepo repository.UserRepository, refreshRepo repository.RedisRefreshTokenRepo, jwt *jwt.JWT) *UserService {
 	return &UserService{
 		userRepo:    userRepo,
 		refreshRepo: refreshRepo,
-		jwt:         jwt.New(jwtSecret),
+		jwt:         jwt,
 	}
 }
 
 func (s *UserService) RegisterUser(ctx context.Context, params *models.CreateUserParams) (*models.User, models.TokenPair, error) {
 
-	existingUser, err := s.userRepo.GetByField(ctx, "email", params.Email)
+	existingUser, err := s.userRepo.GetByEmail(ctx, params.Email)
 	if err != nil {
 		return nil, models.TokenPair{}, err
 	}
@@ -37,7 +37,7 @@ func (s *UserService) RegisterUser(ctx context.Context, params *models.CreateUse
 		return nil, models.TokenPair{}, errors.New("email already in use")
 	}
 
-	existingUser, err = s.userRepo.GetByField(ctx, "username", params.Username)
+	existingUser, err = s.userRepo.GetByUsername(ctx, params.Username)
 	if err != nil {
 		return nil, models.TokenPair{}, err
 	}
@@ -81,7 +81,7 @@ func (s *UserService) LoginUser(
 	ctx context.Context,
 	login *models.LoginUserParams,
 ) (*models.User, models.TokenPair, error) {
-	user, err := s.userRepo.GetByField(ctx, "username", login.Username)
+	user, err := s.userRepo.GetByUsername(ctx, login.Username)
 	if err != nil {
 		return nil, models.TokenPair{}, err
 	}

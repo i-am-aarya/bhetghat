@@ -5,10 +5,4 @@ import (
 )
 
 func RegisterUserRoutes(app *fiber.App) {
-	// admin := app.Group("/admin")
-
-	// admin.Use(middleware.JWTAuthMiddleware())
-
-	// app.Get("/user", handler.GetAllUsersHandler)
-	// app.Get("/user/:id", handler.GetUserHandler)
 }

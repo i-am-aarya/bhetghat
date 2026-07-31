@@ -1,6 +1,6 @@
 module bhetghat-server
 
-go 1.24
+go 1.25.0
 
 require (
 	github.com/gofiber/contrib/websocket v1.3.2
@@ -9,7 +9,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.21.0
 	go.mongodb.org/mongo-driver v1.17.1
-	golang.org/x/crypto v0.26.0
+	golang.org/x/crypto v0.54.0
 )
 
 require (
@@ -33,8 +33,8 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/text v0.17.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
 )

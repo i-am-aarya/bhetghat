@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log/slog"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -49,6 +50,10 @@ func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {
 
 	user, tokens, err := h.userService.LoginUser(c.Context(), &loginParams)
 	if err != nil {
+		slog.Error("login failed",
+			"username", loginParams.Username,
+			"error", err,
+		)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
 	}
 
