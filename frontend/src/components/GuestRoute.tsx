@@ -18,9 +18,11 @@ export default function GuestRoute() {
     return <Navigate to="/lobby" replace />
   }
 
-  return <div>
+  return <div className="h-screen flex flex-col">
     <NavBar/>
+    <main className="mt-14 flex-1">
     <Outlet/>
+    </main>
     <Footer/>
   </div>
 }

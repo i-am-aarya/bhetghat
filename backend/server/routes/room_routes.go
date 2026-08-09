@@ -17,6 +17,7 @@ func RegisterRoomRoutes(app *fiber.App, roomHandler *handler.RoomHandler, userSe
 	rooms.Patch("/:id", roomHandler.UpdateRoomHandler)
 	rooms.Delete("/:id", roomHandler.DeleteRoomHandler)
 	rooms.Get("/:id/members", roomHandler.GetAllMembersHandler)
-	rooms.Post("/:id/members", roomHandler.JoinRoomHandler)
-	rooms.Delete("/:id/members", roomHandler.LeaveRoomHandler)
+	rooms.Post("/:code/members", roomHandler.JoinRoomHandler)
+	rooms.Delete("/:code/members", roomHandler.LeaveRoomHandler)
+	rooms.Get("/mine", roomHandler.FetchMyRoomsHandler)
 }

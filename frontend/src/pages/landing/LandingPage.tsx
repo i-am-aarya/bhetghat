@@ -14,6 +14,7 @@ import {
 import { useAuthStore } from "@/stores/authStore";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
+import OssStrip from "@/components/OssStrip";
 // import useAuth from "@/hooks/useAuth";
 
 // ─── GitHub mark ──────────────────────────────────────────────────────────────
@@ -513,6 +514,7 @@ function LandingPage() {
       <HowItWorks />
       <Features />
       <RoomCodeSection />
+      <OssStrip/>
     </div>
   );
 }

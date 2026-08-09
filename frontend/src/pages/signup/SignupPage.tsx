@@ -49,7 +49,7 @@ const SignupPage = () => {
   }
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center flex-col gap-2">
+    <div className="w-screen h-full flex justify-center items-center flex-col gap-2">
       {/*Registration Div*/}
 
       <div className="p-10 border border-border rounded-xl">

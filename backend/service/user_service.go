@@ -34,7 +34,7 @@ func (s *UserService) RegisterUser(ctx context.Context, params *models.CreateUse
 		return nil, models.TokenPair{}, err
 	}
 	if existingUser != nil {
-		return nil, models.TokenPair{}, errors.New("email already in use")
+		return nil, models.TokenPair{}, ErrEmailUnavailable
 	}
 
 	existingUser, err = s.userRepo.GetByUsername(ctx, params.Username)
@@ -42,11 +42,11 @@ func (s *UserService) RegisterUser(ctx context.Context, params *models.CreateUse
 		return nil, models.TokenPair{}, err
 	}
 	if existingUser != nil {
-		return nil, models.TokenPair{}, errors.New("username already in use")
+		return nil, models.TokenPair{}, ErrUsernameUnavailable
 	}
 
 	if len(params.Password) < 8 {
-		return nil, models.TokenPair{}, errors.New("password too short")
+		return nil, models.TokenPair{}, ErrPasswordTooShort
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)
@@ -86,11 +86,11 @@ func (s *UserService) LoginUser(
 		return nil, models.TokenPair{}, err
 	}
 	if user == nil {
-		return nil, models.TokenPair{}, errors.New("invalid username or password")
+		return nil, models.TokenPair{}, ErrInvalidLoginParams
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(login.Password))
 	if err != nil {
-		return nil, models.TokenPair{}, errors.New("invalid username or password")
+		return nil, models.TokenPair{}, ErrInvalidLoginParams
 	}
 
 	tokenPair, err := s.generateTokenPair(user)

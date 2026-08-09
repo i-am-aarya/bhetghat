@@ -6,6 +6,7 @@ import (
 	"context"
 	"crypto/rand"
 	"errors"
+	"log"
 	"slices"
 	"strings"
 
@@ -31,6 +32,7 @@ func NewRoomService(roomRepo repository.RoomRepository, userRepo repository.User
 func (s *RoomService) CreateRoom(ctx context.Context, name, password string, userID primitive.ObjectID) (*models.Room, error) {
 
 	if len(strings.TrimSpace(name)) < 4 {
+		log.Println("name: ", name)
 		return nil, ErrNameTooShort
 	}
 
@@ -105,6 +107,9 @@ func (s *RoomService) GetAllMembers(ctx context.Context, roomID primitive.Object
 		return nil, err
 	}
 
+	if room == nil {
+		return nil, ErrRoomNotFound
+	}
 	var users []*models.User
 
 	for _, memberID := range room.Members {
@@ -119,21 +124,25 @@ func (s *RoomService) GetAllMembers(ctx context.Context, roomID primitive.Object
 	return users, nil
 }
 
-func (s *RoomService) JoinRoom(ctx context.Context, userID, roomID primitive.ObjectID) error {
+func (s *RoomService) JoinRoom(ctx context.Context, userID primitive.ObjectID, roomCode string) (*models.Room, error) {
 
-	room, err := s.roomRepo.GetByID(ctx, roomID)
+	room, err := s.roomRepo.GetByRoomCode(ctx, roomCode)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	if room == nil {
+		return nil, ErrRoomNotFound
+	}
+
 	if room.MemberCount >= room.Capacity {
-		return ErrRoomFull
+		return nil, ErrRoomFull
 	}
 
 	if slices.Contains(room.Members, userID) {
-		return ErrAlreadyMember
+		return nil, ErrAlreadyMember
 	}
 
-	return s.roomRepo.AddMember(ctx, roomID, userID)
+	return room, s.roomRepo.AddMember(ctx, room.ID, userID)
 }
 
 func (s *RoomService) LeaveRoom(ctx context.Context, userID, roomID primitive.ObjectID) error {
@@ -178,6 +187,19 @@ func (s *RoomService) GetRoom(ctx context.Context, roomID primitive.ObjectID) (*
 	}
 
 	return room, nil
+}
+
+func (s *RoomService) GetUsersRooms(ctx context.Context, userID primitive.ObjectID) ([]*models.Room, error) {
+	rooms, err := s.roomRepo.GetRoomsByMemberID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	if rooms == nil {
+		return nil, ErrRoomNotFound
+	}
+
+	return rooms, nil
 }
 
 func (s *RoomService) generateRoomCode() (string, error) {

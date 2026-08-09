@@ -22,6 +22,16 @@ interface TokenResponse {
   accessToken: string;
 }
 
+export interface User {
+  username: string;
+  email: string;
+  // spriteURL: string;
+  id: string;
+  firstname?: string;
+  lastname?: string;
+  isAdmin?: boolean;
+}
+
 export const authApi = {
   login: (payload: LoginPayload) =>
     api.post<TokenResponse>("/auth/login", payload),

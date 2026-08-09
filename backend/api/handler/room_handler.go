@@ -105,10 +105,10 @@ func (h *RoomHandler) GetAllMembersHandler(c *fiber.Ctx) error {
 }
 
 func (h *RoomHandler) JoinRoomHandler(c *fiber.Ctx) error {
-	roomID, err := primitive.ObjectIDFromHex(c.Params("id"))
-	if err != nil {
-		slog.Error("error parsing room id", "error", err)
-		return respondError(c, err, fiber.StatusBadRequest, "invalid room id")
+	code := c.Params("code")
+	if code == "" {
+		slog.Error("room code not found in request")
+		return respondError(c, service.ErrRoomCodeNotFound, fiber.StatusBadRequest, "code not found")
 	}
 
 	user, ok := c.Locals("user").(*models.User)
@@ -117,16 +117,16 @@ func (h *RoomHandler) JoinRoomHandler(c *fiber.Ctx) error {
 		return respondError(c, service.ErrUnauthorized, fiber.StatusUnauthorized, "unauthorized")
 	}
 
-	err = h.roomService.JoinRoom(c.Context(), user.ID, roomID)
+	room, err := h.roomService.JoinRoom(c.Context(), user.ID, code)
 	if err != nil {
-		slog.Error("join room failed", "roomID", roomID, "userID", user.ID.Hex(), "error", err)
+		slog.Error("join room failed", "roomID", code, "userID", user.ID.Hex(), "error", err)
 		return respondError(c, err, fiber.StatusInternalServerError, "failed")
 	}
 
-	room, err := h.roomService.GetRoom(c.Context(), roomID)
-	if err != nil {
-		return respondError(c, err, fiber.StatusNotFound, "not found")
-	}
+	// room, err := h.roomService.GetRoom(c.Context(), code)
+	// if err != nil {
+	// 	return respondError(c, err, fiber.StatusNotFound, "not found")
+	// }
 
 	return c.JSON(models.SuccessResponse{
 		Message: "joined",
@@ -200,26 +200,26 @@ func (h *RoomHandler) DeleteRoomHandler(c *fiber.Ctx) error {
 	})
 }
 
-func respondError(c *fiber.Ctx, err error, code int, errMsg string) error {
-	switch {
-	case errors.Is(err, service.ErrRoomNotFound):
-		return c.Status(fiber.StatusNotFound).JSON(models.ErrorResponse{Error: err.Error()})
-	case errors.Is(err, service.ErrRoomFull):
-		return c.Status(fiber.StatusConflict).JSON(models.ErrorResponse{Error: err.Error()})
-	case errors.Is(err, service.ErrAlreadyMember):
-		return c.Status(fiber.StatusConflict).JSON(models.ErrorResponse{Error: err.Error()})
-	case errors.Is(err, service.ErrInvalidPassword):
-		return c.Status(fiber.StatusUnauthorized).JSON(models.ErrorResponse{Error: err.Error()})
-	case errors.Is(err, service.ErrInvalidRoomID):
-		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: err.Error()})
-	case errors.Is(err, service.ErrInvalidParams):
-		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: err.Error()})
-	case errors.Is(err, service.ErrNameTooShort):
-		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: err.Error()})
-	case errors.Is(err, service.ErrPasswordTooShort):
-		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: err.Error()})
-	default:
-		slog.Error("request failed", "err", err)
-		return c.Status(code).JSON(models.ErrorResponse{Error: errMsg})
+func (h *RoomHandler) FetchMyRoomsHandler(c *fiber.Ctx) error {
+	user, ok := c.Locals("user").(*models.User)
+	if !ok || user == nil {
+		slog.Error("user not found in context")
+		return respondError(c, service.ErrUnauthorized, fiber.StatusUnauthorized, "unauthorized")
 	}
+
+	rooms, err := h.roomService.GetUsersRooms(c.Context(), user.ID)
+	if err != nil {
+		if errors.Is(err, service.ErrRoomNotFound) {
+			return c.JSON(models.SuccessResponse{
+				Message: "success",
+				Data:    []*models.Room{},
+			})
+		}
+		slog.Error("error getting user's rooms", "user", user, "error", err)
+	}
+
+	return c.JSON(models.SuccessResponse{
+		Message: "success",
+		Data:    rooms,
+	})
 }

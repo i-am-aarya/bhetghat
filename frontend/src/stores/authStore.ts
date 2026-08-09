@@ -1,16 +1,7 @@
-import { authApi, type LoginPayload, type RegisterPayload } from "@/api/auth";
+import { authApi, type LoginPayload, type RegisterPayload, type User } from "@/api/auth";
 import { setAccessToken } from "@/lib/api";
 import { create } from "zustand";
 
-interface User {
-  username: string;
-  email: string;
-  // spriteURL: string;
-  id: string;
-  firstname?: string;
-  lastname?: string;
-  isAdmin?: boolean;
-}
 
 interface AuthState {
   user: User | null;
@@ -76,10 +67,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { data } = await authApi.register(payload);
       set({ user: data.user, isAuthenticated: true });
       setAccessToken(data.accessToken)
-    } catch {
-      // console.error(error)
-      // throw error;
+    } catch(error) {
       setAccessToken(null)
+      throw error;
     } finally {
       set({ isSubmitting: false });
     }
@@ -92,6 +82,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await authApi.logout();
     } catch (error) {
       console.error("logout error: ", error);
+      throw error
     } finally {
       setAccessToken(null)
       set({ user: null, isAuthenticated: false, isSubmitting:false });

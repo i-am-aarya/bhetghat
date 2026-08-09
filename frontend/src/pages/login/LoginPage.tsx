@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getApiErrorMessage } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 import { Eye, EyeOff, LockKeyhole, User } from "lucide-react";
 import { useState } from "react";
@@ -20,6 +21,8 @@ const LoginPage = () => {
 
   const login = useAuthStore((s) => s.login)
 
+  const [error, setError] = useState("")
+
   const {
     register,
     handleSubmit,
@@ -32,6 +35,7 @@ const LoginPage = () => {
       navigate("/lobby")
     } catch (error) {
       console.error(error)
+      setError(getApiErrorMessage(error))
     } finally {
       //
     }
@@ -47,7 +51,7 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-8rem)] flex justify-center items-center flex-col gap-2">
+    <div className="flex h-full justify-center items-center flex-col gap-2">
 
 
       <div className="p-10 border border-border rounded-xl">
@@ -107,6 +111,10 @@ const LoginPage = () => {
           )}
           </div>
 
+          {
+            error &&
+            <p className="text-xs text-red-500">{error}</p>
+          }
 
           <Button type="submit" disabled={submitting}>
             {isSubmitting ? "Logging In.." : "Login"}

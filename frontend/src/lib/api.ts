@@ -1,6 +1,9 @@
+// import { toast } from "@/hooks/use-toast";
+import {toast} from "sonner"
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 const API_BASE = import.meta.env.VITE_GAME_SERVER;
+const AUTH_ENDPOINTS = ["/auth/login", "/auth/register", "/auth/logout", "/auth/refresh"]
 
 let accessToken: string | null = null
 
@@ -51,18 +54,30 @@ api.interceptors.response.use(
       | undefined;
 
     if (!originalRequest || error.response?.status !== 401) {
+
+      if (!error.response) {
+        toast({title: "Network error", description: "Check your connection and try again"})
+      } else if (error.response.status >= 500){
+        toast({title: "Server error", description: getApiErrorMessage(error)})
+      }
+
       return Promise.reject(error)
     }
 
-    if (originalRequest._retry) {
+      if (originalRequest._retry) {
       return Promise.reject(error)
     }
 
-    if (originalRequest.url?.includes("/auth/refresh")) {
-      setAccessToken(null)
-      // window.location.href = "/login"
-      return Promise.reject(error)
-    }
+
+    const isAuthEndpoint = AUTH_ENDPOINTS.some((path) => originalRequest.url?.includes(path))
+
+      if (isAuthEndpoint) {
+        if (originalRequest.url?.includes("/auth/refresh")) {
+          setAccessToken(null)
+        }
+        return Promise.reject(error)
+      }
+
 
     originalRequest._retry = true
 
@@ -97,7 +112,6 @@ api.interceptors.response.use(
     } catch (error) {
       flushQueue(error, null)
       setAccessToken(null)
-      // window.location.href="/login"
       return Promise.reject(error)
     } finally {
       isRefreshing = false
@@ -107,3 +121,13 @@ api.interceptors.response.use(
 )
 
 export default api;
+
+export function getApiErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    console.log("inside getApiErrorMessage: ", error.response?.data.error)
+    if (error.response) return (error.response.data as {error?: string})?.error
+      ?? error.message ?? "Something went wrong"
+    return "Network error — check your connection"  // no response = network fail
+  }
+  return "Something went wrong"
+}

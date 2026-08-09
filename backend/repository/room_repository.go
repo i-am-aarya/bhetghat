@@ -22,6 +22,7 @@ type RoomRepository interface {
 	RemoveMember(ctx context.Context, roomID primitive.ObjectID, userID primitive.ObjectID) error
 	Delete(ctx context.Context, roomID primitive.ObjectID) error
 	Search(ctx context.Context, query string) ([]*models.Room, error)
+	GetRoomsByMemberID(ctx context.Context, userID primitive.ObjectID) ([]*models.Room, error)
 }
 
 type MongoRoomRepo struct {
@@ -66,7 +67,7 @@ func (r *MongoRoomRepo) GetByID(ctx context.Context, id primitive.ObjectID) (*mo
 	err := r.coll.FindOne(ctx, filter).Decode(&room)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, errors.New("room not found")
+			return nil, nil
 		}
 		return nil, err
 	}
@@ -148,4 +149,28 @@ func (r *MongoRoomRepo) Search(ctx context.Context, query string) ([]*models.Roo
 
 	return rooms, nil
 
+}
+
+func (r *MongoRoomRepo) GetRoomsByMemberID(ctx context.Context, userID primitive.ObjectID) ([]*models.Room, error) {
+	var rooms []*models.Room
+	filter := bson.M{"members": userID}
+
+	cur, err := r.coll.Find(ctx, filter)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	for cur.Next(ctx) {
+		var room *models.Room
+		if err := cur.Decode(&room); err != nil {
+			return nil, err
+		}
+
+		rooms = append(rooms, room)
+	}
+
+	return rooms, nil
 }

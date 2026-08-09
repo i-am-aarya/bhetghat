@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import { useAuthStore } from "./stores/authStore";
 import LobbyPage from "./pages/lobby/LobbyPage";
 import GuestRoute from "./components/GuestRoute";
+import RoomPage from "./pages/room/RoomPage";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth)
@@ -19,15 +21,19 @@ function App() {
 
   return (
     <>
+      <Toaster/>
       <Routes>
         <Route element={<GuestRoute />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+
         </Route>
         <Route element={<ProtectedRoute />}>
+          {/*<Route*/}
           <Route path="/lobby" element={<LobbyPage/>} />
           <Route path="/character" element={<CharacterSelectionPage />} />
+          <Route path="/room/:code" element={<RoomPage/>}/>
           <Route path="/game" element={<GamePage />} />
         </Route>
       </Routes>

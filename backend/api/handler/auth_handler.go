@@ -54,7 +54,7 @@ func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {
 			"username", loginParams.Username,
 			"error", err,
 		)
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid username or password"})
 	}
 
 	c.Cookie(&fiber.Cookie{
@@ -75,11 +75,13 @@ func (h *UserHandler) LoginHandler(c *fiber.Ctx) error {
 func (h *UserHandler) RefreshHandler(c *fiber.Ctx) error {
 	refreshToken := c.Cookies("refreshToken")
 	if refreshToken == "" {
+		slog.Error("refreshToken not found in cookies")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
 	}
 
 	user, tokenPair, err := h.userService.RefreshTokens(c.Context(), refreshToken)
 	if err != nil {
+		slog.Error("error refreshing token", "error", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized"})
 	}
 
