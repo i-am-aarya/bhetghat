@@ -23,7 +23,7 @@ export interface Room {
   roomCode: string,
   password?: string,
   requiresPassword: boolean
-  members: string[],
+  members: User[],
   memberCount: number,
   capacity: number
 }
@@ -40,13 +40,14 @@ export const roomApi = {
 
   getAll: () => api.get<{message: string, data: Room[]}>("/rooms"),
 
+  getByCode: (code: string) => api.get < {message: string, data: Room}>(`/rooms/${code}`),
+
 
   join: (code: string) => api.post<{message: string, data: Room}>(`/rooms/${code}/members`),
 
   leave: (code: string) => api.get<{message: string }>(`/rooms/${code}/members`),
 
   getMembers: (id: string) => api.get<{message: string, data: User[]}>(`/rooms/${id}/members`),
-
 
 
   fetchMyRooms: () => api.get<{message: string, data: Room[]}>(`/rooms/mine`)

@@ -17,7 +17,6 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // return <Outlet />;
   return <div className="w-screen h-screen">
     <NavBar/>
     <main className="w-3/4 mx-auto mt-14">

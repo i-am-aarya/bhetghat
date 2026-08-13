@@ -1,10 +1,18 @@
 import type { Room } from "@/api/room"
+import { Button } from "./ui/button"
+import { ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export interface RoomCardProps {
   room: Room
 }
 export default function RoomCard({room}: RoomCardProps) {
-  return <div className="rounded-xl border-border border p-6 w-full md:max-w-64">
-    {room.name}
-  </div>
+  return <Link to={`/room/${room.roomCode}`} className="w-full flex">
+  <Button className="group p-4 h-16 flex items-center justify-between w-full" variant={"outline"}>
+    <p className="text-lg font-sans">
+      {room.name}
+    </p>
+    <ArrowRight className="hidden group-hover:block"/>
+  </Button>
+  </Link>
 }

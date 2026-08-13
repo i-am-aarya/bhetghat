@@ -11,6 +11,7 @@ import LobbyPage from "./pages/lobby/LobbyPage";
 import GuestRoute from "./components/GuestRoute";
 import RoomPage from "./pages/room/RoomPage";
 import { Toaster } from "./components/ui/sonner";
+import NotFoundPage from "./pages/not-found/NotFoundPage";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth)
@@ -36,6 +37,7 @@ function App() {
           <Route path="/room/:code" element={<RoomPage/>}/>
           <Route path="/game" element={<GamePage />} />
         </Route>
+        <Route path="*" element={<NotFoundPage/>}/>
       </Routes>
     </>
   );

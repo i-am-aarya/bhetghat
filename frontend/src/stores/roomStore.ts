@@ -17,7 +17,8 @@ interface RoomState {
   leaveRoom: (code: string) => Promise<void>
   fetchMyRooms: () => Promise<void>
 
-
+  // room card click
+  setCurrentRoomByCode: (code: string) => Promise<void>
 }
 
 
@@ -39,8 +40,6 @@ export const useRoomStore = create<RoomState>((set) => ({
       const {data} = await roomApi.create(payload)
       set({currentRoom: data.data})
       return data.data
-    } catch (error){
-      throw error
     } finally {
       set({isCreating: false})
     }
@@ -52,9 +51,6 @@ export const useRoomStore = create<RoomState>((set) => ({
       const {data} = await roomApi.join(code)
       set({currentRoom: data.data})
       return data.data
-    } catch (error){
-      console.error(error)
-      throw error
     } finally {
       set({isJoining: false})
     }
@@ -67,12 +63,19 @@ export const useRoomStore = create<RoomState>((set) => ({
       set({isFetching: true})
       const {data}= await roomApi.fetchMyRooms()
       set({myRooms: data.data})
-    } catch (error) {
-      console.error(error)
-      throw error
     } finally {
       set({isFetching: false})
     }
   },
+
+  setCurrentRoomByCode: async (code: string) => {
+    try {
+      set({isFetching: true})
+      const {data} = await roomApi.getByCode(code)
+      set({currentRoom: data.data})
+    } finally {
+      set({isFetching: false})
+    }
+  }
 
 }))
