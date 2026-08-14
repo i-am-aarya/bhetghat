@@ -67,7 +67,7 @@ function CreateOrJoin() {
 
     {/* Create Room */}
     <div className="aspect-square md:h-64 flex flex-col border border-border p-6 rounded-xl gap-3 bg-card">
-      <div className="border size-fit rounded-lg border-primary bg-accent text-primary w-9 h-9 flex justify-center items-center">
+      <div className="border size-fit aspect-square rounded-lg border-primary bg-accent text-primary w-9 h-9 flex justify-center items-center">
         <Plus size={16} strokeWidth={2}/>
       </div>
       <p className="font-head text-foreground font-semibold size-sm">Create a Room</p>
@@ -78,7 +78,7 @@ function CreateOrJoin() {
 
     {/* Join Room */}
     <div className="aspect-square md:h-64 flex flex-col border border-border p-6 rounded-xl gap-3 bg-card">
-         <div className="border size-fit rounded-lg border-primary bg-accent text-primary w-9 h-9 flex justify-center items-center">
+         <div className="border size-fit aspect-square rounded-lg border-primary bg-accent text-primary w-9 h-9 flex justify-center items-center">
            <LogIn size={16} strokeWidth={2}/>
          </div>
          <p className="font-head text-foreground font-semibold size-sm">Join a Room</p>
