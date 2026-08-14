@@ -216,10 +216,34 @@ func (h *RoomHandler) FetchMyRoomsHandler(c *fiber.Ctx) error {
 			})
 		}
 		slog.Error("error getting user's rooms", "user", user, "error", err)
+		respondError(c, service.ErrRoomNotFound, fiber.StatusInternalServerError, "error")
 	}
 
 	return c.JSON(models.SuccessResponse{
 		Message: "success",
 		Data:    rooms,
+	})
+}
+
+func (h *RoomHandler) GetRoomByCodeHandler(c *fiber.Ctx) error {
+	code := c.Params("code")
+	if code == "" {
+		slog.Error("room code not found in request")
+		return respondError(c, service.ErrRoomCodeNotFound, fiber.StatusBadRequest, "code not found")
+	}
+
+	room, err := h.roomService.GetRoomByCode(c.Context(), code)
+	if err != nil {
+		if errors.Is(err, service.ErrRoomNotFound) {
+			return c.JSON(models.SuccessResponse{
+				Message: "success",
+				Data:    nil,
+			})
+		}
+	}
+
+	return c.JSON(models.SuccessResponse{
+		Message: "success",
+		Data:    room,
 	})
 }

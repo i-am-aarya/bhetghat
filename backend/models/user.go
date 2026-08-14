@@ -54,3 +54,10 @@ func isEmailValid(email string) bool {
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	return emailRegex.MatchString(email)
 }
+
+type UserSummary struct {
+	ID        primitive.ObjectID `json:"id"`
+	Username  string             `json:"username"`
+	FirstName string             `json:"firstName,omitempty"`
+	LastName  string             `json:"lastName,omitempty"`
+}

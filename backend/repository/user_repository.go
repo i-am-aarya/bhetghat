@@ -18,6 +18,7 @@ type UserRepository interface {
 	GetAll(ctx context.Context) ([]*models.User, error)
 	Insert(ctx context.Context, user *models.User) (*models.User, error)
 	Update(ctx context.Context, userID primitive.ObjectID, update *models.UpdateUserParams) (*models.User, error)
+	FindByIDs(ctx context.Context, ids []primitive.ObjectID) ([]*models.User, error)
 }
 
 type MongoUserRepo struct {
@@ -103,4 +104,29 @@ func (r *MongoUserRepo) Update(ctx context.Context, userID primitive.ObjectID, u
 		return nil, mongo.ErrNoDocuments
 	}
 	return r.GetByID(ctx, userID)
+}
+
+func (r *MongoUserRepo) FindByIDs(ctx context.Context, ids []primitive.ObjectID) ([]*models.User, error) {
+	filter := bson.M{"_id": bson.M{"$in": ids}}
+	cur, err := r.coll.Find(ctx, filter)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+	}
+
+	var users []*models.User
+	for cur.Next(ctx) {
+		var user *models.User
+
+		if err := cur.Decode(&user); err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+
+	}
+
+	return users, nil
+
 }

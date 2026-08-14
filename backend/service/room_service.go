@@ -202,6 +202,39 @@ func (s *RoomService) GetUsersRooms(ctx context.Context, userID primitive.Object
 	return rooms, nil
 }
 
+func (s *RoomService) GetRoomByCode(ctx context.Context, code string) (*models.Room, error) {
+	if len(code) != 6 {
+		return nil, ErrInvalidRoomCode
+	}
+	code = strings.ToUpper(code)
+	room, err := s.roomRepo.GetByRoomCode(ctx, code)
+	if err != nil {
+		return nil, err
+	}
+
+	if room == nil {
+		return nil, ErrRoomNotFound
+	}
+
+	members, err := s.userRepo.FindByIDs(ctx, room.Members)
+
+	var summaries []models.UserSummary
+	for _, m := range members {
+		var s models.UserSummary
+
+		s.ID = m.ID
+		s.Username = m.Username
+		s.FirstName = m.FirstName
+		s.LastName = m.LastName
+
+		summaries = append(summaries, s)
+	}
+
+	room.MemberSummaries = summaries
+
+	return room, nil
+}
+
 func (s *RoomService) generateRoomCode() (string, error) {
 	b := make([]byte, codeLength)
 	_, err := rand.Read(b)

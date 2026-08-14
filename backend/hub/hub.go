@@ -54,7 +54,7 @@ func (hub *Hub) Run() {
 					continue
 				}
 
-				payloadMap := map[string]interface{}{
+				payloadMap := map[string]any{
 					"x":   state.X,
 					"y":   state.Y,
 					"s":   state.Username,
@@ -82,9 +82,19 @@ func (hub *Hub) Run() {
 
 			// penter packet
 			pkt := &models.Packet{
-				Type:    PLAYER_ENTER,
-				Sender:  client.Username,
-				Payload: json.RawMessage(fmt.Sprintf(`{"x":"%d","y":"%d","img":"%s","a":"%s","d":"%s","s":"%s"}`, client.PlayerState.X, client.PlayerState.Y, client.PlayerState.SpriteURL, client.PlayerState.AnimationState, client.PlayerState.Direction, client.PlayerState.Username)),
+				Type:   PLAYER_ENTER,
+				Sender: client.Username,
+				Payload: json.RawMessage(
+					fmt.Sprintf(
+						`{"x":"%d","y":"%d","img":"%s","a":"%s","d":"%s","s":"%s"}`,
+						client.PlayerState.X,
+						client.PlayerState.Y,
+						client.PlayerState.SpriteURL,
+						client.PlayerState.AnimationState,
+						client.PlayerState.Direction,
+						client.PlayerState.Username,
+					),
+				),
 			}
 
 			hub.BroadcastCh <- pkt

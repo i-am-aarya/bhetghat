@@ -9,9 +9,10 @@ type Room struct {
 	RoomCode         string               `bson:"roomCode"              json:"roomCode,omitempty"`
 	HashedPassword   string               `bson:"password,omitempty"    json:"-"`
 	RequiresPassword bool                 `bson:"requiresPassword"      json:"requiresPassword,omitempty"`
-	Members          []primitive.ObjectID `bson:"members,omitempty"     json:"members,omitempty"`
+	Members          []primitive.ObjectID `bson:"members,omitempty"     json:"-"`
 	MemberCount      int                  `bson:"memberCount,omitempty" json:"memberCount,omitempty"`
 	Capacity         int                  `bson:"capacity,omitempty"    json:"capacity,omitempty"`
+	MemberSummaries  []UserSummary        `bson:"-"                     json:"members,omitempty"`
 }
 
 type CreateRoomParams struct {

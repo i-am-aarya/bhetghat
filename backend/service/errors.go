@@ -9,6 +9,7 @@ var (
 	ErrInvalidRoomPassword = errors.New("invalid room password")
 	ErrUnauthorized        = errors.New("unauthorized")
 	ErrInvalidRoomID       = errors.New("invalid room id")
+	ErrInvalidRoomCode     = errors.New("invalid room code")
 	ErrInvalidParams       = errors.New("invalid request params")
 	ErrInvalidSearchParams = errors.New("invalid search params")
 	ErrPasswordTooShort    = errors.New("password too short")
