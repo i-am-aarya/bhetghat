@@ -49,7 +49,7 @@ export default function CharacterSelector() {
 
   const handleStartPlaying = () => {
     // router.push("/game");
-    navigate("/game");
+    // navigate(`/room/${}`);
   };
 
   const handleCharacterSelect = (character: Character) => {

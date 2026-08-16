@@ -5,14 +5,28 @@ import (
 	"bhetghat-server/models"
 	"encoding/json"
 	"log"
+	"log/slog"
 
 	"github.com/gofiber/contrib/websocket"
 )
 
-func WSConn(c *websocket.Conn) {
+type WSHandler struct {
+	registry *hub.HubRegistry
+}
+
+func NewWSHandler(registry *hub.HubRegistry) *WSHandler {
+	return &WSHandler{
+		registry: registry,
+	}
+}
+
+func (h *WSHandler) HandleGameWS(c *websocket.Conn) {
 	defer c.Close()
-	globalHub := hub.GetHubInstance()
-	// proximityManager := globalHub.Proximity
+	room, ok := c.Locals("room").(*models.Room)
+	if !ok || room == nil {
+		slog.Error("room not found in locals")
+		return
+	}
 
 	var initialPkt models.Packet
 	if err := c.ReadJSON(&initialPkt); err != nil {
@@ -27,8 +41,11 @@ func WSConn(c *websocket.Conn) {
 		return
 	}
 
+	roomHub := h.registry.GetOrCreate(room.ID)
+	log.Printf("USER: %s\t\tHUB: %s", playerEnterPayload.Sender, roomHub)
+
 	client := &hub.Client{
-		Hub:      globalHub,
+		Hub:      roomHub,
 		Conn:     c,
 		Send:     make(chan *models.Packet, 256),
 		Username: playerEnterPayload.Sender,
@@ -43,7 +60,7 @@ func WSConn(c *websocket.Conn) {
 		},
 	}
 
-	globalHub.RegisterCh <- client
+	roomHub.RegisterCh <- client
 
 	go client.WritePump()
 	client.ReadPump()

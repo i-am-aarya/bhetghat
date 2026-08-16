@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { Navigate, Outlet } from "react-router-dom";
 import NavBar from "./NavBar";
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({fullWidth = false}) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const isLoading = useAuthStore((s) => s.isCheckingSession);
 
@@ -18,8 +18,8 @@ const ProtectedRoute = () => {
   }
 
   return <div className="w-screen h-screen">
-    <NavBar/>
-    <main className="w-3/4 mx-auto mt-14">
+    { !fullWidth && <NavBar/> }
+    <main className={fullWidth ? "" : "w-3/4 mx-auto mt-14"}>
     <Outlet/>
     </main >
   </div>

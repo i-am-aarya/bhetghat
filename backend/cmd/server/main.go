@@ -8,7 +8,6 @@ import (
 
 	// db "bhetghat-server/database"
 	"bhetghat-server/config"
-	"bhetghat-server/hub"
 	"bhetghat-server/server"
 	"net/http"
 	_ "net/http/pprof"
@@ -37,19 +36,19 @@ func main() {
 		log.Fatal("Redis failed: ", err)
 	}
 
-	roomManager := &hub.SessionManager{
-		Sessions: make(map[string]*hub.Session),
-	}
+	// roomManager := &hub.SessionManager{
+	// 	Sessions: make(map[string]*hub.Session),
+	// }
 
-	globalHub := hub.GetHubInstance()
+	// globalHub := hub.GetHubInstance()
 
-	globalHub.Proximity = hub.NewProximityManager()
-	globalHub.Proximity.RoomManager = roomManager
+	// globalHub.Proximity = hub.NewProximityManager()
+	// globalHub.Proximity.RoomManager = roomManager
 
-	go roomManager.CleanupExpiredRooms()
+	// go roomManager.CleanupExpiredRooms()
 
-	log.Printf("HUB %p running\n", globalHub)
-	go globalHub.Run()
+	// log.Printf("HUB %p running\n", globalHub)
+	// go globalHub.Run()
 
 	server := server.NewServer()
 

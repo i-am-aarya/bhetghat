@@ -19,18 +19,18 @@ import type {
 import { ToastAction } from "../ui/toast";
 import { EventScheduler } from "../communication/event-scheduler";
 import VideoCall from "../communication/video-call";
-import { useToast } from "@/hooks/use-toast";
 import { useMediaPermissions } from "@/hooks/useMediaPermissions";
 import { useAuthStore } from "@/stores/authStore";
+import { useRoomStore } from "@/stores/roomStore";
+import { getAccessToken } from "@/lib/api";
+import { toast } from "sonner";
 
 const GameContainer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { toast } = useToast();
-
   const user = useAuthStore((s) => s.user);
 
-  const { requestMediaAccess } = useMediaPermissions();
+  // const { requestMediaAccess } = useMediaPermissions();
 
   const [loaded, setLoaded] = useState(false);
 
@@ -49,11 +49,13 @@ const GameContainer = () => {
   const [roomID, setRoomID] = useState("");
   const [nearbyUsers, setNearbyUsers] = useState<string[]>([]);
 
+  const roomCode = useRoomStore((s) => s.currentRoom?.roomCode)
+
   const GAME_WIDTH = 1280
   const GAME_HEIGHT = 700
 
   useEffect(() => {
-    requestMediaAccess(true, true);
+    // requestMediaAccess(true, true);
     loadAssets()
       .then((loadedAssets) => {
         setAssets(loadedAssets);
@@ -105,8 +107,8 @@ const GameContainer = () => {
     (payload: EventSchedulePayload) => {
       try {
         gameRef.current?.sendEventSchedule(payload);
-        toast({
-          title: payload.title,
+        toast(
+          payload.title, {
           description: payload.description,
           action: <ToastAction altText="OKAY">OKAY</ToastAction>,
         });
@@ -115,25 +117,22 @@ const GameContainer = () => {
         console.log("error sending event schedule", error);
       }
     },
-    [toast],
+    [],
   );
 
   const handleEventNotification = (payload: EventNotifyPayload) => {
-    // useToast
-    toast({
-      title: payload.title,
-      description: payload.description,
+    toast(
+      payload.title,
+      {
+      description: `${payload.description} by ${payload.creator}`,
       action: <ToastAction altText="OKAY">OK</ToastAction>,
     });
 
-    alert(
-      `EVENT: ${payload.title}\n\n${payload.description}\n\n\n\nOrganizer: ${payload.creator}`,
-    );
   };
 
   const WSURL = import.meta.env.VITE_GAME_WS;
+
   useEffect(() => {
-    console.log("loading...");
 
     const resizeCanvas = () => {
       const canvas = canvasRef.current;
@@ -188,11 +187,11 @@ const GameContainer = () => {
     if (!ctx) return;
     ctx.imageSmoothingEnabled = false;
     if (!user) return;
+    if (!WSURL) return;
 
-    if (!WSURL) {
-      alert("wsurl not found");
-      return;
-    }
+    const wsUrl = new URL(WSURL)
+    wsUrl.pathname = `/ws/${roomCode}`
+    wsUrl.searchParams.set("token", getAccessToken() ?? "")
 
     const initGame = async () => {
       try {
@@ -202,7 +201,6 @@ const GameContainer = () => {
           "/assets/characters/character-male.png";
 
         const player = new LocalPlayer(
-          // 2250,
           3000,
           2200,
           user.username,
@@ -214,7 +212,7 @@ const GameContainer = () => {
           player,
           ctx,
           camera,
-          WSURL,
+          wsUrl.toString(),
           assets,
           handleChatMessages,
           handleCommUpdate,

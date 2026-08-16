@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"sync"
 
 	"bhetghat-server/models"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
@@ -22,6 +23,7 @@ const (
 )
 
 type Hub struct {
+	RoomID       primitive.ObjectID
 	Clients      map[*Client]bool
 	RegisterCh   chan *Client
 	UnregisterCh chan *Client
@@ -30,8 +32,9 @@ type Hub struct {
 	Proximity    *ProximityManager
 }
 
-func NewHub() *Hub {
+func NewHub(roomID primitive.ObjectID) *Hub {
 	return &Hub{
+		RoomID:       roomID,
 		Clients:      make(map[*Client]bool, 256),
 		RegisterCh:   make(chan *Client, 256),
 		UnregisterCh: make(chan *Client, 256),
@@ -122,21 +125,18 @@ func (hub *Hub) Run() {
 
 		case packet := <-hub.BroadcastCh:
 			for client := range hub.Clients {
-				select {
-				case client.Send <- packet:
-				}
+				client.Send <- packet
 			}
 
 		}
 	}
 }
 
-var globalHubInstance *Hub
-var once sync.Once
-
-func GetHubInstance() *Hub {
-	once.Do(func() {
-		globalHubInstance = NewHub()
-	})
-	return globalHubInstance
+func (h *Hub) String() string {
+	return fmt.Sprintf(
+		"Hub{RoomID: %s, Clients: %d, PlayerStates: %d}",
+		h.RoomID.Hex(),
+		len(h.Clients),
+		len(h.PlayerStates),
+	)
 }

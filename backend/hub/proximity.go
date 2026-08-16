@@ -17,10 +17,10 @@ type Position struct {
 }
 
 type ProximityManager struct {
-	positions   map[string]Position
-	activeRooms map[string][]string
-	mutex       sync.RWMutex
-	RoomManager *SessionManager
+	positions      map[string]Position
+	activeRooms    map[string][]string
+	mutex          sync.RWMutex
+	SessionManager *SessionManager
 }
 
 func NewProximityManager() *ProximityManager {
@@ -79,7 +79,7 @@ func (pm *ProximityManager) GetRoomHash(username string) string {
 	members := append(nearby, username)
 	sort.Strings(members)
 
-	return pm.RoomManager.CreateRoom(members)
+	return pm.SessionManager.CreateRoom(members)
 }
 
 func (pm *ProximityManager) GetNearbyPlayersLocked(username string) []string {

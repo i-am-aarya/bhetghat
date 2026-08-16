@@ -35,7 +35,9 @@ function App() {
           <Route path="/lobby" element={<LobbyPage/>} />
           <Route path="/character" element={<CharacterSelectionPage />} />
           <Route path="/room/:code" element={<RoomPage/>}/>
-          <Route path="/game" element={<GamePage />} />
+        </Route>
+        <Route element={<ProtectedRoute fullWidth={true}/>}>
+          <Route path="/room/:code/play" element={<GamePage />} />
         </Route>
         <Route path="*" element={<NotFoundPage/>}/>
       </Routes>

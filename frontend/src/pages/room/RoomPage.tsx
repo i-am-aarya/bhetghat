@@ -1,14 +1,12 @@
-import { roomApi } from "@/api/room"
 import { Button } from "@/components/ui/button"
 import { useRoomStore } from "@/stores/roomStore"
-import { ArrowRight, Copy, User, Users } from "lucide-react"
+import { Copy, Users } from "lucide-react"
 import { useEffect } from "react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 export default function RoomPage() {
   const room = useRoomStore((s) => s.currentRoom)
   const getByCode = useRoomStore((s) => s.setCurrentRoomByCode)
-  // const fetchMembers = useRoomStore((s) => s.)
   const {code} = useParams()
 
   useEffect(() => {
@@ -86,12 +84,10 @@ export default function RoomPage() {
 
 
       <Button className="group w-full mt-5 h-10" asChild>
-        <Link to={"/game"}>
+        <Link to={`/room/${room.roomCode}/play`}>
           Start Playing
         </Link>
       </Button>
-
-
 
   </div>
 }

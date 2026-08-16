@@ -9,6 +9,7 @@ import (
 
 	"bhetghat-server/api/handler"
 	"bhetghat-server/config"
+	"bhetghat-server/hub"
 	"bhetghat-server/jwt"
 
 	"bhetghat-server/repository"
@@ -49,7 +50,10 @@ func NewServer() *Server {
 	roomService := service.NewRoomService(roomRepo, userRepo)
 	roomHandler := handler.NewRoomHandler(roomService)
 
-	routes.SetupRoutes(app, userService, userHandler, roomHandler)
+	hubRegistry := hub.NewHubRegistry()
+	wsHandler := handler.NewWSHandler(hubRegistry)
+
+	routes.SetupRoutes(app, userService, userHandler, roomHandler, roomService, wsHandler)
 
 	return &Server{
 		App: app,

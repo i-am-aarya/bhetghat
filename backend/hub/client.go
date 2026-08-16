@@ -57,7 +57,6 @@ func (c *Client) ReadPump() {
 			c.Hub.Proximity.UpdatePosition(c.Username, state.X, state.Y)
 
 			nearby := c.Hub.Proximity.GetNearbyPlayers(c.Username)
-			log.Println("Getting Nearby players: ", nearby)
 
 			roomHash := c.Hub.Proximity.GetRoomHash(c.Username)
 
