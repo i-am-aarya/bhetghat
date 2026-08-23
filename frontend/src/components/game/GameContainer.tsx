@@ -254,7 +254,10 @@ const GameContainer = () => {
           <Progress value={progress} />
         </div>
       </LoadingScreen>
+      {
+        roomID.length > 0 &&
       <VideoCall roomID={roomID} nearbyUsers={nearbyUsers} />
+      }
     </div>
   );
 };
