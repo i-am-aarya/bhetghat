@@ -126,7 +126,7 @@ func (s *RoomService) GetAllMembers(ctx context.Context, roomID primitive.Object
 
 func (s *RoomService) JoinRoom(ctx context.Context, userID primitive.ObjectID, roomCode string) (*models.Room, error) {
 
-	room, err := s.roomRepo.GetByRoomCode(ctx, roomCode)
+	room, err := s.GetRoomByCode(ctx, roomCode)
 	if err != nil {
 		return nil, err
 	}
