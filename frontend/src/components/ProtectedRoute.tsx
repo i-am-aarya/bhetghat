@@ -18,7 +18,11 @@ const ProtectedRoute = ({ fullWidth = false }) => {
   return (
     <div className="w-screen h-screen">
       {!fullWidth && <NavBar />}
-      <main className={fullWidth ? "" : "md:w-3/4 w-11/12 mx-auto mt-14 pb-4"}>
+      <main
+        className={
+          fullWidth ? "" : "md:w-3/4 w-11/12 mx-auto mt-14 md:pb-0 pb-4"
+        }
+      >
         <Outlet />
       </main>
     </div>
