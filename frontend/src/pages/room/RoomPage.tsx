@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useMediaStore } from "@/stores/mediaStore";
 import { useRoomStore } from "@/stores/roomStore";
 import { Camera, CameraOff, Copy, Mic, MicOff, Users } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 export default function RoomPage() {
@@ -22,6 +22,8 @@ export default function RoomPage() {
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
+  const [micLevel, setMicLevel] = useState(0);
+
   useEffect(() => {
     if (!code) return;
     const fetchData = async () => {
@@ -34,8 +36,30 @@ export default function RoomPage() {
 
   useEffect(() => {
     if (!videoRef.current || !localStream) return;
-
     videoRef.current.srcObject = localStream;
+
+    const audioContext = new AudioContext();
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256;
+
+    audioContext.createMediaStreamSource(localStream).connect(analyser);
+    const data = new Uint8Array(analyser.frequencyBinCount);
+
+    let rafId: number;
+    const tick = () => {
+      analyser.getByteFrequencyData(data);
+
+      const avg = data.reduce((sum, v) => sum + v, 0) / data.length;
+      setMicLevel(Math.min(1, avg / 60));
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    tick();
+
+    return () => {
+      cancelAnimationFrame(rafId);
+    };
   }, [localStream]);
 
   if (!room) {
@@ -68,15 +92,20 @@ export default function RoomPage() {
 
         <div className="bg-black/50 w-full aspect-video text-white">
           {localStream ? (
-            <video ref={videoRef} autoPlay playsInline></video>
+            <video ref={videoRef} autoPlay playsInline muted></video>
           ) : (
             <p className="font-bold">Test!</p>
           )}
         </div>
 
-        <div
-          className={`bg-primary w-full h-1 shadow-2xl shadow-primary`}
-        ></div>
+        <div className={`w-full h-1`}>
+          <div
+            className={`bg-primary shadow-sm h-1`}
+            style={{
+              width: `${micLevel * 100}%`,
+            }}
+          ></div>
+        </div>
 
         <div className="flex gap-2 w-full">
           <Button
