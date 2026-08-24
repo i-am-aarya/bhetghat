@@ -1,16 +1,46 @@
-# BhetGhat: A 2D Gamified Platform for Communication and Collaboration Using WebSockets and WebRTC
+# BhetGhat
 
-## Project Description
+**BhetGhat** is an open-source proximity-based video collaboration platform inspired by virtual spaces like Gather.
 
+## Tech stack
 
-## Directory Structure
+#### Backend
+
+- Go (fiber)
+- MongoDB
+- WebSockets
+
+#### Frontend
+
+- React
+- TypeScript
+- Vite
+- Zustand
+- TailwindCSS
+- shadcn/ui
+
+## Project structure
+
+```text
+bhetghat/
+├── frontend/           # React + TypeScript client
+├── backend/            # Go backend
+└── docker-compose.yml
 ```
-bhetghat/                       
-├── backend/                  # Golang Backend
-├── frontend/
-│   ├── admin/                # Admin Frontend (Dashboard)
-│   └── client/               # Client Frontend (Landing/Download Page)
-├── game/
-│   └── bhetghat/             # Godot Game
-└── README.md
+
+## Development
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Backend
+
+```bash
+cd backend
+go run .
 ```
