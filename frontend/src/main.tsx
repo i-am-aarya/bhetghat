@@ -4,6 +4,8 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 
+import "@livekit/components-styles";
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>

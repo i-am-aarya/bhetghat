@@ -12,34 +12,35 @@ import GuestRoute from "./components/GuestRoute";
 import RoomPage from "./pages/room/RoomPage";
 import { Toaster } from "./components/ui/sonner";
 import NotFoundPage from "./pages/not-found/NotFoundPage";
+import VideoCall from "./components/communication/video-call";
 
 function App() {
-  const initAuth = useAuthStore((s) => s.initAuth)
+  const initAuth = useAuthStore((s) => s.initAuth);
 
   useEffect(() => {
-      initAuth()
-  }, [initAuth])
+    initAuth();
+  }, [initAuth]);
 
   return (
     <>
-      <Toaster/>
+      <Toaster />
       <Routes>
         <Route element={<GuestRoute />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-
         </Route>
         <Route element={<ProtectedRoute />}>
           {/*<Route*/}
-          <Route path="/lobby" element={<LobbyPage/>} />
+          <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/character" element={<CharacterSelectionPage />} />
-          <Route path="/room/:code" element={<RoomPage/>}/>
+          <Route path="/room/:code" element={<RoomPage />} />
+          <Route path="/video-call" element={<VideoCall />} />
         </Route>
-        <Route element={<ProtectedRoute fullWidth={true}/>}>
+        <Route element={<ProtectedRoute fullWidth={true} />}>
           <Route path="/room/:code/play" element={<GamePage />} />
         </Route>
-        <Route path="*" element={<NotFoundPage/>}/>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

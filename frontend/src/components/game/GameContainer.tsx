@@ -42,17 +42,19 @@ const GameContainer = () => {
 
   const gameRef = useRef<Game | null>(null);
 
-  const cameraRef = useRef<Camera | null>(null)
+  const cameraRef = useRef<Camera | null>(null);
 
   const [messages, setMessages] = useState<Message[]>([]);
 
   const [roomID, setRoomID] = useState("");
   const [nearbyUsers, setNearbyUsers] = useState<string[]>([]);
 
-  const roomCode = useRoomStore((s) => s.currentRoom?.roomCode)
+  const roomCode = useRoomStore((s) => s.currentRoom?.roomCode);
 
-  const GAME_WIDTH = 1280
-  const GAME_HEIGHT = 700
+  const GAME_WIDTH = 1280;
+  const GAME_HEIGHT = 700;
+
+  const [comup, setComup] = useState<CommUpdatePayload>();
 
   useEffect(() => {
     // requestMediaAccess(true, true);
@@ -66,13 +68,12 @@ const GameContainer = () => {
   }, []);
 
   useEffect(() => {
-    console.log("loaded: ", loaded)
-  }, [loaded])
+    console.log("loaded: ", loaded);
+  }, [loaded]);
 
-
-    useEffect(() => {
-      console.log("progress: ", progress)
-    }, [progress])
+  useEffect(() => {
+    console.log("progress: ", progress);
+  }, [progress]);
 
   const handleChatMessages = useCallback((payload: ChatPayload) => {
     setMessages((prev) => [
@@ -85,8 +86,9 @@ const GameContainer = () => {
   }, []);
 
   const handleCommUpdate = (payload: CommUpdatePayload) => {
-    setRoomID(payload.roomHash);
-    setNearbyUsers(payload.nearby);
+    setComup(payload);
+    // setRoomID(payload.roomHash);
+    // setNearbyUsers(payload.nearby);
   };
 
   const sendMessage = useCallback(
@@ -107,8 +109,7 @@ const GameContainer = () => {
     (payload: EventSchedulePayload) => {
       try {
         gameRef.current?.sendEventSchedule(payload);
-        toast(
-          payload.title, {
+        toast(payload.title, {
           description: payload.description,
           action: <ToastAction altText="OKAY">OKAY</ToastAction>,
         });
@@ -121,19 +122,15 @@ const GameContainer = () => {
   );
 
   const handleEventNotification = (payload: EventNotifyPayload) => {
-    toast(
-      payload.title,
-      {
+    toast(payload.title, {
       description: `${payload.description} by ${payload.creator}`,
       action: <ToastAction altText="OKAY">OK</ToastAction>,
     });
-
   };
 
   const WSURL = import.meta.env.VITE_GAME_WS;
 
   useEffect(() => {
-
     const resizeCanvas = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -143,32 +140,31 @@ const GameContainer = () => {
       canvas.height = GAME_HEIGHT;
 
       // resize
-      const ratio = 16/9
-      let w, h
+      const ratio = 16 / 9;
+      let w, h;
       // const margin = 10
 
-      const availableHeight = window.innerHeight
-      const availableWidth = window.innerWidth
+      const availableHeight = window.innerHeight;
+      const availableWidth = window.innerWidth;
 
       if (availableWidth / availableHeight > ratio) {
         // wider than 16:9 -> update width to maintain 16:9 ratio with availableWidth
-        w = availableHeight * ratio
-        h = availableHeight
+        w = availableHeight * ratio;
+        h = availableHeight;
       } else {
         // taller than 16:9 -> update height to maintain 16:9 ratio with availableWidth
-        w = availableWidth
-        h = availableWidth * (1/ratio)
+        w = availableWidth;
+        h = availableWidth * (1 / ratio);
       }
 
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.imageSmoothingEnabled = false;
-      ctx.canvas.style.width = `${w}px`
-      ctx.canvas.style.height = `${h}px`
+      ctx.canvas.style.width = `${w}px`;
+      ctx.canvas.style.height = `${h}px`;
 
       if (cameraRef.current) {
-        cameraRef.current.setViewport(canvas.width, canvas.height)
+        cameraRef.current.setViewport(canvas.width, canvas.height);
       }
-
     };
 
     window.addEventListener("resize", resizeCanvas);
@@ -189,9 +185,9 @@ const GameContainer = () => {
     if (!user) return;
     if (!WSURL) return;
 
-    const wsUrl = new URL(WSURL)
-    wsUrl.pathname = `/ws/${roomCode}`
-    wsUrl.searchParams.set("token", getAccessToken() ?? "")
+    const wsUrl = new URL(WSURL);
+    wsUrl.pathname = `/ws/${roomCode}`;
+    wsUrl.searchParams.set("token", getAccessToken() ?? "");
 
     const initGame = async () => {
       try {
@@ -207,7 +203,7 @@ const GameContainer = () => {
           characterSprite,
         );
         const camera = new Camera(player, ctx.canvas.width, ctx.canvas.height);
-        cameraRef.current = camera
+        cameraRef.current = camera;
         const game = new Game(
           player,
           ctx,
@@ -236,13 +232,13 @@ const GameContainer = () => {
   return (
     <div className="w-screen h-screen">
       <div className="w-full h-full flex justify-center items-center">
-      <canvas
-        ref={canvasRef}
-        style={{
-          imageRendering: "pixelated",
-          display: "block",
-        }}
-      />
+        <canvas
+          ref={canvasRef}
+          style={{
+            imageRendering: "pixelated",
+            display: "block",
+          }}
+        />
       </div>
 
       <ChatBox messages={messages} sendMessage={sendMessage} />
@@ -254,10 +250,10 @@ const GameContainer = () => {
           <Progress value={progress} />
         </div>
       </LoadingScreen>
-      {
-        roomID.length > 0 &&
-      <VideoCall roomID={roomID} nearbyUsers={nearbyUsers} />
-      }
+      {comup && comup.roomHash.length > 0 && (
+        // <VideoCall roomID={roomID} nearbyUsers={nearbyUsers} />
+        <VideoCall payload={comup} />
+      )}
     </div>
   );
 };

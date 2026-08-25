@@ -79,6 +79,7 @@ export type PlayerLeavePayload = {
 export type CommUpdatePayload = {
   nearby: string[];
   roomHash: string;
+  lkToken: string;
 };
 
 export type EventSchedulePayload = {

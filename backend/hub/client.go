@@ -1,11 +1,13 @@
 package hub
 
 import (
+	"bhetghat-server/livekit"
 	"bhetghat-server/models"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gofiber/contrib/websocket"
@@ -60,9 +62,24 @@ func (c *Client) ReadPump() {
 
 			roomHash := c.Hub.Proximity.GetRoomHash(c.Username)
 
+			var livekitToken string
+			if roomHash != "" {
+				var err error
+				livekitToken, err = livekit.GetJoinKey(
+					os.Getenv("LIVEKIT_API_KEY"),
+					os.Getenv("LIVEKIT_API_SECRET"),
+					roomHash,
+					c.Username,
+				)
+				if err != nil {
+					log.Fatal("ERROR: generating join key", err)
+				}
+			}
+
 			payload, _ := json.Marshal(models.CommUpdatePayload{
-				NearbyUsers: nearby,
-				RoomHash:    roomHash,
+				NearbyUsers:  nearby,
+				RoomHash:     roomHash,
+				LiveKitToken: livekitToken,
 			})
 
 			c.Send <- &models.Packet{

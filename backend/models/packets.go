@@ -1,6 +1,8 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type Packet struct {
 	Type    string          `json:"t"`
@@ -34,8 +36,9 @@ type PlayerEnterPayload struct {
 }
 
 type CommUpdatePayload struct {
-	NearbyUsers []string `json:"nearby"`
-	RoomHash    string   `json:"roomHash"`
+	NearbyUsers  []string `json:"nearby"`
+	RoomHash     string   `json:"roomHash"`
+	LiveKitToken string   `json:"lkToken"`
 }
 
 type EventSchedulePayload struct {
