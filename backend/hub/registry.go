@@ -1,7 +1,6 @@
 package hub
 
 import (
-	"log"
 	"sync"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,7 +24,6 @@ func (r *HubRegistry) GetOrCreate(roomID primitive.ObjectID) *Hub {
 	defer r.mu.Unlock()
 
 	if hub, ok := r.hubs[roomID]; ok {
-		log.Println("hub exists!")
 		return hub
 	}
 
@@ -33,7 +31,6 @@ func (r *HubRegistry) GetOrCreate(roomID primitive.ObjectID) *Hub {
 		Sessions: make(map[string]*Session),
 	}
 
-	log.Println("created new hub!")
 	hub := NewHub(roomID)
 	hub.Proximity = NewProximityManager()
 	hub.Proximity.SessionManager = roomManager

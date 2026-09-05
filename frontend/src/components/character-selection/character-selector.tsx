@@ -2,7 +2,6 @@ import { Card, CardDescription, CardFooter, CardHeader } from "../ui/card";
 import SpriteAnimation from "./sprite-animation";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { useNavigate } from "react-router-dom";
 
 export interface Character {
   id: number;
@@ -13,8 +12,6 @@ export interface Character {
 }
 
 export default function CharacterSelector() {
-  const navigate = useNavigate();
-
   const characters: Character[] = [
     {
       id: 1,

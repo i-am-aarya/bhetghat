@@ -17,7 +17,7 @@ type UserRepository interface {
 	GetByEmail(ctx context.Context, email string) (*models.User, error)
 	GetAll(ctx context.Context) ([]*models.User, error)
 	Insert(ctx context.Context, user *models.User) (*models.User, error)
-	Update(ctx context.Context, userID primitive.ObjectID, update *models.UpdateUserParams) (*models.User, error)
+	Update(ctx context.Context, userID primitive.ObjectID, update *bson.M) (*models.User, error)
 	FindByIDs(ctx context.Context, ids []primitive.ObjectID) ([]*models.User, error)
 }
 
@@ -95,7 +95,7 @@ func (r *MongoUserRepo) GetAll(ctx context.Context) ([]*models.User, error) {
 	return users, nil
 }
 
-func (r *MongoUserRepo) Update(ctx context.Context, userID primitive.ObjectID, update *models.UpdateUserParams) (*models.User, error) {
+func (r *MongoUserRepo) Update(ctx context.Context, userID primitive.ObjectID, update *bson.M) (*models.User, error) {
 	res, err := r.coll.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$set": update})
 	if err != nil {
 		return nil, err

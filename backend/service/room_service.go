@@ -6,7 +6,6 @@ import (
 	"context"
 	"crypto/rand"
 	"errors"
-	"log"
 	"slices"
 	"strings"
 
@@ -32,7 +31,6 @@ func NewRoomService(roomRepo repository.RoomRepository, userRepo repository.User
 func (s *RoomService) CreateRoom(ctx context.Context, name, password string, userID primitive.ObjectID) (*models.Room, error) {
 
 	if len(strings.TrimSpace(name)) < 4 {
-		log.Println("name: ", name)
 		return nil, ErrNameTooShort
 	}
 

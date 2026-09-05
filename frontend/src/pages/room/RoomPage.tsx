@@ -1,9 +1,55 @@
+import type { Room } from "@/api/room";
 import { Button } from "@/components/ui/button";
 import { useMediaStore } from "@/stores/mediaStore";
 import { useRoomStore } from "@/stores/roomStore";
-import { Camera, CameraOff, Copy, Mic, MicOff, Users } from "lucide-react";
+import {
+  Camera,
+  CameraOff,
+  Copy,
+  Headset,
+  Mic,
+  MicOff,
+  UserIcon,
+  Users,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+
+interface MembersProps {
+  room: Room;
+  className?: string;
+}
+function Members({ room, className }: MembersProps) {
+  return (
+    <div
+      className={`border-border border p-4 rounded-xl w-full mt-5 flex flex-col gap-4 ${className}`}
+    >
+      <div className="flex justify-between w-full text-primary">
+        <p className="font-bold flex items-center gap-2 text-sm text-primary">
+          <Users />
+          <p className="text-primary font-mono">Members</p>
+        </p>
+
+        <p className="text-sm font-semibold">
+          {room.memberCount} / {room.capacity}
+        </p>
+      </div>
+      <div className="grid grid-cols-1 gap-1 overflow-scroll max-h-40">
+        {room.members.map((member) => (
+          <div
+            key={member.id}
+            className="flex items-center gap-2 p-2 border border-border rounded-xl text-sm"
+          >
+            <div className="p-2 rounded-full border border-border">
+              <UserIcon className="text-foreground/50" />
+            </div>
+            <p>{member.username}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function RoomPage() {
   const room = useRoomStore((s) => s.currentRoom);
@@ -87,74 +133,67 @@ export default function RoomPage() {
         />
       </Button>
 
-      <div className="border border-border rounded-xl p-5 w-full flex flex-col gap-2">
-        <p className="text-sm">Check camera and mic</p>
+      <div className="border border-border rounded-xl p-5 w-full flex flex-col md:flex-col gap-2">
+        <p className="text-sm font-mono text-primary font-bold flex gap-2">
+          <Headset />
+          Camera and mic
+        </p>
 
-        <div className="bg-black/50 w-full aspect-video text-white">
-          {localStream ? (
-            <video ref={videoRef} autoPlay playsInline muted></video>
-          ) : (
-            <p className="font-bold">Test!</p>
-          )}
-        </div>
-
-        <div className={`w-full h-1`}>
-          <div
-            className={`bg-primary shadow-sm h-1`}
-            style={{
-              width: `${micLevel * 100}%`,
-            }}
-          ></div>
-        </div>
-
-        <div className="flex gap-2 w-full">
-          <Button
-            className="flex-1"
-            variant={micOn ? "secondary" : "destructive"}
-            onClick={toggleMic}
-          >
-            {micOn ? <Mic /> : <MicOff />} Mic
-          </Button>
-          <Button
-            className="flex-1"
-            variant={cameraOn ? "secondary" : "destructive"}
-            onClick={toggleCamera}
-          >
-            {cameraOn ? <Camera /> : <CameraOff />} Camera
-          </Button>
-        </div>
-      </div>
-
-      <div className="border-border border p-4 rounded-xl w-full mt-5 flex flex-col gap-4">
-        <div className="flex justify-between w-full">
-          <p className="font-bold flex items-center gap-2 text-sm text-foreground/80">
-            <Users />
-            Members
-          </p>
-
-          <p className="text-sm text-muted-foreground font-semibold">
-            {room.memberCount} / {room.capacity}
-          </p>
-        </div>
-        <div className="grid grid-rows-2 gap-2">
-          {room.members.map((member) => (
-            <div
-              key={member.id}
-              className="flex items-center gap-2 rounded-xl w-32 text-sm"
-            >
-              <p>{member.username}</p>
+        {localStream ? (
+          <>
+            <div className="bg-black/50 w-full aspect-video text-white">
+              <video ref={videoRef} autoPlay playsInline muted></video>
             </div>
-          ))}
-        </div>
+
+            <div className={`w-full h-1`}>
+              <div
+                className={`bg-primary shadow-sm h-1`}
+                style={{
+                  width: `${micLevel * 100}%`,
+                }}
+              ></div>
+            </div>
+
+            <div className="flex gap-2 w-full">
+              <Button
+                className="flex-1"
+                variant={micOn ? "secondary" : "destructive"}
+                onClick={toggleMic}
+              >
+                {micOn ? <Mic /> : <MicOff />} Mic
+              </Button>
+              <Button
+                className="flex-1"
+                variant={cameraOn ? "secondary" : "destructive"}
+                onClick={toggleCamera}
+              >
+                {cameraOn ? <Camera /> : <CameraOff />} Camera
+              </Button>
+            </div>
+          </>
+        ) : (
+          <Button
+            variant={"secondary"}
+            onClick={() => {
+              ensureStream();
+            }}
+          >
+            Test!
+          </Button>
+        )}
       </div>
 
-      <div className="border border-border rounded-xl p-4 w-full mt-5">
-        <p>Room Settings</p>
+      <Members room={room} />
 
-        <p>TODO: room password</p>
-      </div>
-
-      <Button className="group w-full mt-5 h-10" asChild>
+      {/*{room.ownerID == user?.id && (
+        <Button variant={"outline"} className="mt-5 w-full h-10" asChild>
+          <Link to={"/settings"}>
+            <Settings2Icon /> Settings
+          </Link>
+        </Button>
+      )}
+*/}
+      <Button className="w-full mt-5 h-10" asChild>
         <Link to={`/room/${room.roomCode}/play`}>Start Playing</Link>
       </Button>
     </div>
