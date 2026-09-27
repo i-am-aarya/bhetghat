@@ -12,7 +12,7 @@ import GuestRoute from "./components/GuestRoute";
 import RoomPage from "./pages/room/RoomPage";
 import { Toaster } from "./components/ui/sonner";
 import NotFoundPage from "./pages/not-found/NotFoundPage";
-import VideoCall from "./components/communication/video-call";
+import SettingsPage from "./pages/settings/SettingsPage";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -35,7 +35,7 @@ function App() {
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/character" element={<CharacterSelectionPage />} />
           <Route path="/room/:code" element={<RoomPage />} />
-          <Route path="/video-call" element={<VideoCall />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
         <Route element={<ProtectedRoute fullWidth={true} />}>
           <Route path="/room/:code/play" element={<GamePage />} />

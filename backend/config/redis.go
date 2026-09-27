@@ -2,7 +2,9 @@ package config
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/redis/go-redis/v9"
@@ -13,7 +15,8 @@ var RedisClient *redis.Client
 func InitRedis() error {
 	addr := os.Getenv("REDIS_ADDR")
 	if addr == "" {
-		addr = "localhost:6379"
+		log.Fatal("redis address not found")
+		return errors.New("redis address not found!")
 	}
 
 	password := os.Getenv("REDIS_PASSWORD")

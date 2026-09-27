@@ -7,6 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.15
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1
+	github.com/livekit/protocol v1.49.0
 	github.com/redis/go-redis/v9 v9.22.0
 	go.mongodb.org/mongo-driver v1.17.9
 	golang.org/x/crypto v0.55.0
@@ -41,7 +42,6 @@ require (
 	github.com/lithammer/shortuuid/v4 v4.2.0 // indirect
 	github.com/livekit/mageutil v0.0.0-20250511045019-0f1ff63f7731 // indirect
 	github.com/livekit/mediatransportutil v0.0.0-20260605212259-862d4a7bcb1e // indirect
-	github.com/livekit/protocol v1.49.0 // indirect
 	github.com/livekit/psrpc v0.7.2 // indirect
 	github.com/livekit/server-sdk-go/v2 v2.18.1 // indirect
 	github.com/magefile/mage v1.17.2 // indirect

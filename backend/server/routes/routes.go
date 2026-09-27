@@ -11,7 +11,7 @@ func SetupRoutes(app *fiber.App, userService *service.UserService, userHandler *
 
 	RegisterAuthRoutes(app, userHandler)
 	RegisterHealthCheckRoutes(app)
-	RegisterUserRoutes(app)
+	RegisterUserRoutes(app, userHandler)
 	RegisterGameRoutes(app, userService, roomService, wsHandler)
 	RegisterRoomRoutes(app, roomHandler, userService)
 

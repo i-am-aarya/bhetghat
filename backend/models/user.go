@@ -41,8 +41,11 @@ func (p *CreateUserParams) Validate() error {
 
 // Params for updating User
 type UpdateUserParams struct {
-	FirstName string `json:"firstName,omitempty" bson:"firstName,omitempty"`
-	LastName  string `json:"lastName,omitempty" bson:"lastName,omitempty"`
+	FirstName          string `json:"firstName,omitempty" bson:"firstName,omitempty"`
+	LastName           string `json:"lastName,omitempty" bson:"lastName,omitempty"`
+	OldPassword        string `json:"oldPassword,omitempty"`
+	NewPassword        string `json:"newPassword,omitempty"`
+	ConfirmNewPassword string `json:"confirmNewPassword,omitempty"`
 }
 
 type LoginUserParams struct {

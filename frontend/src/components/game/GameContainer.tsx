@@ -19,7 +19,6 @@ import type {
 import { ToastAction } from "../ui/toast";
 import { EventScheduler } from "../communication/event-scheduler";
 import VideoCall from "../communication/video-call";
-import { useMediaPermissions } from "@/hooks/useMediaPermissions";
 import { useAuthStore } from "@/stores/authStore";
 import { useRoomStore } from "@/stores/roomStore";
 import { getAccessToken } from "@/lib/api";
@@ -29,8 +28,6 @@ const GameContainer = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const user = useAuthStore((s) => s.user);
-
-  // const { requestMediaAccess } = useMediaPermissions();
 
   const [loaded, setLoaded] = useState(false);
 
@@ -46,9 +43,6 @@ const GameContainer = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const [roomID, setRoomID] = useState("");
-  const [nearbyUsers, setNearbyUsers] = useState<string[]>([]);
-
   const roomCode = useRoomStore((s) => s.currentRoom?.roomCode);
 
   const GAME_WIDTH = 1280;
@@ -57,7 +51,6 @@ const GameContainer = () => {
   const [comup, setComup] = useState<CommUpdatePayload>();
 
   useEffect(() => {
-    // requestMediaAccess(true, true);
     loadAssets()
       .then((loadedAssets) => {
         setAssets(loadedAssets);
@@ -87,8 +80,6 @@ const GameContainer = () => {
 
   const handleCommUpdate = (payload: CommUpdatePayload) => {
     setComup(payload);
-    // setRoomID(payload.roomHash);
-    // setNearbyUsers(payload.nearby);
   };
 
   const sendMessage = useCallback(

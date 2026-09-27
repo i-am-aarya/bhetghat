@@ -1,9 +1,4 @@
-import { Link } from "react-router-dom";
-
-const GITHUB_URL = "https://github.com/i-am-aarya/bhetghat";
-
 export default function Footer() {
-
   return (
     <footer className="border-t border-border px-6 py-5 flex items-center justify-between w-full">
       <span className="font-head font-bold text-[0.9rem] tracking-tight text-muted-foreground">

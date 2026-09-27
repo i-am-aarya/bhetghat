@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 
@@ -187,4 +188,68 @@ func (s *UserService) LogoutUser(ctx context.Context, refreshToken string) error
 	}
 
 	return s.refreshRepo.Delete(ctx, userID, refreshToken)
+}
+
+func (s *UserService) UpdateUser(ctx context.Context, userID primitive.ObjectID, updateParams *models.UpdateUserParams) (*models.User, error) {
+
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, ErrUserNotFound
+	}
+
+	if userID != user.ID {
+		return nil, ErrUnauthorized
+	}
+
+	update := bson.M{}
+
+	if updateParams.FirstName != "" {
+		if len(updateParams.FirstName) > 6 {
+			update["firstName"] = updateParams.FirstName
+		} else {
+			return nil, ErrFirstNameTooShort
+		}
+	}
+	if updateParams.LastName != "" {
+		if len(updateParams.LastName) > 6 {
+			update["lastName"] = updateParams.LastName
+		} else {
+			return nil, ErrLastNameTooShort
+		}
+	}
+	if updateParams.OldPassword != "" {
+		if len(updateParams.OldPassword) >= 8 {
+			err := bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(updateParams.OldPassword))
+			if err != nil {
+				return nil, ErrInvalidPassword
+			}
+		} else {
+			return nil, ErrPasswordTooShort
+		}
+	}
+	if updateParams.NewPassword != "" {
+		if updateParams.NewPassword == updateParams.ConfirmNewPassword {
+			if len(updateParams.NewPassword) >= 8 {
+				newHash, err := bcrypt.GenerateFromPassword([]byte(updateParams.NewPassword), bcrypt.DefaultCost)
+				if err != nil {
+					return nil, err
+				}
+
+				update["password"] = string(newHash)
+
+			} else {
+				return nil, ErrPasswordTooShort
+
+			}
+		} else {
+			return nil, ErrPasswordsDontMatch
+
+		}
+	}
+
+	return s.userRepo.Update(ctx, userID, &update)
 }

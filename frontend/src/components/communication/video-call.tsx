@@ -5,9 +5,11 @@ export interface VideoCallProps {
 }
 export default function VideoCall({ payload }: VideoCallProps) {
   return (
-    <div className="absolute top-0 left-0 w-1/2 flex bg-red-400">
+    <div className="absolute top-0 left-0 w-1/2 right-0 mx-auto mt-10 flex rounded-xl bg-black p-1">
       <LiveKitRoom
-        serverUrl={`ws://localhost:7880`}
+        data-lk-theme="default"
+
+        serverUrl={import.meta.env.VITE_LIVEKIT_SERVER_URL}
         token={payload.lkToken}
         connect={true}
         video={true}
