@@ -194,7 +194,7 @@ export default function RoomPage() {
       )}
 */}
       <Button className="w-full mt-5 h-10" asChild>
-        <Link to={`/room/${room.roomCode}/play`}>Start Playing</Link>
+        <Link to={`/room/${room.roomCode}/play`}>Enter</Link>
       </Button>
     </div>
   );

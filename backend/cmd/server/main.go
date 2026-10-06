@@ -11,21 +11,19 @@ import (
 	"bhetghat-server/server"
 	"net/http"
 	_ "net/http/pprof"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("error loading .env file: ", err)
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// 	log.Fatal("error loading .env file: ", err)
+	// }
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancelFunc()
 
-	err = config.InitMongo(ctx)
+	err := config.InitMongo(ctx)
 	if err != nil {
 		log.Fatal("ERROR CONNECTING TO DATABASE", err)
 	}

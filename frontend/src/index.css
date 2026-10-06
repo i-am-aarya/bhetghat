@@ -67,8 +67,12 @@
     /* ── Bhetghat design language ──────────────────────────────
        One accent (crimson), everything else quiet and neutral.
        See design brief for the full rationale. */
-    --bg: #ffffff;
-    --bg-soft: #fafaf8;
+    /*--bg: #ffffff;*/
+    /*--bg-soft: #fafaf8;*/
+
+    --bg-soft: #ffffff;
+    --bg: #fafaf8;
+
     --bg-subtle: #f4f4f1;
     --crimson: #d91656;
     --crimson-dim: rgba(217, 22, 86, 0.08);

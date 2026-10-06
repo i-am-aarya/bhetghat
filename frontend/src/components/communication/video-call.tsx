@@ -8,8 +8,8 @@ export default function VideoCall({ payload }: VideoCallProps) {
     <div className="absolute top-0 left-0 w-1/2 right-0 mx-auto mt-10 flex rounded-xl bg-black p-1">
       <LiveKitRoom
         data-lk-theme="default"
-
-        serverUrl={import.meta.env.VITE_LIVEKIT_SERVER_URL}
+        serverUrl={import.meta.env.VITE_LIVEKIT_WS}
+        // serverUrl={`ws://localhost:7880`}
         token={payload.lkToken}
         connect={true}
         video={true}

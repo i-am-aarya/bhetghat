@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-      <Toaster />
+      <Toaster richColors />
       <Routes>
         <Route element={<GuestRoute />}>
           <Route path="/" element={<LandingPage />} />
@@ -31,7 +31,6 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
         </Route>
         <Route element={<ProtectedRoute />}>
-          {/*<Route*/}
           <Route path="/lobby" element={<LobbyPage />} />
           <Route path="/character" element={<CharacterSelectionPage />} />
           <Route path="/room/:code" element={<RoomPage />} />

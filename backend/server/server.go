@@ -29,7 +29,7 @@ func NewServer() *Server {
 
 	// CORS
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:7000,http://localhost:5173,http://localhost:4173",
+		AllowOrigins:     "http://127.0.0.1:7000,http://localhost:7000,http://localhost:5173,http://localhost:4173",
 		AllowHeaders:     "Origin, Content-Type, Accpet, Authorization",
 		AllowCredentials: true,
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",

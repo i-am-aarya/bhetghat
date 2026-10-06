@@ -3,7 +3,6 @@ package hub
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"bhetghat-server/models"
 
@@ -50,8 +49,8 @@ func (hub *Hub) Run() {
 		case client := <-hub.RegisterCh:
 
 			for username, state := range hub.PlayerStates {
-				fmt.Printf("username: %s\t state: %v\n", username, state)
-				fmt.Println(hub.PlayerStates)
+				// fmt.Printf("username: %s\t state: %v\n", username, state)
+				// fmt.Println(hub.PlayerStates)
 
 				if username == client.Username {
 					continue
@@ -75,7 +74,7 @@ func (hub *Hub) Run() {
 				}
 
 				client.Send <- existingPkt
-				log.Printf("Sent %s's player data to new client: %s", existingPkt.Sender, client.Username)
+				// log.Printf("Sent %s's player data to new client: %s", existingPkt.Sender, client.Username)
 				// hub.Proximity.Cleanup(client.Username)
 
 			}
@@ -101,14 +100,14 @@ func (hub *Hub) Run() {
 			}
 
 			hub.BroadcastCh <- pkt
-			log.Printf("BROADCAST %s's ENTRANCE\n", client.PlayerState.Username)
+			// log.Printf("BROADCAST %s's ENTRANCE\n", client.PlayerState.Username)
 
 		case client := <-hub.UnregisterCh:
 			if _, ok := hub.Clients[client]; ok {
 				delete(hub.Clients, client)
 				close(client.Send)
 				client.Conn.Close()
-				log.Printf("closing %s connection\n", client.Username)
+				// log.Printf("closing %s connection\n", client.Username)
 				// pleave packet
 				pkt := &models.Packet{
 					Type:    PLAYER_LEAVE,
@@ -117,7 +116,7 @@ func (hub *Hub) Run() {
 				}
 				hub.BroadcastCh <- pkt
 
-				fmt.Println("CURRENT PLAYERS: ", hub.Clients)
+				// fmt.Println("CURRENT PLAYERS: ", hub.Clients)
 				delete(hub.PlayerStates, client.Username)
 				hub.Proximity.Cleanup(client.Username)
 

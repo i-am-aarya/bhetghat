@@ -1,6 +1,6 @@
-networks:
-  npm_proxy:
-    external: true
+# networks:
+#   npm_proxy:
+#     external: true
 
 volumes:
   mongo_data:
@@ -30,8 +30,12 @@ services:
     network_mode: host
     restart: unless-stopped
     command: --config /livekit.yml
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "50000-50200:50000-50200"
     volumes:
-      - ./livekit/livekit.yml:/livekit.yml
+      - ./livekit.yml:/livekit.yml:ro,Z
     environment:
       LIVEKIT_KEYS: "${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}"
 
@@ -42,31 +46,42 @@ services:
     restart: unless-stopped
     environment:
       JWT_SECRET: ${JWT_SECRET}
-      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_URI: "mongodb://root:${MONGO_ROOT_PASSWORD}@mongo:27017/bhetghat?authSource=admin"
       LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
       LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
       LIVEKIT_URL: ${LIVEKIT_URL}
       REDIS_ADDR: ${REDIS_ADDR}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "8080:8080"
     depends_on:
       - mongo
       - redis
-    networks:
-      - default
-      - npm_proxy
+  # networks:
+  #   - default
+  #   - npm_proxy
 
 
   frontend:
     build:
       context: ./frontend
       args:
-        VITE_GAME_SERVER: https://api.bhetghat.aryabhattarai.com.np
-        VITE_GAME_WS: wss://api.bhetghat.aryabhattarai.com.np/ws
-        VITE_LIVEKIT_WS: wss://livekit.bhetghat.aryabhattarai.com.np
+        # VITE_GAME_SERVER: https://api.bhetghat.aryabhattarai.com.np
+        # VITE_GAME_WS: wss://api.bhetghat.aryabhattarai.com.np/ws
+        # VITE_LIVEKIT_WS: wss://livekit.bhetghat.aryabhattarai.com.np
+        # VITE_LIVEKIT_SERVER_URL: https://livekit.bhetghat.aryabhattarai.com.np
+
+        VITE_GAME_SERVER: http://localhost:8080
+        VITE_GAME_WS: ws://localhost:8080/ws
+        VITE_LIVEKIT_WS: ws://localhost:7880
+    # VITE_LIVEKIT_SERVER_URL: ws://localhost:7880
+
     container_name: bhetghat-frontend
     restart: unless-stopped
+    ports:
+      - "7000:80"
     depends_on:
       - backend
-    networks:
-      - default
-      - npm_proxy
+    # networks:
+    #   - default
+    #   - npm_proxy
